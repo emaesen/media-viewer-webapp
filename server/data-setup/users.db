@@ -1,0 +1,3 @@
+{"username":"test1","password":"$2a$13$A1J4E11hq/Tbxfd2ioEdsuA4MGIvmOhDjwdzaQhb5Kzar64GGlIwy","_id":"6FdSuzYSthWmTVud","createdAt":{"$$date":1541874675242},"updatedAt":{"$$date":1541874675242}}
+{"username":"test2","password":"$2a$13$LUT3zDKgx3y/JUxo6uUBo.nWunCZuD18iu0orUndo9zSariy0Xjqe","_id":"T4hIrznRX5CqTOMq","createdAt":{"$$date":1541874697113},"updatedAt":{"$$date":1541874697113}}
+{"$$indexCreated":{"fieldName":"username","unique":true,"sparse":false}}
