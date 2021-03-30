@@ -1,0 +1,25 @@
+{
+  "name": "media-viewer-webapp",
+  "version": "0.3.0",
+  "description": "Media viewer webapp",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emaesen/media-viewer-webapp.git"
+  },
+  "keywords": [
+    "javascript",
+    "vue",
+    "feathers"
+  ],
+  "author": "Edward Maesen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/emaesen/media-viewer-webapp/issues"
+  },
+  "homepage": "https://github.com/emaesen/media-viewer-webapp#readme",
+  "dependencies": {}
+}
