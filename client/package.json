@@ -1,0 +1,45 @@
+{
+  "name": "media-viewer-webapp-client",
+  "description": "Media Viewer WebApp client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve:dev": "vue-cli-service serve --port 7776",
+    "build:dist": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "dev": "npm run serve:dev",
+    "build": "npm run set:env && npm run build:dist",
+    "serve:prod": "serve -s dist -p 7777",
+    "prod": "npm run build && npm run serve:prod",
+    "start": "npm run serve:prod",
+    "set:env": "node set-build-env.js"
+  },
+  "dependencies": {
+    "@feathersjs/authentication-client": "1.0.8",
+    "@feathersjs/feathers": "3.2.3",
+    "@feathersjs/socketio-client": "1.1.5",
+    "@fortawesome/fontawesome-svg-core": "^1.2.8",
+    "@fortawesome/free-regular-svg-icons": "^5.15.3",
+    "@fortawesome/free-solid-svg-icons": "^5.5.0",
+    "@fortawesome/vue-fontawesome": "^0.1.2",
+    "feathers-vuex": "1.6.2",
+    "register-service-worker": "^1.0.0",
+    "serve": "^11.3.2",
+    "socket.io-client": "2.1.1",
+    "vue": "2.5.17",
+    "vue-router": "3.0.1",
+    "vuex": "3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "3.1.1",
+    "@vue/cli-plugin-eslint": "3.1.1",
+    "@vue/cli-plugin-pwa": "3.1.1",
+    "@vue/cli-service": "3.1.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0-0",
+    "less": "^3.0.4",
+    "less-loader": "^4.1.0",
+    "vue-template-compiler": "2.5.17"
+  }
+}
