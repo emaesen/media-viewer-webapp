@@ -24,6 +24,7 @@ jspm_packages/
 
 # dotenv environment variables file
 .env
+**/.env*
 
 # ref files
 _ref_*
