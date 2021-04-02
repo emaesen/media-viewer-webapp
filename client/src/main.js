@@ -19,6 +19,7 @@ import {
   faEye, // eye, view
   faEyeSlash, // hide
   faFilter, // filter
+  faHome, // home
   faHourglassEnd, // hourglass end
   faHourglassHalf, // hourglass half
   faHourglassStart, // hourglass start
@@ -69,6 +70,7 @@ library.add(
   faEye,
   faEyeSlash,
   faFilter,
+  faHome,
   faHourglassEnd,
   faHourglassHalf,
   faHourglassStart,
