@@ -39,8 +39,11 @@
     "cors": "^2.8.5",
     "feathers-authentication-hooks": "^0.3.1",
     "feathers-nedb": "^3.1.0",
+    "fs-extra": "^9.1.0",
     "helmet": "^3.13.0",
     "nedb": "^1.8.0",
+    "node-video-lib": "^2.2.0",
+    "readdirp": "^3.6.0",
     "serve-favicon": "^2.5.0",
     "winston": "^3.1.0"
   },
