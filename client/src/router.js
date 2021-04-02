@@ -44,9 +44,7 @@ const router = new Router({
       path: "/",
       name: "home",
       component: Home,
-      beforeEnter(to, from, next) {
-        checkAuth(to, from, next, "dashboard");
-      },
+      beforeEnter: checkAuth,
       meta: {
         title: "Media Viewer"
       }
