@@ -15,44 +15,39 @@ const settings = {
 let allFiles = []
 
 async function getVideoAssets() {
-  // Iterate recursively through a folder
-  for await (const entry of readdirp(folder, settings)) {
-    try {
-      const file = entry.fullPath
-      const fd = await fse.open(file, 'r')
-      const movie = VideoLib.MovieParser.parse(fd)
-      const meta = {
-        durationInSec: movie.relativeDuration().toFixed(0),
-        resolution: movie.resolution(),
-        sizeInMB: (movie.size() / 1000 / 1000).toFixed(1)
-      }
-      entry.meta = meta
-      const splitPath = entry.path.split('\\').reverse()
-      entry.splitPath = splitPath
-      delete entry.dirent
-      //console.log('getMediaAssets movie', entry)
-      allFiles.push(entry)
-      fse.closeSync(fd)
-    } catch (err) {
-      console.error('getMediaAssets Error:', err)
-    }
-  }
-  return allFiles
-}
-
-async function videoAssets() {
   if (folder) {
     console.log('getMediaAssets folder:', folder)
-    const assets = await getVideoAssets()
-    console.log('getMediaAssets movies:', assets)
-    return assets  
+    // Iterate recursively through a folder
+    for await (const entry of readdirp(folder, settings)) {
+      try {
+        const file = entry.fullPath
+        const fd = await fse.open(file, 'r')
+        const movie = VideoLib.MovieParser.parse(fd)
+        const meta = {
+          durationInSec: movie.relativeDuration().toFixed(0),
+          resolution: movie.resolution(),
+          sizeInMB: (movie.size() / 1000 / 1000).toFixed(1)
+        }
+        entry.meta = meta
+        const splitPath = entry.path.split('\\').reverse()
+        entry.splitPath = splitPath
+        delete entry.dirent
+        //console.log('getMediaAssets movie', entry)
+        allFiles.push(entry)
+        fse.closeSync(fd)
+      } catch (err) {
+        console.error('getMediaAssets Error:', err)
+      }
+    }
+    //console.log('getMediaAssets movies:', allFiles)
+    return allFiles
   } else {
     console.error("getMediaAssets Error: No video assets folder defined. Please export VIDEOS_FOLDER")
   }
 }
 
-module.exports.videoAssets = videoAssets
+module.exports.getVideoAssets = getVideoAssets
 
 // allow command line execution:
 // `node getMediaAssets.js`
-if(require.main == module) videoAssets()
+if(require.main == module) getVideoAssets()
