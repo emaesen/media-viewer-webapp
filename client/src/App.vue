@@ -30,7 +30,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import Clock from "./components/Clock";
+import Clock from "@/components/Clock";
 
 export default {
   name: "App",
@@ -53,7 +53,7 @@ export default {
       } else {
         const buildAt = process.env.VUE_APP_BUILD_AT
         if (buildAt) {
-          return "Dashboard build: " + (new Date(buildAt)).toLocaleString('en-US', options);
+          return "Build: " + (new Date(buildAt)).toLocaleString('en-US', options);
         }
         return ""
       }
