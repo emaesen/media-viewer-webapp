@@ -9,5 +9,14 @@ module.exports = function(app) {
     autoload: true
   });
 
+  // eslint-disable-next-line no-unused-vars
+  Model.ensureIndex({ fieldName: 'fullPath', unique: true }, function(err) {
+    // handle errors...
+    // err.errorType, err.key, err.message
+    if (err) {
+      console.log("movies.model ensureIndex error", err);
+    }
+  });
+
   return Model;
 };
