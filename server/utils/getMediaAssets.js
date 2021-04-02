@@ -3,7 +3,7 @@ const fse = require('fs-extra')
 const VideoLib = require('node-video-lib')
 
 // https://www.npmjs.com/package/readdirp
-const folder = '/test-symlink/videos'
+const folder = process.env.VIDEOS_FOLDER
 const settings = {
   fileFilter: ['*.mp4'],
   depth: 5,
@@ -30,20 +30,25 @@ async function getVideoAssets() {
       const splitPath = entry.path.split('\\').reverse()
       entry.splitPath = splitPath
       delete entry.dirent
-      //console.log('getVideoAssets movie', entry)
+      //console.log('getMediaAssets movie', entry)
       allFiles.push(entry)
       fse.closeSync(fd)
     } catch (err) {
-      console.error('getVideoAssets Error:', err)
+      console.error('getMediaAssets Error:', err)
     }
   }
   return allFiles
 }
 
 async function videoAssets() {
-  const assets = await getVideoAssets()
-  console.log(assets)
-  return assets
+  if (folder) {
+    console.log('getMediaAssets folder:', folder)
+    const assets = await getVideoAssets()
+    console.log('getMediaAssets movies:', assets)
+    return assets  
+  } else {
+    console.error("getMediaAssets Error: No video assets folder defined. Please export VIDEOS_FOLDER")
+  }
 }
 
 module.exports.videoAssets = videoAssets
