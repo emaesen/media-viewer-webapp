@@ -19,9 +19,6 @@ async function createMovies() {
 
   const user = await findUser()
   console.log({user})
-  
-  // The movies service call params (with the user we just created)
-  const params = { user }
 
   const movies = await getVideoAssets()
   //console.log({movies})
@@ -33,6 +30,9 @@ async function createMovies() {
 
 async function createMovie(data, user) {
   try {
+    // for some reason, the feathers service is not correctly setting
+    // the ownerId property, so we explicitly add it here:
+    movie.ownerId = user._id
     const movie = await app.service('movies').create(data, user)
     console.log("initializeMoviesDB Info: movie added: ", movie.path)
   } catch(err) {
