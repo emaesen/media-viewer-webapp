@@ -44,7 +44,9 @@ const router = new Router({
       path: "/",
       name: "home",
       component: Home,
-      beforeEnter: checkAuth,
+      beforeEnter(to, from, next) {
+        checkAuth(to, from, next, "movies");
+      },
       meta: {
         title: "Media Viewer"
       }
@@ -82,6 +84,19 @@ const router = new Router({
       beforeEnter: checkAuth,
       meta: {
         title: "Dashboard - Media Viewer"
+      }
+    },
+    {
+      path: "/movies",
+      name: "movies",
+      // route level code-splitting
+      // this generates a separate chunk (movies.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () =>
+        import(/* webpackChunkName: "movies" */ "./views/Movies.vue"),
+      beforeEnter: checkAuth,
+      meta: {
+        title: "Movies - Media Viewer"
       }
     },
     {
