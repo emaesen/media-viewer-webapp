@@ -41,6 +41,7 @@ import {
   faTrashAlt, // delete
   faUserCheck, // logged-in user
   faUserPlus, // register new user
+  faVideo, // video
   faWindowMinimize // single list item
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -92,6 +93,7 @@ library.add(
   faTrashAlt,
   faUserCheck,
   faUserPlus,
+  faVideo,
   faWindowMinimize,
   farWindowMinimize
 );
