@@ -18,7 +18,7 @@ async function getVideoAssets() {
   if (folder) {
     console.log('getMediaAssets folder:', folder)
     // Iterate recursively through a folder
-    for await (const entry of readdirp(folder, settings)) {
+    for await (let entry of readdirp(folder, settings)) {
       try {
         const file = entry.fullPath
         const fd = await fse.open(file, 'r')
@@ -29,9 +29,12 @@ async function getVideoAssets() {
           sizeInMB: (movie.size() / 1000 / 1000).toFixed(1)
         }
         entry.meta = meta
-        const splitPath = entry.path.split('\\').reverse()
+        entry.path = entry.path.replace(/\\/g, '/')
+        const splitPath = entry.path.split('/').reverse()
         entry.splitPath = splitPath
+        // remove what we don't need
         delete entry.dirent
+        delete entry.fullPath
         //console.log('getMediaAssets movie', entry)
         allFiles.push(entry)
         fse.closeSync(fd)
