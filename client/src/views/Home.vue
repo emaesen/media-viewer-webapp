@@ -1,10 +1,14 @@
 <template>
-  <div class="home">... checking authentication ...</div>
+  <div>
+    <h1>
+      <font-awesome-icon icon="home"/>Home
+    </h1>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "home"
+  name: "Home"
 };
 </script>
 
