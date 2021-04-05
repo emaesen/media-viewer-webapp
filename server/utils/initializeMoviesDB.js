@@ -1,5 +1,5 @@
-const app = require('./src/app')
-const { getVideoAssets } = require('./utils/getMediaAssets')
+const app = require('../src/app')
+const { getVideoAssets } = require('./getMediaAssets')
 //console.log({app})
 
 const userid = process.env.OWNER_ID
@@ -34,10 +34,14 @@ async function createMovies() {
 async function createMovie(data, user) {
   try {
     const movie = await app.service('movies').create(data, user)
-    console.log("initializeMoviesDB Info: movie created ", movie.path)
+    console.log("initializeMoviesDB Info: movie added: ", movie.path)
   } catch(err) {
     console.error("initializeMoviesDB Error: ", err.errorType, err.key)
   }
 }
 
-createMovies()
+module.exports.createMovies = createMovies
+
+// allow command line execution:
+// `node getMediaAssets.js`
+if(require.main == module) createMovies()
