@@ -9,7 +9,7 @@
         <font-awesome-icon :icon="displayGrid? 'align-justify' : 'th'" class="flush-right"/>
       </button>
       <button
-        v-if="sortType==='color' || sortType==='category'"
+        v-if="sortType==='rating'"
         @click="sortAsc = !sortAsc"
         class="action button"
       >sort
@@ -81,15 +81,16 @@ export default {
   },
   data() {
     return {
-      types: ["rating", "date created", "date modified"],
-      sortType: "date modified",
+      types: ["rating", "date created", "date updated"],
+      sortType: "date created",
+      sortDateDefault: "created",
       ratings: [],
       levels1: [],
       levels2: [],
       filter: { ratings: [], levels1: [], levels2: [] },
       showFilters: false,
       sortAsc: true,
-      sortDateAsc: false,
+      sortDateAsc: true,
       displayGrid: true,
       movieBasePath: "/media/movies/"
     };
@@ -97,7 +98,7 @@ export default {
   created() {
     // Find all movies from server. We'll filter/sort on the client.
     this.findMovies({ query: {} })
-      .then(this.setRatingsAndLevels)
+      .then(this.setFilterData)
       .catch(err => {
         this.handleError(err);
       });
@@ -119,6 +120,7 @@ export default {
         .update()
         .then(movie => {
           console.log("edit succesful", movie);
+          this.setFilterData()
         })
         .catch(err => {
           this.handleError(err);
@@ -133,7 +135,7 @@ export default {
       //console.log(this.sortType + " " + typeIndex);
     },
     sortByDate(a, b, type) {
-      type = type || "updated";
+      type = type || this.sortDateDefault;
       let dateDiff;
       dateDiff =
         type === "updated"
@@ -157,8 +159,8 @@ export default {
         case "date created":
           result = this.sortByDate(a, b, "created");
           break;
-        case "date modified":
-          result = this.sortByDate(a, b);
+        case "date updated":
+          result = this.sortByDate(a, b, "updated");
           break;
       }
       return result;
@@ -184,7 +186,7 @@ export default {
         this.filter.levels2.reduce(pinReducer, !hasLevel2)
       );
     },
-    setRatingsAndLevels() {
+    setFilterData() {
       // get list of user-defined ratings and levels, and remove duplicates
       this.ratings = this.moviesUnfiltered
         .map(m => m.rating)
@@ -215,7 +217,7 @@ export default {
     resultsFound() {
       return !this.loading && this.movies && this.movies[0];
     },
-    rating() {
+    page() {
       // For large datasets, an option is to implement a query-selector.
       // But for the Movies service, we can just filter on the client.
       return null;
@@ -226,8 +228,8 @@ export default {
       // the current user's movies are returned.
       // In combination with movies service clearAll on logout
       let query = {};
-      if (this.rating) {
-        query.rating = this.rating;
+      if (this.page) {
+        query.page = this.page;
       }
       return query;
     },
@@ -245,6 +247,7 @@ export default {
           .map(m => {
             m.level1 = m.splitPath[1]
             m.level2 = m.splitPath[2]
+            m.rating = m.rating ? 1*m.rating : 0
             m.src = this.movieBasePath + m.path
             return m
           })

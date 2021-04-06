@@ -32,7 +32,8 @@ import {
   faSignOutAlt, // log/sign out
   faSortAmountDown, // sort down
   faSortAmountUp, // sort up
-  faSpinner,
+  faSpinner, // spinner
+  faStar, // star
   faStickyNote, // notes
   faStop, // stop
   faTachometerAlt, // dashboard
@@ -46,7 +47,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faWindowMinimize as farWindowMinimize, // single list item
-  faBellSlash as farBellSlash // dismiss
+  faBellSlash as farBellSlash, // dismiss
+  faStar as farStar // star
 } from "@fortawesome/free-regular-svg-icons";
 
 import router from "./router";
@@ -85,6 +87,8 @@ library.add(
   faSortAmountDown,
   faSortAmountUp,
   faSpinner,
+  faStar,
+  farStar,
   faStickyNote,
   faStop,
   faTachometerAlt,

@@ -1,5 +1,11 @@
 <template>
   <div class="movie-container">
+    <div class="rating">
+      <Rating
+        :rating="movieRating"
+        @set-rating="setRating"
+      />
+    </div>
     <div class="levels info">
       {{ movieLevels }}
     </div>
@@ -17,10 +23,13 @@
 </template>
 
 <script>
+import Rating from "@/components/Rating";
+
 export default {
   name:"Movie",
   props: ['movie'],
   components: {
+    Rating
   },
   data() {
     return {
@@ -40,9 +49,20 @@ export default {
       let levels =  this.movie.level2 ? this.movie.level2 + "/" : ""
       levels = levels + this.movie.level1
       return levels
-    }
+    },
+    movieRating() {
+      return this.movie.rating
+    },
   },
   methods: {
+    setRating(i) {
+      this.$emit('edit-movie', {
+        movie: this.movie,
+        mod: {
+          rating: i
+        }
+      })
+    }
   },
 
 }
