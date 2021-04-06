@@ -11,7 +11,8 @@ module.exports = function (app) {
     Model,
     paginate
   };
-
+  console.log("INFO: 'movies' pagination options:", paginate)
+  
   // Initialize our service with any options it requires
   app.use('/movies', createService(options));
 
