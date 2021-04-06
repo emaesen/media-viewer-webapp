@@ -37,17 +37,17 @@ export default {
   },
   computed: {
     movieSrc() {
-      return this.movie.src || this.movie.path
+      return this.movie.ui.src
     },
     mimeType() {
       return this.movie.mime || "video/mp4"
     },
     movieTitle() {
-      return this.movie.title || this.movie.basename.replace(".mp4","").replace(/[-_]/g, " ")
+      return this.movie.basename.replace(".mp4","").replace(/[-_]/g, " ")
     },
     movieLevels() {
-      let levels =  this.movie.level2 ? this.movie.level2 + "/" : ""
-      levels = levels + this.movie.level1
+      let levels =  this.movie.ui.level2 ? this.movie.ui.level2 + "/" : ""
+      levels = levels + this.movie.ui.level1
       return levels
     },
     movieRating() {

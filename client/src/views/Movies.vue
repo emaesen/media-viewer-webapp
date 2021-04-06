@@ -116,6 +116,8 @@ export default {
       // save the modifictions
       props.movie.rating = props.mod.rating;
       props.movie.watchedAt = Date.now();
+      // prevent ui-specific properties from cluttering the DB
+      delete props.movie.ui
       props.movie
         .update()
         .then(movie => {
@@ -175,8 +177,8 @@ export default {
       // Example:
       // (movie.rating === 5 || movie.rating === 4) && (movie.level1 === 'g')
       const clrReducer = (acc, cur) => acc || movie.rating === cur;
-      const catReducer = (acc, cur) => acc || movie.level1 === cur;
-      const pinReducer = (acc, cur) => acc || movie.level2 === cur;
+      const catReducer = (acc, cur) => acc || movie.ui.level1 === cur;
+      const pinReducer = (acc, cur) => acc || movie.ui.level2 === cur;
       const hasRating = this.filter.ratings.length > 0;
       const hasLevel1 = this.filter.levels1.length > 0;
       const hasLevel2 = this.filter.levels2.length > 0;
@@ -195,13 +197,13 @@ export default {
       console.log({ ratings: this.ratings })
 
       this.levels1 = this.moviesUnfiltered
-        .map(m => m.level1)
+        .map(m => m.ui.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
       console.log({ levels1: this.levels1 })
 
       this.levels2 = this.moviesUnfiltered
-        .map(m => m.level2)
+        .map(m => m.ui.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
       console.log({ levels2: this.levels2 })
@@ -245,10 +247,12 @@ export default {
             query: this.query
           }).data
           .map(m => {
-            m.level1 = m.splitPath[1]
-            m.level2 = m.splitPath[2]
+            m.ui = {
+              level1: m.splitPath[1],
+              level2: m.splitPath[2],
+              src: this.movieBasePath + m.path
+            }
             m.rating = m.rating ? 1*m.rating : 0
-            m.src = this.movieBasePath + m.path
             return m
           })
         : [];
@@ -270,8 +274,8 @@ export default {
     moviesFilterMeta() {
       return this.moviesUnfiltered.map(movie => ({
         rating: movie.rating,
-        level1: movie.level1,
-        level2: movie.level2
+        level1: movie.ui.level1,
+        level2: movie.ui.level2
       }));
     }
 
