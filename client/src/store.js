@@ -34,24 +34,17 @@ export default new Vuex.Store({
     }),
     service("movies", {
       instanceDefaults: {
-        filePath: "",
-        fileName: "",
-        type: "",
-        duration: "",
-        size: "",
-        rating: "",
-        lastAccessedAt: "",
+        path: "",
+        basename: "",
+        meta: {},
+        splitPath: [],
+        rating: 0,
+        ui: {},
+        watchedAt: null
       }
     }),
     service("music", {
       instanceDefaults: {
-        filePath: "",
-        fileName: "",
-        type: "",
-        duration: "",
-        size: "",
-        rating: "",
-        lastAccessedAt: "",
       }
     }),
     // Setup the auth plugin.
