@@ -35,16 +35,14 @@
         <span class="filter-cntr">({{ nrFiltersApplied }} applied)</span>
       </button>
     </div>
-    <!--
-    <pa-filter-control
+    <MovieFilter
       v-show="showFilters"
-      :colors="colors"
       :ratings="ratings"
-      :pins="pins"
+      :levels1="levels1"
+      :levels2="levels2"
       :filter="filter"
       :filterMeta="moviesFilterMeta"
     />
-    -->
     <div v-if="loading" class="loading">loading...</div>
     <div v-if="!resultsFound" class="noresults">{{ noResultsText }}</div>
     <transition-group
@@ -71,6 +69,7 @@
 
 <script>
 import Movie from "@/components/Movie";
+import MovieFilter from "@/components/MovieFilter";
 
 import { mapState, mapGetters, mapActions } from "vuex";
 
@@ -78,12 +77,16 @@ export default {
   name: "Movies",
   components: {
     Movie,
+    MovieFilter,
   },
   data() {
     return {
       types: ["rating", "date created", "date modified"],
       sortType: "date modified",
-      filter: { ratings: [], level1: [], level2: [] },
+      ratings: [],
+      levels1: [],
+      levels2: [],
+      filter: { ratings: [], levels1: [], levels2: [] },
       showFilters: false,
       sortAsc: true,
       sortDateAsc: false,
@@ -94,7 +97,7 @@ export default {
   created() {
     // Find all movies from server. We'll filter/sort on the client.
     this.findMovies({ query: {} })
-      .then(this.setRatings)
+      .then(this.setRatingsAndLevels)
       .catch(err => {
         this.handleError(err);
       });
@@ -169,27 +172,37 @@ export default {
       // Multiple ratings are `or`-ed. Multiple levels are `or`-ed.
       // Example:
       // (movie.rating === 5 || movie.rating === 4) && (movie.level1 === 'g')
-      const level1 = movie.splitPath[1]
-      const level2 = movie.splitPath[2]
       const clrReducer = (acc, cur) => acc || movie.rating === cur;
-      const catReducer = (acc, cur) => acc || level1 === cur;
-      const pinReducer = (acc, cur) => acc || level2 === cur;
+      const catReducer = (acc, cur) => acc || movie.level1 === cur;
+      const pinReducer = (acc, cur) => acc || movie.level2 === cur;
       const hasRating = this.filter.ratings.length > 0;
-      const hasLevel1 = this.filter.level1.length > 0;
-      const hasLevel2 = this.filter.level2.length > 0;
+      const hasLevel1 = this.filter.levels1.length > 0;
+      const hasLevel2 = this.filter.levels2.length > 0;
       return (
         this.filter.ratings.reduce(clrReducer, !hasRating) &&
-        this.filter.level1.reduce(catReducer, !hasLevel1) &&
-        this.filter.level2.reduce(pinReducer, !hasLevel2)
+        this.filter.levels1.reduce(catReducer, !hasLevel1) &&
+        this.filter.levels2.reduce(pinReducer, !hasLevel2)
       );
     },
-    setRatings() {
-      // get list of user-defined ratings and remove duplicates
+    setRatingsAndLevels() {
+      // get list of user-defined ratings and levels, and remove duplicates
       this.ratings = this.moviesUnfiltered
-        .map(n => n.rating)
-        .filter((c, i, s) => s.indexOf(c) === i)
-        .sort();
-      //console.log({ ratings: this.ratings });
+        .map(m => m.rating)
+        .filter((c, i, s) => c!=="" && s.indexOf(c) === i)
+        .sort()
+      console.log({ ratings: this.ratings })
+
+      this.levels1 = this.moviesUnfiltered
+        .map(m => m.level1)
+        .filter((c, i, s) => c && s.indexOf(c) === i)
+        .sort()
+      console.log({ levels1: this.levels1 })
+
+      this.levels2 = this.moviesUnfiltered
+        .map(m => m.level2)
+        .filter((c, i, s) => c && s.indexOf(c) === i)
+        .sort()
+      console.log({ levels2: this.levels2 })
     }
   },
   computed: {
@@ -230,6 +243,8 @@ export default {
             query: this.query
           }).data
           .map(m => {
+            m.level1 = m.splitPath[1]
+            m.level2 = m.splitPath[2]
             m.src = this.movieBasePath + m.path
             return m
           })
@@ -238,8 +253,8 @@ export default {
     nrFiltersApplied() {
       return (
         this.filter.ratings.length +
-        this.filter.level1.length +
-        this.filter.level2.length
+        this.filter.levels1.length +
+        this.filter.levels2.length
       );
     },
     noResultsText() {
@@ -250,10 +265,10 @@ export default {
       }
     },
     moviesFilterMeta() {
-      return this.moviesUnfiltered.map(n => ({
-        rating: n.rating,
-        level1: n.level1,
-        level2: n.level2
+      return this.moviesUnfiltered.map(movie => ({
+        rating: movie.rating,
+        level1: movie.level1,
+        level2: movie.level2
       }));
     }
 
