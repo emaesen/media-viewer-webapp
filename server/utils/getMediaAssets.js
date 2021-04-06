@@ -3,7 +3,7 @@ const fse = require('fs-extra')
 const VideoLib = require('node-video-lib')
 
 // https://www.npmjs.com/package/readdirp
-const folder = process.env.VIDEOS_FOLDER
+const folder = "../client/public/media/movies"
 const settings = {
   fileFilter: ['*.mp4'],
   depth: 5,
@@ -23,9 +23,13 @@ async function getVideoAssets() {
         const file = entry.fullPath
         const fd = await fse.open(file, 'r')
         const movie = VideoLib.MovieParser.parse(fd)
+        const resolution = movie.resolution().split('x')
+        const width = resolution[0]
+        const height = resolution[1]
         const meta = {
           durationInSec: movie.relativeDuration().toFixed(0),
-          resolution: movie.resolution(),
+          width: width,
+          height: height,
           sizeInMB: (movie.size() / 1000 / 1000).toFixed(1)
         }
         entry.meta = meta
