@@ -1,5 +1,8 @@
 <template>
   <div class="movie-container">
+    <div class="levels info">
+      {{ movieLevels }}
+    </div>
     <div class="title info">
       {{ movieTitle }}
     </div>
@@ -32,6 +35,11 @@ export default {
     },
     movieTitle() {
       return this.movie.title || this.movie.basename.replace(".mp4","").replace(/[-_]/g, " ")
+    },
+    movieLevels() {
+      let levels =  this.movie.level2 ? this.movie.level2 + "/" : ""
+      levels = levels + this.movie.level1
+      return levels
     }
   },
   methods: {
@@ -41,8 +49,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.movie-container {
+  padding: 10px 5px 20px;
+}
+.levels,
 .title {
-  margin: 20px 0 10px 0;
+  margin: 10px 0 10px 0;
+}
+.levels {
+  text-align: right;
 }
 .movie {
   width: 100%;
