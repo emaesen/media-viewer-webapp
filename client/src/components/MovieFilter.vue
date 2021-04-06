@@ -1,7 +1,7 @@
 <template>
   <transition name="slidefade">
     <div class="filters">
-      
+
       <div v-if="hasRatings" class="filter-group">
         <span class="filter-type">Rating:</span>
         <span
@@ -14,7 +14,7 @@
           <input type="checkbox" :id="'rating-' + rating" :value="rating" v-model="filter.ratings">
           <label :for="'rating-' + rating" class="action button">
             {{ rating }}
-            <span class="clr cntr" :class="'rating-' + rating">({{ ratingsCount['rating-'+rating] }})</span>
+            <span class="clr cntr" :class="'rating-' + rating">({{ ratingsCount[rating] }})</span>
           </label>
         </div>
       </div>
