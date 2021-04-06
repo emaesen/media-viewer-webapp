@@ -1,7 +1,8 @@
 <template>
   <transition name="slidefade">
     <div class="filters">
-      <div class="filter-group">
+      
+      <div v-if="hasRatings" class="filter-group">
         <span class="filter-type">Rating:</span>
         <span
           class="action button cntr clear rating-none"
@@ -17,7 +18,8 @@
           </label>
         </div>
       </div>
-      <div class="filter-group">
+
+      <div v-if="hasLevels1" class="filter-group">
         <span class="filter-type">Level 1:</span>
         <span
           class="action button cntr clear cat-none"
@@ -35,7 +37,8 @@
           </div>
         </div>
       </div>
-      <div class="filter-group">
+
+      <div v-if="hasLevels2" class="filter-group">
         <span class="filter-type">Level 2:</span>
         <span
           class="action button cntr clear cat-none"
@@ -53,6 +56,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </transition>
 </template>
@@ -62,18 +66,6 @@ export default {
   name: "MovieFilter",
   props: ["filter", "ratings", "levels1", "levels2", "filterMeta"],
   mounted() {
-    console.log({
-      filter: this.filter,
-      ratings: this.ratings,
-      levels1: this.levels1,
-      levels2: this.levels2,
-      filterMeta: this.filterMeta
-    });
-    console.log({
-      ratingsCount: this.ratingsCount,
-      levels1Count: this.levels1Count,
-      levels2Count: this.levels2Count
-    });
   },
   methods: {
     metaCounter(type, attr, pre) {
@@ -106,6 +98,15 @@ export default {
     }
   },
   computed: {
+    hasRatings() {
+      return this.ratings.length > 0
+    },
+    hasLevels1() {
+      return this.levels1.length > 0
+    },
+    hasLevels2() {
+      return this.levels2.length > 0
+    },
     ratingsCount() {
       return this.metaCounter(this.ratings, "rating");
     },
