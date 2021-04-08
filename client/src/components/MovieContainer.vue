@@ -1,5 +1,5 @@
 <template>
-  <div class="movie-container">
+  <div :class="['movie-container', {'full-width': isFullWidth}]">
     <div class="rating">
       <Rating
         :rating="movieRating"
@@ -16,6 +16,7 @@
       class="movie" 
       :source="{src:movieSrc, type:mimeType, id:movie._id}"
       :options="{autoplay:false, volume:0.1}"
+      @toggle-fullwidth="onToggleFullWidth"
     />
   </div>
 </template>
@@ -33,6 +34,7 @@ export default {
   },
   data() {
     return {
+      isFullWidth: false
     }
   },
   computed: {
@@ -62,6 +64,10 @@ export default {
           rating: i
         }
       })
+    },
+    onToggleFullWidth() {
+      this.$emit('toggle-fullwidth')
+      this.isFullWidth = !this.isFullWidth
     }
   },
 
@@ -71,6 +77,16 @@ export default {
 <style lang="less" scoped>
 .movie-container {
   padding: 10px 5px 20px;
+}
+.movie-container.full-width {
+  padding: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000;
+  z-index: 999;
 }
 .levels,
 .title {

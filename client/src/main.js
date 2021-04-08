@@ -7,6 +7,7 @@ import {
   faAlignJustify, // list layout
   faCheck, // check
   faCompress, // compress - box corners
+  faCompressArrowsAlt, // compress - arrows
   faExpand, // expand - box corners
   faExpandArrowsAlt, // expand - arrows
   faFilter, // filter
@@ -41,6 +42,7 @@ library.add(
   faAlignJustify,
   faCheck,
   faCompress,
+  faCompressArrowsAlt,
   faExpand,
   faExpandArrowsAlt,
   faFilter,

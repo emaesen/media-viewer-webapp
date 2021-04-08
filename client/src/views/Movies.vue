@@ -59,11 +59,13 @@
         <MovieContainer
           :movie="movie"
           @edit-movie="editMovie"
+          @toggle-fullwidth="onToggleFullWidth"
           class="cell-content"
         />
       </div>
     </transition-group>
-
+    <div class="screen" v-if="hasFullWidthMovie">
+    </div>
   </div>
 </template>
 
@@ -92,6 +94,7 @@ export default {
       sortAsc: true,
       sortDateAsc: true,
       displayGrid: true,
+      hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       pagination: {
         limit: 30,
@@ -131,6 +134,9 @@ export default {
         .catch(err => {
           this.handleError(err);
         });
+    },
+    onToggleFullWidth() {
+      this.hasFullWidthMovie = !this.hasFullWidthMovie
     },
     cycleSortType() {
       let typeIndex = this.types.findIndex(t => t === this.sortType) + 1;
@@ -392,6 +398,15 @@ h2.movies {
 .grid .movies-list-cell {
   border: 1px dashed #454545;
   margin: -1px;
+}
+.screen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: #000;
+  opacity:.9;
 }
 @media all and (max-width: 400px) {
   .grid .grid-cell {
