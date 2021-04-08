@@ -35,7 +35,7 @@
         </button>
         <div class="mp-video-time">
           <span class="mp-video-time-text">
-            {{video.displayTimeElapsed}}
+            {{player.displayTimeElapsed}}
           </span>
         </div>
         <div
@@ -49,18 +49,18 @@
             :id="source.id+'-playback-head'"
             :ref="source.id+'-playback-head'" 
             class="mp-playback-head"
-            :style="{'transform': 'translateX('+video.pos.current+'px)'}"
+            :style="{'transform': 'translateX('+player.pos.current+'px)'}"
           ></div>
           <div class="mp-playback-rail">
             <div
-              class="mp-playback-rail-loaded"
-              :style="{'transform': 'translateX('+video.loaded+'%)'}"
+              class="mp-playback-rail-buffered"
+              :style="{'transform': 'translateX('+video.buffered+'%)'}"
             ></div>
           </div>
         </div>
         <div class="mp-video-time">
           <span class="mp-video-time-text">
-            {{video.displayTimeRemaining}}
+            {{player.displayTimeRemaining}}
           </span>
         </div>
         <div class="mp-ctrl-volume">
@@ -159,30 +159,15 @@ export default {
     return {
       videoEl: null,
       video: {
-        playbackSliderEl: null,
         current: 0,
-        loaded: 0,
-        isChanging: false,
-        displayTimeRemaining: '00:00',
-        displayTimeElapsed: '00:00',
-        pos: {
-          start: 0,
-          width: 0,
-          innerWidth: 0,
-          current: 0
-        },
-        isListeningTo: {
-          durationchange: false,
-          progress: false,
-          timeupdate: false,
-          ended: false,
-        }
+        buffered: 0,
       },
       volume: {
-        volumeSliderEl: null,
+        sliderEl: null,
+        levelEl: null,
         muted: false,
         percent: 60,
-        isChanging: false,
+        hasMousedown: false,
         pos: {
           start: 0,
           width: 0,
@@ -192,7 +177,18 @@ export default {
       },
       player: {
         playerEl: null,
-        pos: null
+        playbackSliderEl: null,
+        playbackHeadEl: null,
+        displayTimeRemaining: '00:00',
+        displayTimeElapsed: '00:00',
+        hasMousedown: false,
+        domRect: null,
+        pos: {
+          start: 0,
+          width: 0,
+          innerWidth: 0,
+          current: 0
+        },
       },
       tmp: {
         ctrlsDisplayTimer: null,
@@ -217,67 +213,85 @@ export default {
   methods: {
     init() {
       this.videoEl = this.$refs && this.$refs[this.source.id+'-video']
-      //console.log({video: this.videoEl})
-      this.initCore()
+      this.initVideo()
+      this.initPlayer()
       if (this.options.autoplay) {
         this.togglePlay()
       }
-      this.player.playerEl.addEventListener('mousemove', this.onMousemovePlayer, false)
-      this.player.playerEl.addEventListener('mouseup', this.onMouseupPlayer, false)
-    },
-    initCore() {
-      this.initVol()
-      this.initVideo()
-      this.initPlayer()
-      const vol = this.options.volume || 0.9
-      this.setVolume(vol)
     },
     initPlayer() {
       const playerEl = this.$refs && this.$refs[this.source.id+'-player']
-      this.player.pos = playerEl.getBoundingClientRect()
-      this.player.playerEl = playerEl
-    },
-    initVol() {
-      const volumeSliderEl = this.$refs && this.$refs[this.source.id+'-vol-slider']
-      const volumeLevelEl = this.$refs && this.$refs[this.source.id+'-vol-level']
-      this.volume.volumeSliderEl = volumeSliderEl
-      this.volume.pos.innerWidth = volumeLevelEl.getBoundingClientRect().width
-      this.volume.pos.start = volumeSliderEl.getBoundingClientRect().left
-      this.volume.pos.width = volumeSliderEl.getBoundingClientRect().width - this.volume.pos.innerWidth
-    },
-    initVideo() {
       const playbackSliderEl = this.$refs && this.$refs[this.source.id+'-playback-slider']
       const playbackHeadEl = this.$refs && this.$refs[this.source.id+'-playback-head']
-      this.playbackSliderEl = playbackSliderEl
-      this.video.pos.start = playbackSliderEl.getBoundingClientRect().left
-      this.video.pos.innerWidth = playbackHeadEl.getBoundingClientRect().width
-      this.video.pos.width = playbackSliderEl.getBoundingClientRect().width - this.video.pos.innerWidth
 
+      this.player.domRect = playerEl.getBoundingClientRect()
+      this.player.playerEl = playerEl
+      this.player.playbackSliderEl = playbackSliderEl
+      this.player.playbackHeadEl = playbackHeadEl
+      this.player.playerEl.addEventListener('mousemove', this.onMousemovePlayer, false)
+      this.player.playerEl.addEventListener('mouseup', this.onMouseupPlayer, false)
+      this.setPlaybackDimensions()
+      this.initVolume()
+    },
+    initVolume() {
+      const sliderEl = this.$refs && this.$refs[this.source.id+'-vol-slider']
+      const levelEl = this.$refs && this.$refs[this.source.id+'-vol-level']
+      const vol = this.options.volume || 0.9
+      this.setVolume(vol)
+      this.volume.sliderEl = sliderEl
+      this.volume.levelEl = levelEl
+      this.setVolumeDimensions()
+    },
+    initVideo() {
       this.videoEl.addEventListener('durationchange', this.onDurationchangeVideo)
       this.videoEl.addEventListener('progress', this.onProgressVideo)
       this.videoEl.addEventListener('timeupdate', this.onTimeupdateVideo)
       this.videoEl.addEventListener('ended', this.onEndedVideo)
     },
+    setVolumeDimensions() {
+      let v = this.volume
+      v.pos.innerWidth = v.levelEl.getBoundingClientRect().width
+      v.pos.start = v.sliderEl.getBoundingClientRect().left
+      v.pos.width = v.sliderEl.getBoundingClientRect().width - v.pos.innerWidth
+    },
+    setPlaybackDimensions() {
+      let p = this.player
+      p.pos.start = p.playbackSliderEl.getBoundingClientRect().left
+      p.pos.innerWidth = p.playbackHeadEl.getBoundingClientRect().width
+      p.pos.width = p.playbackSliderEl.getBoundingClientRect().width - p.pos.innerWidth
+      console.log({playerPos:p.pos})
+    },
+    setPlayerDimensions() {
+      this.setPlaybackDimensions()
+      this.setVolumeDimensions()
+    },
     onDurationchangeVideo() {
-      if (this.video.displayTimeRemaining === '00:00') {
+      if (this.player.displayTimeRemaining === '00:00') {
         // initialize the displayTimeRemaining value
-        this.video.displayTimeRemaining = timeParse(this.videoEl.duration)
+        this.player.displayTimeRemaining = timeParse(this.videoEl.duration)
       }
     },
     onProgressVideo() {
-      if (this.videoEl.readyState===4) {
-        this.video.loaded = (-1 + (this.videoEl.buffered.end(0) / this.videoEl.duration)) * 100
+      let duration = this.videoEl.duration
+      if (duration > 0) {
+        let buffered = this.videoEl.buffered
+        for (var i = 0; i < buffered.length; i++) {
+          if (buffered.start(buffered.length - 1 - i) < this.videoEl.currentTime) {
+            this.video.buffered = (-1 + buffered.end(buffered.length - 1 - i) / duration) * 100;
+            break;
+          }
+        }
       }
     },
     onTimeupdateVideo() {
       const percent = this.videoEl.currentTime / this.videoEl.duration
-      this.video.pos.current = (this.video.pos.width * percent).toFixed(3)
-      this.video.displayTimeRemaining = timeParse(this.videoEl.duration - this.videoEl.currentTime)
-      this.video.displayTimeElapsed = timeParse(this.videoEl.currentTime)
+      this.player.pos.current = (this.player.pos.width * percent).toFixed(3)
+      this.player.displayTimeRemaining = timeParse(this.videoEl.duration - this.videoEl.currentTime)
+      this.player.displayTimeElapsed = timeParse(this.videoEl.currentTime)
     },
     onEndedVideo() {
       this.state.isPlaying = false
-      this.video.pos.current = 0
+      this.player.pos.current = 0
       this.videoEl.currentTime = 0
     },
     onMouseenterVideo() {
@@ -317,12 +331,12 @@ export default {
       this.togglePlay()
     },
     onMousedownVolumeSlider() {
-      this.initVol()
-      this.volume.isChanging = true
+      //this.setVolumeDimensions()
+      this.volume.hasMousedown = true
     },
     onMousedownPlaybackSlider() {
-      this.initVideo()
-      this.video.isChanging = true
+      //this.setPlaybackDimensions()
+      this.player.hasMousedown = true
     },
     onClickPlaybackSlider(e) {
       this.playbackSlideMove(e)
@@ -351,39 +365,25 @@ export default {
         elem.requestFullscreen()
           .then(() => {
             this.state.isFullScreen = true
+            this.setPlayerDimensions()
           })
           .catch(err => {
             console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
         });
       } else {
         this.state.isFullScreen = false
-        document.exitFullscreen && document.exitFullscreen();
+        document.exitFullscreen && document.exitFullscreen().then(() => {
+          this.setPlayerDimensions()
+        })
       }
     },
     onMousemovePlayer(e) {
-      if (this.volume.isChanging) {
+      if (this.volume.hasMousedown) {
         this.volumeSlideMove(e)
       }
-      if (this.video.isChanging) {
+      if (this.player.hasMousedown) {
         this.playbackSlideMove(e)
       }
-      this.ctrlHider(e)
-    },
-    ctrlHider(e) {
-      const x = getMousePosition(e, 'x')
-      const y = getMousePosition(e, 'y')
-      if (!this.player.pos) return
-      if (x > this.player.pos.left &&
-        x < this.player.pos.left + this.player.pos.width
-      ) {
-        if (
-          y > this.player.pos.top + this.player.pos.height * 0.6 &&
-          y < this.player.pos.top + this.player.pos.height
-        ) {
-          return this.onMouseenterVideo()
-        }
-      }
-      return this.onMouseleaveVideo()
     },
     volumeSlideMove(e) {
       const x = getMousePosition(e) - this.volume.pos.start
@@ -392,15 +392,15 @@ export default {
       }
     },
     playbackSlideMove(e) {
-      const x = getMousePosition(e) - this.video.pos.start
-      if (x > 0 && x < this.video.pos.width) {
-        this.video.pos.current = x
-        this.setVideoByTime(x / this.video.pos.width)
+      const x = getMousePosition(e) - this.player.pos.start
+      if (x > 0 && x < this.player.pos.width) {
+        this.player.pos.current = x
+        this.setVideoByTime(x / this.player.pos.width)
       }
     },
     onMouseupPlayer(e) {
-      this.volume.isChanging = false
-      this.video.isChanging = false
+      this.volume.hasMousedown = false
+      this.player.hasMousedown = false
     }
   }
 }
@@ -511,7 +511,7 @@ export default {
   background: #cec0a150;
   overflow: hidden;
 }
-.mp-playback-rail-loaded {
+.mp-playback-rail-buffered {
   position: absolute;
   top: 0;
   left: 0;
