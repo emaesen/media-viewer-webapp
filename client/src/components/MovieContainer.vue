@@ -12,24 +12,24 @@
     <div class="title info">
       {{ movieTitle }}
     </div>
-    <video 
+    <MoviePlayer 
       class="movie" 
-      controls playsinline
-      preload="metadata"
-    >
-      <source :src="movieSrc" :type="mimeType">
-    </video>
+      :source="{src:movieSrc, type:mimeType, id:movie._id}"
+      :options="{autoplay:false, volume:0.1}"
+    />
   </div>
 </template>
 
 <script>
 import Rating from "@/components/Rating";
+import MoviePlayer from "@/components/MoviePlayer";
 
 export default {
   name:"Movie",
   props: ['movie'],
   components: {
-    Rating
+    Rating,
+    MoviePlayer
   },
   data() {
     return {
