@@ -5,49 +5,28 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   faAlignJustify, // list layout
-  faAngleLeft, // angle left
-  faAngleRight, // angle right
-  faBan, // cancel
-  faBell, // reminders
-  faBellSlash, // dismiss
-  faCalendarAlt, // calendar
   faCheck, // check
-  faCheckCircle, // save, ok
-  faClipboardList, // to do list
-  faEdit, // edit
-  faEllipsisV, // ellipsis vertical
-  faEye, // eye, view
-  faEyeSlash, // hide
+  faExpandArrowsAlt, // expand
   faFilter, // filter
   faHome, // home
-  faHourglassEnd, // hourglass end
-  faHourglassHalf, // hourglass half
-  faHourglassStart, // hourglass start
-  faMinusCircle, // remove
+  faPause, // pause
   faPlay, // start, play
-  faPlusCircle, // add
-  faQuestionCircle, // info
-  faRecycle, // recycle
   faSignInAlt, // log/sign in
   faSignOutAlt, // log/sign out
   faSortAmountDown, // sort down
   faSortAmountUp, // sort up
   faSpinner, // spinner
   faStar, // star
-  faStickyNote, // notes
   faStop, // stop
   faTachometerAlt, // dashboard
-  faTh, // grid layout
-  faThumbtack, // pin
-  faTrashAlt, // delete
   faUserCheck, // logged-in user
   faUserPlus, // register new user
   faVideo, // video
-  faWindowMinimize // single list item
+  faVolumeDown, // volume down/low
+  faVolumeMute, // volume muted
+  faVolumeUp, // volume up/high
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  faWindowMinimize as farWindowMinimize, // single list item
-  faBellSlash as farBellSlash, // dismiss
   faStar as farStar // star
 } from "@fortawesome/free-regular-svg-icons";
 
@@ -58,30 +37,12 @@ import "./registerServiceWorker";
 
 library.add(
   faAlignJustify,
-  faAngleLeft,
-  faAngleRight,
-  faBan,
-  faBell,
-  faBellSlash,
-  farBellSlash,
-  faCalendarAlt,
   faCheck,
-  faCheckCircle,
-  faClipboardList,
-  faEdit,
-  faEllipsisV,
-  faEye,
-  faEyeSlash,
+  faExpandArrowsAlt,
   faFilter,
   faHome,
-  faHourglassEnd,
-  faHourglassHalf,
-  faHourglassStart,
-  faMinusCircle,
+  faPause,
   faPlay,
-  faPlusCircle,
-  faQuestionCircle,
-  faRecycle,
   faSignInAlt,
   faSignOutAlt,
   faSortAmountDown,
@@ -89,17 +50,14 @@ library.add(
   faSpinner,
   faStar,
   farStar,
-  faStickyNote,
   faStop,
   faTachometerAlt,
-  faTh,
-  faThumbtack,
-  faTrashAlt,
   faUserCheck,
   faUserPlus,
   faVideo,
-  faWindowMinimize,
-  farWindowMinimize
+  faVolumeDown,
+  faVolumeMute,
+  faVolumeUp,
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
