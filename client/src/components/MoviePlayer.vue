@@ -100,6 +100,7 @@
         </div>
         <button
           class="mp-ctrl-btn"
+          v-if="!state.isFullscreen"
           @click="onClickFullWidthButton"
         >
           <font-awesome-icon
@@ -113,6 +114,7 @@
         </button>
         <button
           class="mp-ctrl-btn"
+          v-if="!state.isFullWidth"
           @click="onClickFullscreenButton"
         >
           <font-awesome-icon
@@ -273,11 +275,12 @@ export default {
       p.pos.start = p.playbackSliderEl.getBoundingClientRect().left
       p.pos.innerWidth = p.playbackHeadEl.getBoundingClientRect().width
       p.pos.width = p.playbackSliderEl.getBoundingClientRect().width - p.pos.innerWidth
-      console.log({playerPos:p.pos})
     },
     setPlayerDimensions() {
-      this.setPlaybackDimensions()
-      this.setVolumeDimensions()
+      this.$nextTick(() => {
+        this.setPlaybackDimensions()
+        this.setVolumeDimensions()
+      })
     },
     onDurationchangeVideo() {
       if (this.player.displayTimeRemaining === '00:00') {
@@ -308,21 +311,27 @@ export default {
       this.player.pos.current = 0
       this.videoEl.currentTime = 0
     },
-    onMouseenterVideo() {
+    showControls() {
       if (this.tmp.ctrlsDisplayTimer) {
         clearTimeout(this.tmp.ctrlsDisplayTimer)
         this.tmp.ctrlsDisplayTimer = null
       }
       this.state.showCtrls = true
     },
-    onMouseleaveVideo() {
+    hideControls(delay) {
       if (this.tmp.ctrlsDisplayTimer) {
         clearTimeout(this.tmp.ctrlsDisplayTimer)
       }
       this.tmp.ctrlsDisplayTimer = setTimeout(() => {
-        this.state.showCtrls = false
+        if (this.state.isPlaying) this.state.showCtrls = false
         this.tmp.ctrlsDisplayTimer = null
-      }, 3000)
+      }, delay)
+    },
+    onMouseenterVideo() {
+      this.showControls()
+    },
+    onMouseleaveVideo() {
+      this.hideControls(3000)
     },
     setVideoByTime(percent) {
       this.videoEl.currentTime = Math.floor(percent * this.videoEl.duration)
@@ -332,7 +341,7 @@ export default {
       if (this.videoEl) {
         if (this.state.isPlaying) {
           this.videoEl.play()
-          this.onMouseleaveVideo()
+          this.hideControls(5000)
         } else {
           this.videoEl.pause()
         }
@@ -342,11 +351,11 @@ export default {
       this.togglePlay()
     },
     onMousedownVolumeSlider() {
-      //this.setVolumeDimensions()
+      this.setVolumeDimensions()
       this.volume.hasMousedown = true
     },
     onMousedownPlaybackSlider() {
-      //this.setPlaybackDimensions()
+      this.setPlaybackDimensions()
       this.player.hasMousedown = true
     },
     onClickPlaybackSlider(e) {
@@ -369,6 +378,7 @@ export default {
     onClickFullWidthButton() {
       this.$emit('toggle-fullwidth')
       this.state.isFullWidth = !this.state.isFullWidth
+      this.setPlayerDimensions()
     },
     onClickFullscreenButton() {
       const elem = this.player.playerEl
