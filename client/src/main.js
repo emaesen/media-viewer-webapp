@@ -6,7 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   faAlignJustify, // list layout
   faCheck, // check
-  faExpandArrowsAlt, // expand
+  faCompress, // compress - box corners
+  faExpand, // expand - box corners
+  faExpandArrowsAlt, // expand - arrows
   faFilter, // filter
   faHome, // home
   faPause, // pause
@@ -38,6 +40,8 @@ import "./registerServiceWorker";
 library.add(
   faAlignJustify,
   faCheck,
+  faCompress,
+  faExpand,
   faExpandArrowsAlt,
   faFilter,
   faHome,
