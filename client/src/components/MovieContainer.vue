@@ -25,7 +25,7 @@ import Rating from "@/components/Rating";
 import MoviePlayer from "@/components/MoviePlayer";
 
 export default {
-  name:"Movie",
+  name:"MovieContainer",
   props: ['movie'],
   components: {
     Rating,
