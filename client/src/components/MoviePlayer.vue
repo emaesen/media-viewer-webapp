@@ -100,14 +100,27 @@
         </div>
         <button
           class="mp-ctrl-btn"
+          @click="onClickFullWidthButton"
+        >
+          <font-awesome-icon
+            v-if="!state.isFullWidth"
+            icon="expand-arrows-alt"
+          />
+          <font-awesome-icon
+            v-if="state.isFullWidth"
+            icon="compress-arrows-alt"
+          />
+        </button>
+        <button
+          class="mp-ctrl-btn"
           @click="onClickFullscreenButton"
         >
           <font-awesome-icon
-            v-if="!state.isFullScreen"
+            v-if="!state.isFullscreen"
             icon="expand"
           />
           <font-awesome-icon
-            v-if="state.isFullScreen"
+            v-if="state.isFullscreen"
             icon="compress"
           />
         </button>
@@ -198,7 +211,8 @@ export default {
         showCtrls: true,
         vol: 0.5,
         currentTime: 0,
-        isFullScreen: false,
+        isFullWidth: false,
+        isFullscreen: false,
         isPlaying: false
       }
     }
@@ -310,9 +324,6 @@ export default {
         this.tmp.ctrlsDisplayTimer = null
       }, 3000)
     },
-    toggleContrlShow() {
-      this.state.showCtrls = !this.state.showCtrls
-    },
     setVideoByTime(percent) {
       this.videoEl.currentTime = Math.floor(percent * this.videoEl.duration)
     },
@@ -355,6 +366,10 @@ export default {
         this.videoEl.volume = val
       }
     },
+    onClickFullWidthButton() {
+      this.$emit('toggle-fullwidth')
+      this.state.isFullWidth = !this.state.isFullWidth
+    },
     onClickFullscreenButton() {
       const elem = this.player.playerEl
       if (!document.fullscreenElement) {
@@ -364,14 +379,14 @@ export default {
           || elem.webkitRequestFullscreen
         elem.requestFullscreen()
           .then(() => {
-            this.state.isFullScreen = true
+            this.state.isFullscreen = true
             this.setPlayerDimensions()
           })
           .catch(err => {
             console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
         });
       } else {
-        this.state.isFullScreen = false
+        this.state.isFullscreen = false
         document.exitFullscreen && document.exitFullscreen().then(() => {
           this.setPlayerDimensions()
         })
@@ -398,7 +413,7 @@ export default {
         this.setVideoByTime(x / this.player.pos.width)
       }
     },
-    onMouseupPlayer(e) {
+    onMouseupPlayer() {
       this.volume.hasMousedown = false
       this.player.hasMousedown = false
     }
@@ -425,56 +440,61 @@ export default {
   left: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.54);
-  height: 2rem;
+  height: 2em;
   width: 100%;
   z-index: 3;
 }
 .mp-ctrl-btn {
   position: relative;
-  height: 100%;
   background: none;
   border: none;
-  height: 2rem;
-  width: 2rem;
+  height: 2em;
+  width: 2em;
   outline: none;
   vertical-align: top;
+  margin: 0;
+  padding: 0 3px;
 }
 .mp-ctrl-btn:hover {
   background-color: rgba(255, 255, 255, 0.27);
 }
+.mp-ctrl-btn svg {
+  margin: 0;
+  padding: 0;
+}
 .mp-ctrl-btn-icon {
   position: absolute;
-  height: 1rem;
-  width: 1rem;
+  height: 1em;
+  width: 1em;
   top: 50%;
   left: 50%;
-  margin-top: -.5rem;
-  margin-left: -.5rem;
+  margin-top: -.5em;
+  margin-left: -.5em;
 }
 .mp-ctrl-vol-btn-icon {
   position: absolute;
-  height: 1.1rem;
-  width: 1.1rem;
+  height: 1.1em;
+  width: 1.1em;
   top: 50%;
   left: 50%;
-  margin-top: -.55rem;
-  margin-left: -.55rem;
+  margin-top: -.55em;
+  margin-left: -.55em;
 }
 .mp-ctrl-vol-slider {
   position: relative;
   display: inline-block;
   height: 100%;
-  width: 2rem;
-  height: 2rem;
+  width: 2em;
+  height: 2em;
   overflow: hidden;
   transition: all .2s ease-in;
 }
 .mp-ctrl-vol-rail {
   position: absolute;
   top: 50%;
-  width: 2rem;
-  height: .1rem;
-  margin-top: -.05rem;
+  width: 2em;
+  height: .1em;
+  margin-top: -.05em;
   background: #cec0a1;
 }
 .mp-ctrl-vol-level {
@@ -483,10 +503,10 @@ export default {
   left: 0;
   top: 50%;
   background: #cec0a1;
-  width: .5rem;
-  height: .5rem;
+  width: .5em;
+  height: .5em;
   border-radius: 50%;
-  margin-top: -.25rem;
+  margin-top: -.25em;
   z-index: 2;
   cursor: pointer;
 }
@@ -499,15 +519,15 @@ export default {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  margin: 0 .5rem;
+  margin: 0 .5em;
   transition: all .2s ease-in;
 }
 .mp-playback-rail {
   position: absolute;
   top: 50%;
   width: 100%;
-  height: .1rem;
-  margin-top: -.05rem;
+  height: .1em;
+  margin-top: -.05em;
   background: #cec0a150;
   overflow: hidden;
 }
@@ -516,7 +536,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: .1rem;
+  height: .1em;
   background: #cec0a1;
   transition: transform .2s;
 }
@@ -526,21 +546,20 @@ export default {
   left: 0;
   top: 50%;
   background: #cec0a1;
-  width: .5rem;
-  height: .5rem;
-  border-radius: 50%;
-  margin-top: -.25rem;
+  width: .3em;
+  height: .8em;
+  margin-top: -.4em;
   z-index: 2;
   cursor: pointer;
   transition: all 16ms;
 }
 .mp-video-time {
-  padding: 0;
+  padding-top: .15em;
 }
 .mp-video-time-text {
   color: #cec0a1;
-  line-height: 2rem;
-  font-size: .8rem;
+  line-height: 2em;
+  font-size: .8em;
 }
 ::media-controls {
  display:none !important;
