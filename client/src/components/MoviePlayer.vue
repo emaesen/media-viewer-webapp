@@ -159,7 +159,6 @@ export default {
       videoEl: null,
       video: {
         playbackSliderEl: null,
-        len: 0,
         current: 0,
         loaded: 0,
         isChanging: false,
@@ -252,7 +251,21 @@ export default {
       this.video.pos.start = playbackSliderEl.getBoundingClientRect().left
       this.video.pos.innerWidth = playbackHeadEl.getBoundingClientRect().width
       this.video.pos.width = playbackSliderEl.getBoundingClientRect().width - this.video.pos.innerWidth
-      this.getTime()
+
+      this.videoEl.addEventListener('durationchange', this.onDurationchangeVideo)
+      this.videoEl.addEventListener('progress', this.onProgressVideo)
+
+    },
+    onDurationchangeVideo() {
+      if (this.video.displayTimeRemaining === '00:00') {
+        // initialize the displayTimeRemaining value
+        this.video.displayTimeRemaining = timeParse(this.videoEl.duration)
+      }
+    },
+    onProgressVideo() {
+      if (this.videoEl.readyState===4) {
+        this.video.loaded = (-1 + (this.videoEl.buffered.end(0) / this.videoEl.duration)) * 100
+      }
     },
     onMouseenterVideo () {
       if (this.tmp.ctrlsDisplayTimer) {
@@ -273,28 +286,8 @@ export default {
     toggleContrlShow () {
       this.state.showCtrls = !this.state.showCtrls
     },
-    getTime () {
-      if(!this.video.isListeningTo.durationchange) {
-        this.videoEl.addEventListener('durationchange', (e) => {
-          if (this.video.displayTimeRemaining === '00:00') {
-            // initialize the displayTimeRemaining value
-            this.video.displayTimeRemaining = timeParse(this.videoEl.duration)
-          }
-        })
-        this.video.isListeningTo.durationchange = true
-      }
-      if(!this.video.isListeningTo.progress) {
-        this.videoEl.addEventListener('progress', (evt) => {
-          if (this.videoEl.readyState===4) {
-            this.video.loaded = (-1 + (this.videoEl.buffered.end(0) / this.videoEl.duration)) * 100
-          }
-        })
-        this.video.isListeningTo.progress = true
-      }
-      this.video.len = this.videoEl.duration
-    },
     setVideoByTime (percent) {
-      this.videoEl.currentTime = Math.floor(percent * this.video.len)
+      this.videoEl.currentTime = Math.floor(percent * this.videoEl.duration)
     },
     togglePlay() {
       this.state.isPlaying = !this.state.isPlaying
