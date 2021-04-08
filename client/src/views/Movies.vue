@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>
-      <font-awesome-icon icon="video"/>Movies <span class="info">({{ totalNrOfMovies }})</span>
+      <font-awesome-icon icon="film"/>Movies <span class="info">({{ totalNrOfMovies }})</span>
     </h1>
 
     <div v-if="resultsFound" class="controls convert-to-block-on-small-device">

@@ -24,7 +24,7 @@ import {
   faTachometerAlt, // dashboard
   faUserCheck, // logged-in user
   faUserPlus, // register new user
-  faVideo, // video
+  faFilm, // movie
   faVolumeDown, // volume down/low
   faVolumeMute, // volume muted
   faVolumeUp, // volume up/high
@@ -60,7 +60,7 @@ library.add(
   faTachometerAlt,
   faUserCheck,
   faUserPlus,
-  faVideo,
+  faFilm,
   faVolumeDown,
   faVolumeMute,
   faVolumeUp,
