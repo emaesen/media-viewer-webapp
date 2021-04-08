@@ -1,8 +1,8 @@
 <template>
   <div
-    :id="source.id+'-container'"
-    :ref="source.id+'-container'"
-    class="mp-video-container"
+    :id="source.id+'-player'"
+    :ref="source.id+'-player'"
+    class="mp-video-player"
     @mouseenter="onMouseenterVideo"
     @mouseleave="onMouseleaveVideo"
   >
@@ -25,11 +25,11 @@
           @click="onClickPlayButton"
         >
           <font-awesome-icon
-            v-show="!state.isPlaying"
+            v-if="!state.isPlaying"
             icon="play"
           />
           <font-awesome-icon
-            v-show="state.isPlaying"
+            v-if="state.isPlaying"
             icon="pause"
           />
         </button>
@@ -69,15 +69,15 @@
             @click="onClickVolumeButton"
           >
             <font-awesome-icon
-              v-show="volume.percent >= 50 && !volume.muted"
+              v-if="volume.percent >= 50 && !volume.muted"
               icon="volume-up"
             />
             <font-awesome-icon
-              v-show="volume.percent < 50 && !volume.muted"
+              v-if="volume.percent < 50 && !volume.muted"
               icon="volume-down"
             />
             <font-awesome-icon
-              v-show="volume.muted"
+              v-if="volume.muted"
               icon="volume-mute"
             />
           </button>
@@ -100,9 +100,16 @@
         </div>
         <button
           class="mp-ctrl-btn"
-          @click="onClickResizeButton"
+          @click="onClickFullscreenButton"
         >
-          <font-awesome-icon icon="expand-arrows-alt"/>
+          <font-awesome-icon
+            v-if="!state.isFullScreen"
+            icon="expand"
+          />
+          <font-awesome-icon
+            v-if="state.isFullScreen"
+            icon="compress"
+          />
         </button>
       </div>
     </transition>
@@ -188,7 +195,8 @@ export default {
         pos: null
       },
       tmp: {
-        ctrlsDisplayTimer: null
+        ctrlsDisplayTimer: null,
+        isFullscreenSupported: null
       },
       state: {
         showCtrls: true,
@@ -225,7 +233,7 @@ export default {
       this.setVol(vol)
     },
     initPlayer () {
-      const playerEl = this.$refs && this.$refs[this.source.id+'-container']
+      const playerEl = this.$refs && this.$refs[this.source.id+'-player']
       this.player.pos = playerEl.getBoundingClientRect()
       this.player.playerEl = playerEl
     },
@@ -345,16 +353,23 @@ export default {
         this.videoEl.volume = val
       }
     },
-    onClickResizeButton () {
-      if (this.videoEl.RequestFullScreen) {
-        if (!this.state.isFullScreen) {
-          this.state.isFullScreen = true
-          this.videoEl.RequestFullScreen()
-        } else {
-          this.state.isFullScreen = false
-          document.CancelFullScreen()
-        }
-        setTimeout(this.initVideo, 200)
+    onClickFullscreenButton () {
+      const elem = this.player.playerEl
+      if (!document.fullscreenElement) {
+        elem.requestFullscreen = elem.requestFullscreen 
+          || elem.mozRequestFullscreen
+          || elem.msRequestFullscreen
+          || elem.webkitRequestFullscreen
+        elem.requestFullscreen()
+          .then(() => {
+            this.state.isFullScreen = true
+          })
+          .catch(err => {
+            console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+      } else {
+        this.state.isFullScreen = false
+        document.exitFullscreen && document.exitFullscreen();
       }
     },
     onMousemovePlayer (e) {
@@ -404,7 +419,7 @@ export default {
 </script>
 
 <style>
-.mp-video-container {
+.mp-video-player {
   position: relative;
   width: 100%;
   background-color: #000;
