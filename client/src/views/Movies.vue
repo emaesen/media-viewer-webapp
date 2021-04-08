@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>
-      <font-awesome-icon icon="video"/>Movies
+      <font-awesome-icon icon="video"/>Movies <span class="info">({{ totalNrOfMovies }})</span>
     </h1>
 
     <div v-if="resultsFound" class="controls convert-to-block-on-small-device">
@@ -56,7 +56,7 @@
         :key="movie._id"
         class="grid-cell movies-list-cell"
       >
-        <Movie
+        <MovieContainer
           :movie="movie"
           @edit-movie="editMovie"
           class="cell-content"
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import Movie from "@/components/Movie";
+import MovieContainer from "@/components/MovieContainer";
 import MovieFilter from "@/components/MovieFilter";
 
 import { mapState, mapGetters, mapActions } from "vuex";
@@ -76,7 +76,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 export default {
   name: "Movies",
   components: {
-    Movie,
+    MovieContainer,
     MovieFilter,
   },
   data() {
@@ -92,7 +92,11 @@ export default {
       sortAsc: true,
       sortDateAsc: true,
       displayGrid: true,
-      movieBasePath: "/media/movies/"
+      movieBasePath: "/media/movies/",
+      pagination: {
+        limit: 30,
+        skip: 0
+      }
     };
   },
   created() {
@@ -220,19 +224,43 @@ export default {
       return !this.loading && this.movies && this.movies[0];
     },
     page() {
-      // For large datasets, an option is to implement a query-selector.
-      // But for the Movies service, we can just filter on the client.
+      // TODO: placeholder for pagination
       return null;
     },
     query() {
       // it is not necessary to define ownerId in the query:
       // The 'before' hooks in movies.hooks.js guarantee that only
       // the current user's movies are returned.
-      // In combination with movies service clearAll on logout
+      // In combination with movies service clearAll on logout.
+      //
+      // We can use query to set pagination options
+      // https://docs.feathersjs.com/api/databases/querying.html
+      //
+      // However, the UI filtering currently only acts on the queried dataset;
+      // client-side filter options do not carry through to the DB query.
       let query = {};
-      if (this.page) {
-        query.page = this.page;
+      let sort = {}
+      switch (this.sortType) {
+        case "rating":
+          sort.rating = this.sortAsc ? 1 : -1
+          break;
+        case "date created":
+          sort.createdAt = this.sortDateAsc ? 1 : -1
+          break;
+        case "date updated":
+          sort.updatedAt = this.sortDateAsc ? 1 : -1
+          break;
       }
+      query.$sort = sort
+
+      if (this.pagination && this.pagination.limit) {
+        query.$limit = this.pagination.limit
+      }
+
+      if (this.pagination && this.pagination.skip) {
+        query.$skip = this.pagination.skip
+      }
+      console.log({query})
       return query;
     },
     movies() {
@@ -241,11 +269,25 @@ export default {
         .sort(this.sortByDate)
         .sort(this.uiSort);
     },
-    moviesUnfiltered() {
+    moviesQueryResult() {
       return this.user
         ? this.findMoviesInStore({
             query: this.query
-          }).data
+          })
+        : {}
+    },
+    totalNrOfMovies() {
+      return this.moviesQueryResult.total
+    },
+    maxNrOfMoviesPerPage() {
+      return this.moviesQueryResult.limit || "unlimited"
+    },
+    nrOfMoviesSkipped() {
+      return this.moviesQueryResult.skip
+    },
+    moviesUnfiltered() {
+      //console.log("this.moviesQueryResult", this.moviesQueryResult)
+      return this.moviesQueryResult.data
           .map(m => {
             m.ui = {
               level1: m.splitPath[1],
@@ -255,7 +297,6 @@ export default {
             m.rating = m.rating ? 1*m.rating : 0
             return m
           })
-        : [];
     },
     nrFiltersApplied() {
       return (
@@ -284,6 +325,11 @@ export default {
 </script>
 
 <style>
+h1 .info {
+  font-weight: 400;
+  font-size: 70%;
+  letter-spacing: normal;
+}
 h2.movies {
   display: inline-block;
   margin-right: 1em;
