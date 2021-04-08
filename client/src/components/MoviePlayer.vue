@@ -117,7 +117,7 @@
 </template>
 
 <script>
-const getMousePosition = function (e, type = 'x') {
+const getMousePosition = (e, type = 'x') => {
   if (type === 'x') {
     return e.pageX
   }
@@ -139,11 +139,12 @@ const timeParse = (sec) => {
   return (hrs ? hrs + ':' : '') + pad(min) + ':' + pad(sec)
 }
 export default {
+  name:"MoviePlayer",
   props: {
     source: Object,
     options: {
       type: Object,
-      default () {
+      default() {
         return {
           autoplay: false,
           volume: 0.1,
@@ -154,7 +155,7 @@ export default {
       }
     }
   },
-  data () {
+  data() {
     return {
       videoEl: null,
       video: {
@@ -206,15 +207,15 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   },
-  beforeDestroy () {
+  beforeDestroy() {
     this.player.playerEl.removeEventListener('mousemove', this.onMousemovePlayer)
     this.player.playerEl.removeEventListener('mouseup', this.onMouseupPlayer)
   },
   methods: {
-    init () {
+    init() {
       this.videoEl = this.$refs && this.$refs[this.source.id+'-video']
       //console.log({video: this.videoEl})
       this.initCore()
@@ -224,19 +225,19 @@ export default {
       this.player.playerEl.addEventListener('mousemove', this.onMousemovePlayer, false)
       this.player.playerEl.addEventListener('mouseup', this.onMouseupPlayer, false)
     },
-    initCore () {
+    initCore() {
       this.initVol()
       this.initVideo()
       this.initPlayer()
       const vol = this.options.volume || 0.9
-      this.setVol(vol)
+      this.setVolume(vol)
     },
-    initPlayer () {
+    initPlayer() {
       const playerEl = this.$refs && this.$refs[this.source.id+'-player']
       this.player.pos = playerEl.getBoundingClientRect()
       this.player.playerEl = playerEl
     },
-    initVol () {
+    initVol() {
       const volumeSliderEl = this.$refs && this.$refs[this.source.id+'-vol-slider']
       const volumeLevelEl = this.$refs && this.$refs[this.source.id+'-vol-level']
       this.volume.volumeSliderEl = volumeSliderEl
@@ -244,7 +245,7 @@ export default {
       this.volume.pos.start = volumeSliderEl.getBoundingClientRect().left
       this.volume.pos.width = volumeSliderEl.getBoundingClientRect().width - this.volume.pos.innerWidth
     },
-    initVideo () {
+    initVideo() {
       const playbackSliderEl = this.$refs && this.$refs[this.source.id+'-playback-slider']
       const playbackHeadEl = this.$refs && this.$refs[this.source.id+'-playback-head']
       this.playbackSliderEl = playbackSliderEl
@@ -254,7 +255,8 @@ export default {
 
       this.videoEl.addEventListener('durationchange', this.onDurationchangeVideo)
       this.videoEl.addEventListener('progress', this.onProgressVideo)
-
+      this.videoEl.addEventListener('timeupdate', this.onTimeupdateVideo)
+      this.videoEl.addEventListener('ended', this.onEndedVideo)
     },
     onDurationchangeVideo() {
       if (this.video.displayTimeRemaining === '00:00') {
@@ -267,14 +269,25 @@ export default {
         this.video.loaded = (-1 + (this.videoEl.buffered.end(0) / this.videoEl.duration)) * 100
       }
     },
-    onMouseenterVideo () {
+    onTimeupdateVideo() {
+      const percent = this.videoEl.currentTime / this.videoEl.duration
+      this.video.pos.current = (this.video.pos.width * percent).toFixed(3)
+      this.video.displayTimeRemaining = timeParse(this.videoEl.duration - this.videoEl.currentTime)
+      this.video.displayTimeElapsed = timeParse(this.videoEl.currentTime)
+    },
+    onEndedVideo() {
+      this.state.isPlaying = false
+      this.video.pos.current = 0
+      this.videoEl.currentTime = 0
+    },
+    onMouseenterVideo() {
       if (this.tmp.ctrlsDisplayTimer) {
         clearTimeout(this.tmp.ctrlsDisplayTimer)
         this.tmp.ctrlsDisplayTimer = null
       }
       this.state.showCtrls = true
     },
-    onMouseleaveVideo (e) {
+    onMouseleaveVideo() {
       if (this.tmp.ctrlsDisplayTimer) {
         clearTimeout(this.tmp.ctrlsDisplayTimer)
       }
@@ -283,10 +296,10 @@ export default {
         this.tmp.ctrlsDisplayTimer = null
       }, 3000)
     },
-    toggleContrlShow () {
+    toggleContrlShow() {
       this.state.showCtrls = !this.state.showCtrls
     },
-    setVideoByTime (percent) {
+    setVideoByTime(percent) {
       this.videoEl.currentTime = Math.floor(percent * this.videoEl.duration)
     },
     togglePlay() {
@@ -295,58 +308,40 @@ export default {
         if (this.state.isPlaying) {
           this.videoEl.play()
           this.onMouseleaveVideo()
-          if(!this.video.isListeningTo.timeupdate) {
-            this.videoEl.addEventListener('timeupdate', this.timeline)
-            this.video.isListeningTo.timeupdate = true
-          }
-          if(!this.video.isListeningTo.ended) {
-            this.videoEl.addEventListener('ended', (e) => {
-              this.state.isPlaying = false
-              this.video.pos.current = 0
-              this.videoEl.currentTime = 0
-            })
-            this.video.isListeningTo.ended = true
-          }
         } else {
           this.videoEl.pause()
         }
       }
     },
-    timeline () {
-      const percent = this.videoEl.currentTime / this.videoEl.duration
-      this.video.pos.current = (this.video.pos.width * percent).toFixed(3)
-      this.video.displayTimeRemaining = timeParse(this.videoEl.duration - this.videoEl.currentTime)
-      this.video.displayTimeElapsed = timeParse(this.videoEl.currentTime)
-    },
     onClickPlayButton() {
       this.togglePlay()
     },
-    onMousedownVolumeSlider (e) {
+    onMousedownVolumeSlider() {
       this.initVol()
       this.volume.isChanging = true
     },
-    onMousedownPlaybackSlider (e) {
+    onMousedownPlaybackSlider() {
       this.initVideo()
       this.video.isChanging = true
     },
-    onClickPlaybackSlider (e) {
-      this.videoSlideMove(e)
+    onClickPlaybackSlider(e) {
+      this.playbackSlideMove(e)
     },
-    onClickVolumeSlider (e) {
-      this.volSlideMove(e)
+    onClickVolumeSlider(e) {
+      this.volumeSlideMove(e)
     },
-    onClickVolumeButton () {
+    onClickVolumeButton() {
       this.videoEl.muted = !this.videoEl.muted
       this.volume.muted = this.videoEl.muted
     },
-    setVol (val) {
+    setVolume(val) {
       if (this.videoEl) {
         this.volume.pos.current = val * this.volume.pos.width
         this.volume.percent = val * 100
         this.videoEl.volume = val
       }
     },
-    onClickFullscreenButton () {
+    onClickFullscreenButton() {
       const elem = this.player.playerEl
       if (!document.fullscreenElement) {
         elem.requestFullscreen = elem.requestFullscreen 
@@ -365,16 +360,16 @@ export default {
         document.exitFullscreen && document.exitFullscreen();
       }
     },
-    onMousemovePlayer (e) {
+    onMousemovePlayer(e) {
       if (this.volume.isChanging) {
-        this.volSlideMove(e)
+        this.volumeSlideMove(e)
       }
       if (this.video.isChanging) {
-        this.videoSlideMove(e)
+        this.playbackSlideMove(e)
       }
       this.ctrlHider(e)
     },
-    ctrlHider (e) {
+    ctrlHider(e) {
       const x = getMousePosition(e, 'x')
       const y = getMousePosition(e, 'y')
       if (!this.player.pos) return
@@ -390,20 +385,20 @@ export default {
       }
       return this.onMouseleaveVideo()
     },
-    volSlideMove (e) {
+    volumeSlideMove(e) {
       const x = getMousePosition(e) - this.volume.pos.start
       if (x > 0 && x < this.volume.pos.width) {
-        this.setVol(x / this.volume.pos.width)
+        this.setVolume(x / this.volume.pos.width)
       }
     },
-    videoSlideMove (e) {
+    playbackSlideMove(e) {
       const x = getMousePosition(e) - this.video.pos.start
       if (x > 0 && x < this.video.pos.width) {
         this.video.pos.current = x
         this.setVideoByTime(x / this.video.pos.width)
       }
     },
-    onMouseupPlayer (e) {
+    onMouseupPlayer(e) {
       this.volume.isChanging = false
       this.video.isChanging = false
     }
