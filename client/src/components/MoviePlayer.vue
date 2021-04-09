@@ -18,8 +18,41 @@
         :type="source.type"
       />
     </video>
-    <transition name="fade">
-      <div class="mp-ctrls"
+
+    <transition name="fade-down">
+      <div class="mp-ctrls-topleft"
+        v-show="state.showCtrls && state.showSecondaryCtrls"
+      >
+        <button class="mp-ctrl-btn"
+          @click="onClickReduceSpeedButton"
+        >
+          <font-awesome-icon
+            icon="minus-square"
+          />
+        </button>
+        <span class="mp-info-icon">
+          <font-awesome-icon
+            icon="tachometer-alt"
+          />
+        </span>
+        <button class="mp-ctrl-btn"
+          @click="onClickIncreaseSpeedButton"
+        >
+          <font-awesome-icon
+            icon="plus-square"
+          />
+        </button>
+        <div class="mp-info-text-container">
+          <span class="mp-info-text">
+            {{ video.playbackRate }} x
+          </span>
+        </div>
+      </div>
+    </transition>
+
+
+    <transition name="fade-up">
+      <div class="mp-ctrls-bottom"
         v-show="state.showCtrls"
       >
         <button class="mp-ctrl-btn"
@@ -34,8 +67,8 @@
             icon="pause"
           />
         </button>
-        <div class="mp-video-time">
-          <span class="mp-video-time-text">
+        <div class="mp-info-text-container">
+          <span class="mp-info-text">
             {{player.displayTimeElapsed}}
           </span>
         </div>
@@ -59,8 +92,8 @@
             ></div>
           </div>
         </div>
-        <div class="mp-video-time">
-          <span class="mp-video-time-text">
+        <div class="mp-info-text-container">
+          <span class="mp-info-text">
             {{player.displayTimeRemaining}}
           </span>
         </div>
@@ -177,6 +210,7 @@ export default {
       video: {
         current: 0,
         buffered: 0,
+        playbackRate: 1,
       },
       volume: {
         sliderEl: null,
@@ -212,6 +246,7 @@ export default {
       },
       state: {
         showCtrls: true,
+        showSecondaryCtrls: true,
         vol: 0.5,
         currentTime: 0,
         isFullWidth: false,
@@ -442,7 +477,15 @@ export default {
     onMouseupPlayer() {
       this.volume.hasMousedown = false
       this.player.hasMousedown = false
-    }
+    },
+    onClickReduceSpeedButton() {
+      this.video.playbackRate = .5 * this.video.playbackRate
+      this.videoEl.playbackRate = this.video.playbackRate
+    },
+    onClickIncreaseSpeedButton() {
+      this.video.playbackRate = 2 * this.video.playbackRate
+      this.videoEl.playbackRate = this.video.playbackRate
+    },
   }
 }
 </script>
@@ -460,7 +503,7 @@ export default {
   vertical-align: bottom;
 }
 
-.mp-ctrls {
+.mp-ctrls-bottom {
   position: absolute;
   display: flex;
   left: 0;
@@ -470,6 +513,17 @@ export default {
   width: 100%;
   z-index: 3;
 }
+.mp-ctrls-topleft {
+  position: absolute;
+  display: flex;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.54);
+  z-index: 3;
+  padding-right: .7em;
+  height: 2em;
+}
+.mp-info-icon,
 .mp-ctrl-btn {
   position: relative;
   background: none;
@@ -484,27 +538,14 @@ export default {
 .mp-ctrl-btn:hover {
   background-color: rgba(255, 255, 255, 0.27);
 }
+.mp-info-icon {
+  padding: 5px 0;
+  width: auto;
+}
+.mp-info-icon svg,
 .mp-ctrl-btn svg {
   margin: 0;
   padding: 0;
-}
-.mp-ctrl-btn-icon {
-  position: absolute;
-  height: 1em;
-  width: 1em;
-  top: 50%;
-  left: 50%;
-  margin-top: -.5em;
-  margin-left: -.5em;
-}
-.mp-ctrl-vol-btn-icon {
-  position: absolute;
-  height: 1.1em;
-  width: 1.1em;
-  top: 50%;
-  left: 50%;
-  margin-top: -.55em;
-  margin-left: -.55em;
 }
 .mp-ctrl-vol-slider {
   position: relative;
@@ -579,10 +620,11 @@ export default {
   cursor: pointer;
   transition: all 16ms;
 }
-.mp-video-time {
+
+.mp-info-text-container {
   padding-top: .15em;
 }
-.mp-video-time-text {
+.mp-info-text {
   color: #cec0a1;
   line-height: 2em;
   font-size: .8em;
@@ -597,12 +639,21 @@ video::media-controls-enclosure {
  display:none !important;
 }
 
-.fade-enter-active,
-.fade-leave-active {
+
+.fade-up-enter-active,
+.fade-up-leave-active,
+.fade-down-enter-active,
+.fade-down-leave-active {
   transition: all 0.4s ease-in-out, transform 0.4s ease-in-out;
 }
-.fade-enter,
-.fade-leave-to {
+.fade-down-enter,
+.fade-down-leave-to {
+  opacity: 0;
+  transform: translateY(-9px);
+}
+
+.fade-up-enter,
+.fade-up-leave-to {
   opacity: 0;
   transform: translateY(9px);
 }
