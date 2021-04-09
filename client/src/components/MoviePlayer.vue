@@ -392,11 +392,13 @@ export default {
     },
     onClickFullscreenButton() {
       const elem = this.player.playerEl
-      if (!document.fullscreenElement) {
+      const isFullScreen = !!(document.fullscreenElement || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement)
+      if (!isFullScreen) {
         elem.requestFullscreen = elem.requestFullscreen 
           || elem.mozRequestFullscreen
           || elem.msRequestFullscreen
           || elem.webkitRequestFullscreen
+          || elem.webkitRequestFullScreen
         elem.requestFullscreen()
           .then(() => {
             this.state.isFullscreen = true
@@ -406,8 +408,12 @@ export default {
             console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
         });
       } else {
-        this.state.isFullscreen = false
-        document.exitFullscreen && document.exitFullscreen().then(() => {
+        document.exitFullscreen = document.exitFullscreen
+          || document.mozCancelFullScreen
+          || document.msExitFullscreen
+          || document.webkitCancelFullScreen
+        document.exitFullscreen().then(() => {
+          this.state.isFullscreen = false
           this.setPlayerDimensions()
         })
       }
