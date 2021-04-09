@@ -54,9 +54,13 @@
       <div
         v-for="movie in movies"
         :key="movie._id"
+        :id="movie._id"
         class="grid-cell movies-list-cell"
+        :style="'min-height:' + minMovieCellHeight + 'px;'"
+        v-activate-on-intersection
       >
         <MovieContainer
+          v-if="intSecObsv.activeIDs.includes(movie._id)"
           :movie="movie"
           @edit-movie="editMovie"
           @toggle-fullwidth="onToggleFullWidth"
@@ -73,10 +77,13 @@
 import MovieContainer from "@/components/MovieContainer";
 import MovieFilter from "@/components/MovieFilter";
 
+import activateOnIntersection from '@/mixins/activate-on-intersection.js';
+
 import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Movies",
+  mixins: [activateOnIntersection],
   components: {
     MovieContainer,
     MovieFilter,
@@ -99,7 +106,11 @@ export default {
       pagination: {
         limit: 30,
         skip: 0
-      }
+      },
+      intSecObsv: {
+        activeIDs: [],
+      },
+      minMovieCellHeight: 300,
     };
   },
   created() {
