@@ -54,7 +54,11 @@ export default {
         el.classList.remove('v-activate--init')
         el.classList.remove('v-activate--deactive')
         el.classList.add('v-activate--active')
+        // add new id and filter to prevent duplicate entries
         this.intSecObsv.activeIDs.push(el.id)
+        this.intSecObsv.activeIDs = 
+          this.intSecObsv.activeIDs
+            .filter((x,i,a) => a.indexOf(x) === i)
         logMessage("activate intsecHandler ACTIVATE: " + el.id)
         logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
       }
