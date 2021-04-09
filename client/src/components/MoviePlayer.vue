@@ -168,6 +168,8 @@
 </template>
 
 <script>
+import { logMessage } from '@/utils/logger.js'
+
 const getMousePosition = (e, type = 'x') => {
   if (type === 'x') {
     return e.pageX
@@ -261,13 +263,15 @@ export default {
     }
   },
   mounted() {
+    logMessage("mount movieplayer for: " + this.source.id)
     this.init()
   },
   beforeDestroy() {
     if (this.player.playerEl) {
       this.player.playerEl.removeEventListener('mousemove', this.onMousemovePlayer)
       this.player.playerEl.removeEventListener('mouseup', this.onMouseupPlayer)
-      }
+    }
+    logMessage("destroy movieplayer for: " + this.source.id)
   },
   methods: {
     init() {
