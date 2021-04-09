@@ -24,6 +24,7 @@
         v-show="state.showCtrls && state.showSecondaryCtrls"
       >
         <button class="mp-ctrl-btn"
+          :class="{inactive:player.isAtMinSpeed}"
           @click="onClickReduceSpeedButton"
         >
           <font-awesome-icon
@@ -36,6 +37,7 @@
           />
         </span>
         <button class="mp-ctrl-btn"
+          :class="{inactive:player.isAtMaxSpeed}"
           @click="onClickIncreaseSpeedButton"
         >
           <font-awesome-icon
@@ -44,7 +46,7 @@
         </button>
         <div class="mp-info-text-container">
           <span class="mp-info-text">
-            {{ video.playbackRate }} x
+            {{ player.playbackRateText }}
           </span>
         </div>
       </div>
@@ -69,7 +71,7 @@
         </button>
         <div class="mp-info-text-container">
           <span class="mp-info-text">
-            {{player.displayTimeElapsed}}
+            {{player.timeElapsedText}}
           </span>
         </div>
         <div
@@ -94,7 +96,7 @@
         </div>
         <div class="mp-info-text-container">
           <span class="mp-info-text">
-            {{player.displayTimeRemaining}}
+            {{player.timeRemainingText}}
           </span>
         </div>
         <div class="mp-ctrl-volume">
@@ -229,8 +231,9 @@ export default {
         playerEl: null,
         playbackSliderEl: null,
         playbackHeadEl: null,
-        displayTimeRemaining: '00:00',
-        displayTimeElapsed: '00:00',
+        timeRemainingText: '00:00',
+        timeElapsedText: '00:00',
+        playbackRateText: '1 x',
         hasMousedown: false,
         domRect: null,
         pos: {
@@ -239,6 +242,8 @@ export default {
           innerWidth: 0,
           current: 0
         },
+        isAtMaxSpeed: false,
+        isAtMinSpeed: false,
       },
       tmp: {
         ctrlsDisplayTimer: null,
@@ -328,9 +333,9 @@ export default {
       })
     },
     onDurationchangeVideo() {
-      if (this.player.displayTimeRemaining === '00:00') {
-        // initialize the displayTimeRemaining value
-        this.player.displayTimeRemaining = timeParse(this.videoEl.duration)
+      if (this.player.timeRemainingText === '00:00') {
+        // initialize the timeRemainingText value
+        this.player.timeRemainingText = timeParse(this.videoEl.duration)
       }
     },
     onProgressVideo() {
@@ -348,8 +353,8 @@ export default {
     onTimeupdateVideo() {
       const percent = this.videoEl.currentTime / this.videoEl.duration
       this.player.pos.current = (this.player.pos.width * percent).toFixed(3)
-      this.player.displayTimeRemaining = timeParse(this.videoEl.duration - this.videoEl.currentTime)
-      this.player.displayTimeElapsed = timeParse(this.videoEl.currentTime)
+      this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
+      this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
     },
     onEndedVideo() {
       this.state.isPlaying = false
@@ -478,15 +483,37 @@ export default {
       this.volume.hasMousedown = false
       this.player.hasMousedown = false
     },
+    setPlaybackRateText() {
+      const pbr = this.video.playbackRate
+      this.player.playbackRateText = (pbr >=1 ? pbr : '1/' + 1/pbr)  + ' x'
+    },
     onClickReduceSpeedButton() {
-      this.video.playbackRate = .5 * this.video.playbackRate
-      this.videoEl.playbackRate = this.video.playbackRate
+      const cur = this.video.playbackRate
+      this.video.playbackRate = .5 * cur
+      this.player.isAtMaxSpeed = false
+      try {
+        this.videoEl.playbackRate = this.video.playbackRate
+      } catch(err) {
+        //limit reached - reset previous
+        this.video.playbackRate = cur
+        this.player.isAtMinSpeed = true
+      }
+      this.setPlaybackRateText()
     },
     onClickIncreaseSpeedButton() {
-      this.video.playbackRate = 2 * this.video.playbackRate
-      this.videoEl.playbackRate = this.video.playbackRate
+      const cur = this.video.playbackRate
+      this.video.playbackRate = 2 * cur
+      this.player.isAtMinSpeed = false
+      try {
+        this.videoEl.playbackRate = this.video.playbackRate
+      } catch(err) {
+        //limit reached - reset previous
+        this.video.playbackRate = cur
+        this.player.isAtMaxSpeed = true
+      }
+      this.setPlaybackRateText()
     },
-  }
+  },
 }
 </script>
 
@@ -535,7 +562,11 @@ export default {
   margin: 0;
   padding: 0 3px;
 }
-.mp-ctrl-btn:hover {
+.mp-ctrl-btn.inactive {
+  cursor: default;
+  opacity: .3;
+}
+.mp-ctrl-btn:not(.inactive):hover {
   background-color: rgba(255, 255, 255, 0.27);
 }
 .mp-info-icon {
