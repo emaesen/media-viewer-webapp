@@ -4,6 +4,7 @@ import App from "./App";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
+  // these use default "fas" prefix
   faAlignJustify, // list layout
   faCheck, // check
   faCompress, // compress - box corners
@@ -12,8 +13,10 @@ import {
   faExpandArrowsAlt, // expand - arrows
   faFilter, // filter
   faHome, // home
+  faMinusSquare, // minus sign in square
   faPause, // pause
   faPlay, // start, play
+  faPlusSquare, // plus sign in square
   faSignInAlt, // log/sign in
   faSignOutAlt, // log/sign out
   faSortAmountDown, // sort down
@@ -30,7 +33,8 @@ import {
   faVolumeUp, // volume up/high
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  faStar as farStar // star
+  // these require explicit "far" prefix
+  faStar as farStar, // star
 } from "@fortawesome/free-regular-svg-icons";
 
 import router from "./router";
@@ -47,8 +51,10 @@ library.add(
   faExpandArrowsAlt,
   faFilter,
   faHome,
+  faMinusSquare,
   faPause,
   faPlay,
+  faPlusSquare,
   faSignInAlt,
   faSignOutAlt,
   faSortAmountDown,
