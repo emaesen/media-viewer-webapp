@@ -229,7 +229,7 @@ input[type="number"] {
 input[type="submit"] {
   cursor: pointer;
 }
-input[type="submit"]:hover {
+input[type="submit"]:not(.inactive):hover {
   border-color: #888;
 }
 input[type="submit"]:disabled,
@@ -311,15 +311,15 @@ button,
 .actionable {
   cursor: pointer;
 }
-button:hover,
-.action.button:hover {
+button:not(.inactive):hover,
+.action.button:not(.inactive):hover {
   background-color: #351212;
 }
 .actionable {
   margin: -4px;
   padding: 4px;
 }
-.actionable:hover {
+.actionable:not(.inactive):hover {
   background-color: #1f0303;
 }
 .loading,
