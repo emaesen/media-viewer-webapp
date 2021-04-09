@@ -465,9 +465,10 @@ export default {
     onMousemovePlayer(e) {
       if (this.volume.hasMousedown) {
         this.volumeSlideMove(e)
-      }
-      if (this.player.hasMousedown) {
+      } else if (this.player.hasMousedown) {
         this.playbackSlideMove(e)
+      } else {
+        this.showControls()
       }
     },
     volumeSlideMove(e) {
