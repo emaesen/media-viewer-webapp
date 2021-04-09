@@ -11,6 +11,7 @@
       :ref="source.id+'-video'"
       :class="['mp-video', {'hide-cursor': !state.showCtrls}]"
       :preload="options.preload"
+      controls
     >
       <source
         :src="source.src"
@@ -223,16 +224,25 @@ export default {
     this.init()
   },
   beforeDestroy() {
-    this.player.playerEl.removeEventListener('mousemove', this.onMousemovePlayer)
-    this.player.playerEl.removeEventListener('mouseup', this.onMouseupPlayer)
+    if (this.player.playerEl) {
+      this.player.playerEl.removeEventListener('mousemove', this.onMousemovePlayer)
+      this.player.playerEl.removeEventListener('mouseup', this.onMouseupPlayer)
+      }
   },
   methods: {
     init() {
       this.videoEl = this.$refs && this.$refs[this.source.id+'-video']
-      this.initVideo()
-      this.initPlayer()
-      if (this.options.autoplay) {
-        this.togglePlay()
+      this.supportsVideo = this.videoEl.canPlayType;
+      if (this.supportsVideo) {
+        // Hide the default controls
+        this.videoEl.controls = false;
+        this.initVideo()
+        this.initPlayer()
+        if (this.options.autoplay) {
+          this.togglePlay()
+        }
+      } else {
+        this.state.showCtrls = false
       }
     },
     initPlayer() {
