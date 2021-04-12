@@ -38,8 +38,8 @@
     <MovieFilter
       v-show="showFilters"
       :ratings="ratings"
-      :levels1="levels1"
-      :levels2="levels2"
+      :level1s="level1s"
+      :level2s="level2s"
       :filter="filter"
       :filterMeta="moviesFilterMeta"
     />
@@ -94,9 +94,9 @@ export default {
       sortType: "date created",
       sortDateDefault: "created",
       ratings: [],
-      levels1: [],
-      levels2: [],
-      filter: { ratings: [], levels1: [], levels2: [] },
+      level1s: [],
+      level2s: [],
+      filter: { ratings: [], level1s: [], level2s: [] },
       showFilters: false,
       sortAsc: true,
       sortDateAsc: true,
@@ -201,12 +201,12 @@ export default {
       const catReducer = (acc, cur) => acc || movie.ui.level1 === cur;
       const pinReducer = (acc, cur) => acc || movie.ui.level2 === cur;
       const hasRating = this.filter.ratings.length > 0;
-      const hasLevel1 = this.filter.levels1.length > 0;
-      const hasLevel2 = this.filter.levels2.length > 0;
+      const hasLevel1 = this.filter.level1s.length > 0;
+      const hasLevel2 = this.filter.level2s.length > 0;
       return (
         this.filter.ratings.reduce(clrReducer, !hasRating) &&
-        this.filter.levels1.reduce(catReducer, !hasLevel1) &&
-        this.filter.levels2.reduce(pinReducer, !hasLevel2)
+        this.filter.level1s.reduce(catReducer, !hasLevel1) &&
+        this.filter.level2s.reduce(pinReducer, !hasLevel2)
       );
     },
     setFilterData() {
@@ -217,17 +217,17 @@ export default {
         .sort()
       console.log({ ratings: this.ratings })
 
-      this.levels1 = this.moviesUnfiltered
+      this.level1s = this.moviesUnfiltered
         .map(m => m.ui.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
-      console.log({ levels1: this.levels1 })
+      console.log({ level1s: this.level1s })
 
-      this.levels2 = this.moviesUnfiltered
+      this.level2s = this.moviesUnfiltered
         .map(m => m.ui.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
-      console.log({ levels2: this.levels2 })
+      console.log({ level2s: this.level2s })
     }
   },
   computed: {
@@ -319,8 +319,8 @@ export default {
     nrFiltersApplied() {
       return (
         this.filter.ratings.length +
-        this.filter.levels1.length +
-        this.filter.levels2.length
+        this.filter.level1s.length +
+        this.filter.level2s.length
       );
     },
     noResultsText() {
