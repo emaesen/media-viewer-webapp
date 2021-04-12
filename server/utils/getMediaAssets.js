@@ -34,7 +34,8 @@ async function getVideoAssets() {
         }
         entry.meta = meta
         entry.path = entry.path.replace(/\\/g, '/')
-        const splitPath = entry.path.split('/').reverse()
+        const splitPath = entry.path.split('/')
+        splitPath.pop()
         entry.splitPath = splitPath
         // remove what we don't need
         delete entry.dirent
