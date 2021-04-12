@@ -12,46 +12,61 @@
         ➔
         <div class="filter" v-for="rating in ratings" :key="rating">
           <input type="checkbox" :id="'rating-' + rating" :value="rating" v-model="filter.ratings">
-          <label :for="'rating-' + rating" class="action button">
+          <label :for="'rating-' + rating" class="action button"
+            :class="{
+              no_results_when_clicked: hasEmptySetWhenFiltered('rating', rating),
+              no_change_when_clicked: noChangeInSetWhenFiltered('rating', rating)
+              }"
+          >
             {{ rating }}
             <span class="clr cntr" :class="'rating-' + rating">({{ ratingsCount[rating] }})</span>
           </label>
         </div>
       </div>
 
-      <div v-if="hasLevels1" class="filter-group">
+      <div v-if="hasLevel1s" class="filter-group">
         <span class="filter-type">Level 1:</span>
         <span
           class="action button cntr clear cat-none"
-          :class="{checked: noLevels1Filtered}"
+          :class="{checked: noLevel1sFiltered}"
           @click="clearLevel1Filter"
         >clear</span>
         ➔
-        <div class="filter" v-for="level1 in levels1" :key="level1">
+        <div class="filter" v-for="level1 in level1s" :key="level1">
           <div v-if="level1.length>0">
-            <input type="checkbox" :id="level1" :value="level1" v-model="filter.levels1">
-            <label :for="level1" class="action button">
+            <input type="checkbox" :id="level1" :value="level1" v-model="filter.level1s">
+            <label :for="level1" class="action button"
+              :class="{
+                no_results_when_clicked: hasEmptySetWhenFiltered('level1', level1),
+                no_change_when_clicked: noChangeInSetWhenFiltered('level1', level1)
+                }"
+            >
               {{ level1 }}
-              <span class="cntr">({{ levels1Count[level1] }})</span>
+              <span class="cntr">({{ level1sCount[level1] }})</span>
             </label>
           </div>
         </div>
       </div>
 
-      <div v-if="hasLevels2" class="filter-group">
+      <div v-if="hasLevel2s" class="filter-group">
         <span class="filter-type">Level 2:</span>
         <span
           class="action button cntr clear cat-none"
-          :class="{checked: noLevels2Filtered}"
+          :class="{checked: noLevel2sFiltered}"
           @click="clearLevel2Filter"
         >clear</span>
         ➔
-        <div class="filter" v-for="level2 in levels2" :key="level2">
+        <div class="filter" v-for="level2 in level2s" :key="level2">
           <div v-if="level2.length>0">
-            <input type="checkbox" :id="level2" :value="level2" v-model="filter.levels2">
-            <label :for="level2" class="action button">
+            <input type="checkbox" :id="level2" :value="level2" v-model="filter.level2s">
+            <label :for="level2" class="action button"
+              :class="{
+                no_results_when_clicked: hasEmptySetWhenFiltered('level2', level2),
+                no_change_when_clicked: noChangeInSetWhenFiltered('level2', level2)
+                }"
+            >
               {{ level2 }}
-              <span class="cntr">({{ levels2Count[level2] }})</span>
+              <span class="cntr">({{ level2sCount[level2] }})</span>
             </label>
           </div>
         </div>
@@ -64,7 +79,7 @@
 <script>
 export default {
   name: "MovieFilter",
-  props: ["filter", "ratings", "levels1", "levels2", "filterMeta"],
+  props: ["filter", "ratings", "level1s", "level2s", "filterMeta"],
   mounted() {
   },
   methods: {
@@ -74,7 +89,7 @@ export default {
       let metasItr = type
         .map(c => {
           const reducer = (acc, cur) => (cur[attr] === c ? acc + 1 : acc);
-          let nr = this.filterMeta.reduce(reducer, 0);
+          let nr = this.filteredFilterMeta.reduce(reducer, 0);
           let key = pre + c;
           return { [key]: nr };
         })
@@ -89,47 +104,86 @@ export default {
       this.filter.ratings.splice(0);
     },
     clearLevel1Filter() {
-      // clear the levels1 filter array by removing all elements
-      this.filter.levels1.splice(0);
+      // clear the level1s filter array by removing all elements
+      this.filter.level1s.splice(0);
     },
     clearLevel2Filter() {
-      // clear the levels2 filter array by removing all elements
-      this.filter.levels2.splice(0);
-    }
+      // clear the level2s filter array by removing all elements
+      this.filter.level2s.splice(0);
+    },
+    capitalizeFirstLetter(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    noTypesFilteredName(filterType) {
+      return 'no' + this.capitalizeFirstLetter(filterType) + 'sFiltered'
+    },
+    filterValueCount(filterType, filterValue) {
+      return this[filterType+'sCount'][filterValue]
+    },
+    hasEmptySetWhenFiltered(filterType, filterValue) {
+      // if no filter has been applied for a given filterType and the count
+      // for a given filter equals 0, then activating that filter will result
+      // in an empty result set
+      const expectEmptySet = this[this.noTypesFilteredName(filterType)] 
+        && this.filterValueCount(filterType, filterValue)===0
+      return expectEmptySet
+    },
+    noChangeInSetWhenFiltered(filterType, filterValue) {
+      // if a filter has been applied for a given filterType and the count
+      // for a given filter equals 0, then activating that filter may or may
+      // not result in a change in the result set
+      const expectNoChange = !this[this.noTypesFilteredName(filterType)] 
+        && this.filterValueCount(filterType, filterValue)===0
+      return expectNoChange
+    },
+
   },
   computed: {
+    filteredFilterMeta() {
+      //console.log({filter:this.filter, filterMeta:this.filterMeta, ratings:this.ratings, level1s:this.level1s, level2s:this.level2s})
+      const filter=this.filter
+      const test = function(arr,val) {
+        return !(arr.length > 0 
+          && typeof arr.find(el => el === val) === "undefined")
+      }
+      return this.filterMeta.filter(m => {
+        return test(filter.level1s, m.level1) 
+           && test(filter.level2s, m.level2) 
+           && test(filter.ratings, m.rating) 
+      })
+    },
     hasRatings() {
       return this.ratings.length > 0
     },
-    hasLevels1() {
-      return this.levels1.length > 0
+    hasLevel1s() {
+      return this.level1s.length > 0
     },
-    hasLevels2() {
-      return this.levels2.length > 0
+    hasLevel2s() {
+      return this.level2s.length > 0
     },
     ratingsCount() {
       return this.metaCounter(this.ratings, "rating");
     },
-    levels1Count() {
-      return this.metaCounter(this.levels1, "level1");
+    level1sCount() {
+      return this.metaCounter(this.level1s, "level1");
     },
-    levels2Count() {
-      return this.metaCounter(this.levels2, "level2");
+    level2sCount() {
+      return this.metaCounter(this.level2s, "level2");
     },
     noRatingsFiltered() {
       return this.filter.ratings.length === 0;
     },
-    noLevels1Filtered() {
-      return this.filter.levels1.length === 0;
+    noLevel1sFiltered() {
+      return this.filter.level1s.length === 0;
     },
-    noLevels2Filtered() {
-      return this.filter.levels2.length === 0;
-    }
+    noLevel2sFiltered() {
+      return this.filter.level2s.length === 0;
+    },
   }
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 input,
 label {
   display: inline-block;
@@ -155,6 +209,18 @@ label.action.button {
 label {
   margin-left: -0.2em;
   margin-right: 0.3em;
+}
+label.no_change_when_clicked {
+  opacity: .45;
+  cursor: inherit;
+}
+label.no_results_when_clicked {
+  opacity: .45;
+  cursor: inherit;
+  border-color: #dd0000;
+  .cntr {
+    color: #dd0000;
+  }
 }
 .filters {
   padding: 5px;
