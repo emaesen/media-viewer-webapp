@@ -1,23 +1,25 @@
 <template>
   <div :class="['movie-container', {'full-width': isFullWidth}]">
-    <div class="rating">
-      <Rating
-        :rating="movieRating"
-        @set-rating="setRating"
+    <div class="sub-container">
+      <div class="rating">
+        <Rating
+          :rating="movieRating"
+          @set-rating="setRating"
+        />
+      </div>
+      <div class="levels info">
+        {{ movieLevels }}
+      </div>
+      <div class="title info">
+        {{ movieTitle }}
+      </div>
+      <MoviePlayer 
+        class="movie" 
+        :source="{src:movieSrc, type:mimeType, id:movie._id}"
+        :options="{autoplay:false, volume:0.1}"
+        @toggle-fullwidth="onToggleFullWidth"
       />
     </div>
-    <div class="levels info">
-      {{ movieLevels }}
-    </div>
-    <div class="title info">
-      {{ movieTitle }}
-    </div>
-    <MoviePlayer 
-      class="movie" 
-      :source="{src:movieSrc, type:mimeType, id:movie._id}"
-      :options="{autoplay:false, volume:0.1}"
-      @toggle-fullwidth="onToggleFullWidth"
-    />
   </div>
 </template>
 
@@ -68,6 +70,9 @@ export default {
     onToggleFullWidth() {
       this.$emit('toggle-fullwidth')
       this.isFullWidth = !this.isFullWidth
+      if (this.isFullWidth) {
+        this.$el.scrollIntoView({behavior: "smooth"})
+      }
     }
   },
 
@@ -79,14 +84,28 @@ export default {
   padding: 10px 5px 20px;
 }
 .movie-container.full-width {
-  padding: 0;
-  position: absolute;
+  display: flex;
+  align-items: center;
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   background-color: #000;
   z-index: 999;
+  max-height: 100vh;
+  max-width: 100vw;
+  margin: -7px;
+  padding: 7px;
+  .sub-container {
+    flex-grow: 1;
+    max-height: 100vh;
+  }
+  .rating,
+  .info {
+    display: none;
+    height: 0;
+  }
 }
 .levels,
 .title {
@@ -97,5 +116,6 @@ export default {
 }
 .movie {
   width: 100%;
+  max-height: 100vh;
 }
 </style>
