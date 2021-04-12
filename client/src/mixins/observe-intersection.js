@@ -51,6 +51,7 @@ export default {
     }
   },
   methods: {
+    // eslint-disable-next-line
     handleIntersection({intersectionRatio, isIntersecting, target}, observer) {
       if (intersectionRatio > 0) {
         target.dataset[dataIntsecObserved] ++
