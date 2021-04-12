@@ -50,8 +50,8 @@ export default {
       return this.movie.basename.replace(".mp4","").replace(/[-_]/g, " ")
     },
     movieLevels() {
-      let levels =  this.movie.ui.level2 ? this.movie.ui.level2 + "/" : ""
-      levels = levels + this.movie.ui.level1
+      let levels =  this.movie.ui.level1 
+        + (this.movie.ui.level2 ? "/" + this.movie.ui.level2 : "")
       return levels
     },
     movieRating() {
