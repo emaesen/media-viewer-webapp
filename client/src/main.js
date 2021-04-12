@@ -11,6 +11,8 @@ import {
   faCompressArrowsAlt, // compress - arrows
   faExpand, // expand - box corners
   faExpandArrowsAlt, // expand - arrows
+  faFastBackward, // larger jump/skip backwards
+  faFastForward, //larger jump/skip forwards
   faFilter, // filter
   faHome, // home
   faMinusSquare, // minus sign in square
@@ -23,6 +25,8 @@ import {
   faSortAmountUp, // sort up
   faSpinner, // spinner
   faStar, // star
+  faStepBackward, // small jump/skip backwards
+  faStepForward, // small jump/skip forwards
   faStop, // stop
   faTachometerAlt, // dashboard
   faUserCheck, // logged-in user
@@ -49,6 +53,8 @@ library.add(
   faCompressArrowsAlt,
   faExpand,
   faExpandArrowsAlt,
+  faFastBackward,
+  faFastForward,
   faFilter,
   faHome,
   faMinusSquare,
@@ -62,6 +68,8 @@ library.add(
   faSpinner,
   faStar,
   farStar,
+  faStepBackward,
+  faStepForward,
   faStop,
   faTachometerAlt,
   faUserCheck,

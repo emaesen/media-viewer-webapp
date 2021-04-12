@@ -23,31 +23,67 @@
       <div class="mp-ctrls-topleft"
         v-show="state.showCtrls && state.showSecondaryCtrls"
       >
-        <button class="mp-ctrl-btn"
-          :class="{inactive:player.isAtMinSpeed}"
-          @click="onClickReduceSpeedButton"
-        >
-          <font-awesome-icon
-            icon="minus-square"
-          />
-        </button>
-        <span class="mp-info-icon">
-          <font-awesome-icon
-            icon="tachometer-alt"
-          />
-        </span>
-        <button class="mp-ctrl-btn"
-          :class="{inactive:player.isAtMaxSpeed}"
-          @click="onClickIncreaseSpeedButton"
-        >
-          <font-awesome-icon
-            icon="plus-square"
-          />
-        </button>
-        <div class="mp-info-text-container">
-          <span class="mp-info-text">
-            {{ player.playbackRateText }}
-          </span>
+        <div class="mp-ctrls-speed">
+          <button class="mp-ctrl-btn"
+            :class="{inactive:player.isAtMinSpeed}"
+            @click="onClickReduceSpeedButton"
+          >
+            <font-awesome-icon
+              icon="minus-square"
+            />
+          </button>
+          <button class="mp-ctrl-btn"
+            :class="{inactive:player.isAtMinSpeed}"
+            @click="onClickResetSpeedButton"
+          >
+            <font-awesome-icon
+              icon="tachometer-alt"
+            />
+          </button>
+          <button class="mp-ctrl-btn"
+            :class="{inactive:player.isAtMaxSpeed}"
+            @click="onClickIncreaseSpeedButton"
+          >
+            <font-awesome-icon
+              icon="plus-square"
+            />
+          </button>
+          <div class="mp-info-text-container">
+            <span class="mp-info-text">
+              ({{ player.playbackRateText }})
+            </span>
+          </div>
+        </div>
+
+        <div class="mp-ctrls-skip">
+          <button class="mp-ctrl-btn"
+            @click="onClickSkipButton(-30)"
+          >
+            <font-awesome-icon
+              icon="fast-backward"
+            />
+          </button>
+          <button class="mp-ctrl-btn"
+            @click="onClickSkipButton(-10)"
+          >
+            <font-awesome-icon
+              icon="step-backward"
+            />
+          </button>
+          <button class="mp-ctrl-btn"
+            @click="onClickSkipButton(10)"
+          >
+            <font-awesome-icon
+              icon="step-forward"
+            />
+          </button>
+          <button class="mp-ctrl-btn"
+            @click="onClickSkipButton(30)"
+          >
+            <font-awesome-icon
+              icon="fast-forward"
+            />
+          </button>
         </div>
       </div>
     </transition>
@@ -488,10 +524,6 @@ export default {
       this.volume.hasMousedown = false
       this.player.hasMousedown = false
     },
-    setPlaybackRateText() {
-      const pbr = this.video.playbackRate
-      this.player.playbackRateText = (pbr >=1 ? pbr : '1/' + 1/pbr)  + ' x'
-    },
     onClickReduceSpeedButton() {
       const cur = this.video.playbackRate
       this.video.playbackRate = .5 * cur
@@ -503,7 +535,6 @@ export default {
         this.video.playbackRate = cur
         this.player.isAtMinSpeed = true
       }
-      this.setPlaybackRateText()
     },
     onClickIncreaseSpeedButton() {
       const cur = this.video.playbackRate
@@ -516,13 +547,31 @@ export default {
         this.video.playbackRate = cur
         this.player.isAtMaxSpeed = true
       }
-      this.setPlaybackRateText()
     },
+    onClickResetSpeedButton() {
+      this.videoEl.playbackRate = this.video.playbackRate = 1
+      this.player.isAtMinSpeed = false
+      this.player.isAtMaxSpeed = false
+    },
+    onClickSkipButton(sec) {
+      this.videoEl.currentTime += sec * this.video.playbackRate
+    }
+  },
+  computed: {
+    playbackRate() {
+      return this.video.playbackRate
+    }
+  },
+  watch: {
+    playbackRate(val) {
+      const pbr = this.video.playbackRate
+      this.player.playbackRateText = (pbr >=1 ? pbr : '1/' + 1/pbr)  + ' x'
+    }
   },
 }
 </script>
 
-<style>
+<style lang="less">
 .mp-video-player {
   position: relative;
   width: 100%;
@@ -547,13 +596,26 @@ export default {
 }
 .mp-ctrls-topleft {
   position: absolute;
-  display: flex;
   left: 0;
   top: 0;
   background-color: rgba(0, 0, 0, 0.54);
   z-index: 3;
   padding-right: .7em;
-  height: 2em;
+}
+.mp-ctrls-speed,
+.mp-ctrls-skip {
+    display: flex;
+    .mp-info-icon {
+      height: 1.5em;
+    }
+}
+.mp-ctrls-speed {
+  .svg-inline--fa.fa-w-14.fa-tachometer-alt,
+  .svg-inline--fa.fa-w-14.fa-minus-square,
+  .svg-inline--fa.fa-w-14.fa-plus-square {
+    width: 1.25em;
+    height: 1.25em;
+  }
 }
 .mp-info-icon,
 .mp-ctrl-btn {
@@ -665,6 +727,7 @@ export default {
   line-height: 2em;
   font-size: .8em;
 }
+
 ::media-controls {
  display:none !important;
 }
