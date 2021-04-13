@@ -215,19 +215,19 @@ export default {
         .map(m => m.rating)
         .filter((c, i, s) => c!=="" && s.indexOf(c) === i)
         .sort()
-      console.log({ ratings: this.ratings })
+      //console.log({ ratings: this.ratings })
 
       this.level1s = this.moviesUnfiltered
         .map(m => m.ui.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
-      console.log({ level1s: this.level1s })
+      //console.log({ level1s: this.level1s })
 
       this.level2s = this.moviesUnfiltered
         .map(m => m.ui.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
-      console.log({ level2s: this.level2s })
+      //console.log({ level2s: this.level2s })
     }
   },
   computed: {
@@ -312,7 +312,7 @@ export default {
               src: this.movieBasePath + m.path
             }
             m.rating = m.rating ? 1*m.rating : 0
-            console.log({m})
+            //console.log({m})
             return m
           })
     },
