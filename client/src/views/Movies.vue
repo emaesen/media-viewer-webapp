@@ -4,7 +4,7 @@
       <font-awesome-icon icon="film"/>Movies <span class="info">({{ totalNrOfMovies }})</span>
     </h1>
 
-    <div v-if="resultsFound" class="controls convert-to-block-on-small-device">
+    <div v-if="showControls" class="controls convert-to-block-on-small-device">
       <button @click="displayGrid=!displayGrid" class="action button">
         <font-awesome-icon :icon="displayGrid? 'align-justify' : 'th'" class="flush-right"/>
       </button>
@@ -315,6 +315,9 @@ export default {
             //console.log({m})
             return m
           })
+    },
+    showControls() {
+      return this.resultsFound || this.nrFiltersApplied > 0
     },
     nrFiltersApplied() {
       return (
