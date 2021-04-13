@@ -15,17 +15,19 @@
           @click="clearRatingsFilter"
         >clear</span>
         ➔
-        <div class="filter" v-for="rating in ratings" :key="rating">
-          <input type="checkbox" :id="'rating-' + rating" :value="rating" v-model="filter.ratings">
-          <label :for="'rating-' + rating" class="action button"
-            :class="{
-              no_results_when_clicked: hasEmptySetWhenFiltered('rating', rating),
-              no_change_when_clicked: noChangeInSetWhenFiltered('rating', rating)
-              }"
-          >
-            {{ rating }}
-            <span class="clr cntr" :class="'rating-' + rating">({{ ratingsCount[rating] }})</span>
-          </label>
+        <div class="filter-set">
+          <div class="filter" v-for="rating in ratings" :key="rating">
+            <input type="checkbox" :id="'rating-' + rating" :value="rating" v-model="filter.ratings">
+            <label :for="'rating-' + rating" class="action button"
+              :class="{
+                no_results_when_clicked: hasEmptySetWhenFiltered('rating', rating),
+                no_change_when_clicked: noChangeInSetWhenFiltered('rating', rating)
+                }"
+            >
+              {{ rating }}
+              <span class="clr cntr" :class="'rating-' + rating">({{ ratingsCount[rating] }})</span>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -37,18 +39,20 @@
           @click="clearLevel1Filter"
         >clear</span>
         ➔
-        <div class="filter" v-for="level1 in level1s" :key="level1">
-          <div v-if="level1.length>0">
-            <input type="checkbox" :id="level1" :value="level1" v-model="filter.level1s">
-            <label :for="level1" class="action button"
-              :class="{
-                no_results_when_clicked: hasEmptySetWhenFiltered('level1', level1),
-                no_change_when_clicked: noChangeInSetWhenFiltered('level1', level1)
-                }"
-            >
-              {{ level1 }}
-              <span class="cntr">({{ level1sCount[level1] }})</span>
-            </label>
+        <div class="filter-set">
+          <div class="filter" v-for="level1 in level1s" :key="level1">
+            <div v-if="level1.length>0">
+              <input type="checkbox" :id="level1" :value="level1" v-model="filter.level1s">
+              <label :for="level1" class="action button"
+                :class="{
+                  no_results_when_clicked: hasEmptySetWhenFiltered('level1', level1),
+                  no_change_when_clicked: noChangeInSetWhenFiltered('level1', level1)
+                  }"
+              >
+                {{ level1 }}
+                <span class="cntr">({{ level1sCount[level1] }})</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -61,18 +65,20 @@
           @click="clearLevel2Filter"
         >clear</span>
         ➔
-        <div class="filter" v-for="level2 in level2s" :key="level2">
-          <div v-if="level2.length>0">
-            <input type="checkbox" :id="level2" :value="level2" v-model="filter.level2s">
-            <label :for="level2" class="action button"
-              :class="{
-                no_results_when_clicked: hasEmptySetWhenFiltered('level2', level2),
-                no_change_when_clicked: noChangeInSetWhenFiltered('level2', level2)
-                }"
-            >
-              {{ level2 }}
-              <span class="cntr">({{ level2sCount[level2] }})</span>
-            </label>
+        <div class="filter-set">
+          <div class="filter" v-for="level2 in level2s" :key="level2">
+            <div v-if="level2.length>0">
+              <input type="checkbox" :id="level2" :value="level2" v-model="filter.level2s">
+              <label :for="level2" class="action button"
+                :class="{
+                  no_results_when_clicked: hasEmptySetWhenFiltered('level2', level2),
+                  no_change_when_clicked: noChangeInSetWhenFiltered('level2', level2)
+                  }"
+              >
+                {{ level2 }}
+                <span class="cntr">({{ level2sCount[level2] }})</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -270,6 +276,9 @@ label.no_results_when_clicked {
     color: #dd0000;
   }
 }
+.filter-set {
+  display: inline-block;
+}
 .filters {
   padding: 5px;
 }
@@ -281,7 +290,7 @@ label.no_results_when_clicked {
 }
 .filter-type {
   display: inline-block;
-  min-width: 4.5rem;
+  min-width: 3.5em;
 }
 .clr {
   margin: 0;
@@ -291,8 +300,6 @@ label.no_results_when_clicked {
   font-style: normal;
   font-weight: 400;
   color: #948972;
-  line-height: 22px;
-  font-size: 14px;
 }
 .slidefade-enter-active,
 .slidefade-leave-active {
