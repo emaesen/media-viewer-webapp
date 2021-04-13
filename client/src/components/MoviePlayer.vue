@@ -59,6 +59,8 @@
         <div class="mp-ctrls-skip">
           <button class="mp-ctrl-btn"
             @click.stop="onClickSkipButton(-30)"
+            @mouseenter="onMouseenterSkipButton(-30)"
+            @mouseleave="onMouseleaveSkipButton"
           >
             <font-awesome-icon
               icon="fast-backward"
@@ -66,6 +68,8 @@
           </button>
           <button class="mp-ctrl-btn"
             @click.stop="onClickSkipButton(-10)"
+            @mouseenter="onMouseenterSkipButton(-10)"
+            @mouseleave="onMouseleaveSkipButton"
           >
             <font-awesome-icon
               icon="step-backward"
@@ -73,6 +77,8 @@
           </button>
           <button class="mp-ctrl-btn"
             @click.stop="onClickSkipButton(10)"
+            @mouseenter="onMouseenterSkipButton(10)"
+            @mouseleave="onMouseleaveSkipButton"
           >
             <font-awesome-icon
               icon="step-forward"
@@ -80,11 +86,18 @@
           </button>
           <button class="mp-ctrl-btn"
             @click.stop="onClickSkipButton(30)"
+            @mouseenter="onMouseenterSkipButton(30)"
+            @mouseleave="onMouseleaveSkipButton"
           >
             <font-awesome-icon
               icon="fast-forward"
             />
           </button>
+          <div v-show="player.skipTimeText" class="mp-info-text-container">
+            <span class="mp-info-text">
+              ({{ player.skipTimeText }})
+            </span>
+          </div>
         </div>
       </div>
     </transition>
@@ -273,6 +286,7 @@ export default {
         timeRemainingText: '00:00',
         timeElapsedText: '00:00',
         playbackRateText: '1 x',
+        skipTimeText: null,
         hasMousedown: false,
         domRect: null,
         pos: {
@@ -557,12 +571,23 @@ export default {
       this.player.isAtMinSpeed = false
       this.player.isAtMaxSpeed = false
     },
-    onClickSkipButton(sec) {
-      this.videoEl.currentTime += sec * this.video.playbackRate
-    }
+    skipTime(val) {
+      return val * this.video.playbackRate
+    },
+    onClickSkipButton(val) {
+      this.videoEl.currentTime += this.skipTime(val)
+    },
+    onMouseenterSkipButton(val) {
+      const skip = this.skipTime(val)
+      this.player.skipTimeText = (skip > 0 ? "+ " : "- ") + Math.abs(skip) + " sec"
+    },
+    onMouseleaveSkipButton() {
+      this.player.skipTimeText = null
+    },
   },
   computed: {
     playbackRate() {
+      // define this computed property just so we can watch it
       return this.video.playbackRate
     }
   },
