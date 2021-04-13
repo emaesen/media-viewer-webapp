@@ -5,6 +5,7 @@
     class="mp-video-player"
     @mouseenter="onMouseenterVideo"
     @mouseleave="onMouseleaveVideo"
+    @click.stop="onClickMovie"
   >
     <video
       :id="source.id+'-video'"
@@ -26,7 +27,7 @@
         <div class="mp-ctrls-speed">
           <button class="mp-ctrl-btn"
             :class="{inactive:player.isAtMinSpeed}"
-            @click="onClickReduceSpeedButton"
+            @click.stop="onClickReduceSpeedButton"
           >
             <font-awesome-icon
               icon="minus-square"
@@ -34,7 +35,7 @@
           </button>
           <button class="mp-ctrl-btn"
             :class="{inactive:player.isAtMinSpeed}"
-            @click="onClickResetSpeedButton"
+            @click.stop="onClickResetSpeedButton"
           >
             <font-awesome-icon
               icon="tachometer-alt"
@@ -42,7 +43,7 @@
           </button>
           <button class="mp-ctrl-btn"
             :class="{inactive:player.isAtMaxSpeed}"
-            @click="onClickIncreaseSpeedButton"
+            @click.stop="onClickIncreaseSpeedButton"
           >
             <font-awesome-icon
               icon="plus-square"
@@ -57,28 +58,28 @@
 
         <div class="mp-ctrls-skip">
           <button class="mp-ctrl-btn"
-            @click="onClickSkipButton(-30)"
+            @click.stop="onClickSkipButton(-30)"
           >
             <font-awesome-icon
               icon="fast-backward"
             />
           </button>
           <button class="mp-ctrl-btn"
-            @click="onClickSkipButton(-10)"
+            @click.stop="onClickSkipButton(-10)"
           >
             <font-awesome-icon
               icon="step-backward"
             />
           </button>
           <button class="mp-ctrl-btn"
-            @click="onClickSkipButton(10)"
+            @click.stop="onClickSkipButton(10)"
           >
             <font-awesome-icon
               icon="step-forward"
             />
           </button>
           <button class="mp-ctrl-btn"
-            @click="onClickSkipButton(30)"
+            @click.stop="onClickSkipButton(30)"
           >
             <font-awesome-icon
               icon="fast-forward"
@@ -94,7 +95,7 @@
         v-show="state.showCtrls"
       >
         <button class="mp-ctrl-btn"
-          @click="onClickPlayButton"
+          @click.stop="onClickPlayButton"
         >
           <font-awesome-icon
             v-if="!state.isPlaying"
@@ -114,7 +115,7 @@
           :id="source.id+'-playback-slider'"
           :ref="source.id+'-playback-slider'" 
           class="mp-ctrl-playback-slider"
-          @click="onClickPlaybackSlider"
+          @click.stop="onClickPlaybackSlider"
           @mousedown="onMousedownPlaybackSlider"
         >
           <div
@@ -138,7 +139,7 @@
         <div class="mp-ctrl-volume">
           <button
             class="mp-ctrl-btn"
-            @click="onClickVolumeButton"
+            @click.stop="onClickVolumeButton"
           >
             <font-awesome-icon
               v-if="volume.percent >= 50 && !volume.muted"
@@ -157,7 +158,7 @@
             :id="source.id+'-vol-slider'"
             :ref="source.id+'-vol-slider'"
             class="mp-ctrl-vol-slider"
-            @click="onClickVolumeSlider"
+            @click.stop="onClickVolumeSlider"
             @mousedown="onMousedownVolumeSlider"
           >
             <div
@@ -173,7 +174,7 @@
         <button
           class="mp-ctrl-btn"
           v-if="!state.isFullscreen"
-          @click="onClickFullWidthButton"
+          @click.stop="onClickFullWidthButton"
         >
           <font-awesome-icon
             v-if="!state.isFullWidth"
@@ -187,7 +188,7 @@
         <button
           class="mp-ctrl-btn"
           v-if="!state.isFullWidth"
-          @click="onClickFullscreenButton"
+          @click.stop="onClickFullscreenButton"
         >
           <font-awesome-icon
             v-if="!state.isFullscreen"
@@ -438,6 +439,9 @@ export default {
       }
     },
     onClickPlayButton() {
+      this.togglePlay()
+    },
+    onClickMovie() {
       this.togglePlay()
     },
     onMousedownVolumeSlider() {
