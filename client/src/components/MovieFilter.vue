@@ -121,27 +121,50 @@ export default {
       return this[filterType+'sCount'][filterValue]
     },
     hasEmptySetWhenFiltered(filterType, filterValue) {
-      // if no filter has been applied for a given filterType and the count
+      // If *no* filter has been applied for a given filterType and the count
       // for a given filter equals 0, then activating that filter will result
-      // in an empty result set
+      // in an empty result set.
       const expectEmptySet = this[this.noTypesFilteredName(filterType)] 
         && this.filterValueCount(filterType, filterValue)===0
       return expectEmptySet
     },
     noChangeInSetWhenFiltered(filterType, filterValue) {
-      // if a filter has been applied for a given filterType and the count
+      // If a filter *has* been applied for a given filterType and the count
       // for a given filter equals 0, then activating that filter may or may
-      // not result in a change in the result set
-      const expectNoChange = !this[this.noTypesFilteredName(filterType)] 
+      // not result in a change in the result set.
+      const mayCauseChange = !this[this.noTypesFilteredName(filterType)] 
         && this.filterValueCount(filterType, filterValue)===0
-      return expectNoChange
-    },
+      let expectNoChange = true
 
-  },
-  computed: {
-    filteredFilterMeta() {
-      //console.log({filter:this.filter, filterMeta:this.filterMeta, ratings:this.ratings, level1s:this.level1s, level2s:this.level2s})
-      const filter=this.filter
+      if (mayCauseChange) {
+        // Additional check that there is no other matching filterMeta entry
+        // determines whether there truly is no change.
+
+        // `this.filter` contains three arrays with all selected filters (some may not contribute to result yet) -> `this.filter.level1s` array etc
+        // `this.filterMeta` contains am array of all movies with metadata that can be filtered on.
+        // `this.filteredFilterMeta` contains an array of filterMeta that contribute to the filtered result set
+
+        // define a new temporary filter object with the addition of the
+        // `filterValue` and check if that would return more results than
+        // the current result set
+        let filter = {
+          ratings: [...this.filter.ratings],
+          level1s: [...this.filter.level1s],
+          level2s: [...this.filter.level2s]
+        }
+        filter[filterType+'s'] = [...filter[filterType+'s'], filterValue]
+
+        const possibleResults = this.checkFilteredFilterMeta(filter)
+
+        //console.log({filterValue: filterValue, filter: filter, possibleResults: possibleResults})
+
+        expectNoChange = 
+          possibleResults.length === this.filteredFilterMeta.length
+
+      }
+      return mayCauseChange && expectNoChange
+    },
+    checkFilteredFilterMeta(filter) {
       const test = function(arr,val) {
         return !(arr.length > 0 
           && typeof arr.find(el => el === val) === "undefined")
@@ -151,6 +174,13 @@ export default {
            && test(filter.level2s, m.level2) 
            && test(filter.ratings, m.rating) 
       })
+    },
+  },
+  computed: {
+    filteredFilterMeta() {
+      //console.log({filter:this.filter, filterMeta:this.filterMeta, ratings:this.ratings, level1s:this.level1s, level2s:this.level2s})
+      const filter=this.filter
+      return this.checkFilteredFilterMeta(filter)
     },
     hasRatings() {
       return this.ratings.length > 0
