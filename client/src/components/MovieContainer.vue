@@ -7,8 +7,8 @@
           @set-rating="setRating"
         />
       </div>
-      <div class="levels info">
-        {{ movieLevels }}
+      <div class="path info">
+        {{ moviePath }}
       </div>
       <div class="title info">
         {{ movieTitle }}
@@ -49,9 +49,9 @@ export default {
     movieTitle() {
       return this.movie.basename.replace(".mp4","").replace(/[-_]/g, " ")
     },
-    movieLevels() {
+    moviePath() {
       let levels =  this.movie.ui.level1 
-        + (this.movie.ui.level2 ? "/" + this.movie.ui.level2 : "")
+        + (this.movie.ui.level2!=="-" ? "/" + this.movie.ui.level2 : "")
       return levels
     },
     movieRating() {
@@ -107,11 +107,11 @@ export default {
     height: 0;
   }
 }
-.levels,
+.path,
 .title {
   margin: 10px 0 10px 0;
 }
-.levels {
+.path {
   text-align: right;
 }
 .movie {
