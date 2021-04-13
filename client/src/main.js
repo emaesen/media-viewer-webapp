@@ -5,7 +5,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   // these use default "fas" prefix
-  faAlignJustify, // list layout
   faCheck, // check
   faCompress, // compress - box corners
   faCompressArrowsAlt, // compress - arrows
@@ -47,7 +46,6 @@ import store from "./store";
 import "./registerServiceWorker";
 
 library.add(
-  faAlignJustify,
   faCheck,
   faCompress,
   faCompressArrowsAlt,

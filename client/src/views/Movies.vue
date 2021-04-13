@@ -5,9 +5,6 @@
     </h1>
 
     <div v-if="showControls" class="controls convert-to-block-on-small-device">
-      <button @click="displayGrid=!displayGrid" class="action button">
-        <font-awesome-icon :icon="displayGrid? 'align-justify' : 'th'" class="flush-right"/>
-      </button>
       <button
         v-if="sortType==='rating'"
         @click="sortAsc = !sortAsc"
@@ -49,7 +46,7 @@
       v-if="!loading && movies && movies[0]"
       tag="div"
       name="movies-list"
-      :class="{'grid' : displayGrid, 'grid-list' : !displayGrid}"
+      class="grid"
     >
       <div
         v-for="movie in movies"
@@ -100,7 +97,6 @@ export default {
       showFilters: false,
       sortAsc: true,
       sortDateAsc: true,
-      displayGrid: true,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       pagination: {
@@ -378,9 +374,6 @@ h2.movies {
 .grid .cell-content {
   margin: 5px;
 }
-.grid-list .grid-cell {
-  width: 100%;
-}
 .grid .grid-cell {
   width: 33.333%;
   display: inline-block;
@@ -407,9 +400,7 @@ h2.movies {
 .movies-list-leave-active {
   position: absolute;
 }
-.grid-list .movies-list-cell + .movies-list-cell {
-  border-top: 1px dashed #454545;
-}
+
 .grid .movies-list-cell {
   border: 1px dashed #454545;
   margin: -1px;
