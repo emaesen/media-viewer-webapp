@@ -1,7 +1,12 @@
 <template>
   <transition name="slidefade">
     <div class="filters">
-
+      <div class="">
+        <input type="checkbox" id="smartFilterAssist" :value="enableSmartFilterAssist" v-model="enableSmartFilterAssist">
+          <label for="smartFilterAssist" class="action button cntr">
+            Enable Smart Filter Assist
+          </label>
+      </div>
       <div v-if="hasRatings" class="filter-group">
         <span class="filter-type">Rating:</span>
         <span
@@ -80,6 +85,11 @@
 export default {
   name: "MovieFilter",
   props: ["filter", "ratings", "level1s", "level2s", "filterMeta"],
+  data() {
+    return {
+      enableSmartFilterAssist: true
+    }
+  },
   mounted() {
   },
   methods: {
@@ -121,48 +131,56 @@ export default {
       return this[filterType+'sCount'][filterValue]
     },
     hasEmptySetWhenFiltered(filterType, filterValue) {
-      // If *no* filter has been applied for a given filterType and the count
-      // for a given filter equals 0, then activating that filter will result
-      // in an empty result set.
-      const expectEmptySet = this[this.noTypesFilteredName(filterType)] 
-        && this.filterValueCount(filterType, filterValue)===0
-      return expectEmptySet
+      if (this.enableSmartFilterAssist) {
+        // If *no* filter has been applied for a given filterType and the count
+        // for a given filter equals 0, then activating that filter will result
+        // in an empty result set.
+        const expectEmptySet = this[this.noTypesFilteredName(filterType)] 
+          && this.filterValueCount(filterType, filterValue)===0
+        return expectEmptySet
+      } else {
+        return false
+      }
     },
     noChangeInSetWhenFiltered(filterType, filterValue) {
-      // If a filter *has* been applied for a given filterType and the count
-      // for a given filter equals 0, then activating that filter may or may
-      // not result in a change in the result set.
-      const mayCauseChange = !this[this.noTypesFilteredName(filterType)] 
-        && this.filterValueCount(filterType, filterValue)===0
-      let expectNoChange = true
+      if (this.enableSmartFilterAssist) {
+        // If a filter *has* been applied for a given filterType and the count
+        // for a given filter equals 0, then activating that filter may or may
+        // not result in a change in the result set.
+        const mayCauseChange = !this[this.noTypesFilteredName(filterType)] 
+          && this.filterValueCount(filterType, filterValue)===0
+        let expectNoChange = true
 
-      if (mayCauseChange) {
-        // Additional check that there is no other matching filterMeta entry
-        // determines whether there truly is no change.
+        if (mayCauseChange) {
+          // Additional check that there is no other matching filterMeta entry
+          // determines whether there truly is no change.
 
-        // `this.filter` contains three arrays with all selected filters (some may not contribute to result yet) -> `this.filter.level1s` array etc
-        // `this.filterMeta` contains am array of all movies with metadata that can be filtered on.
-        // `this.filteredFilterMeta` contains an array of filterMeta that contribute to the filtered result set
+          // `this.filter` contains three arrays with all selected filters (some may not contribute to result yet) -> `this.filter.level1s` array etc
+          // `this.filterMeta` contains am array of all movies with metadata that can be filtered on.
+          // `this.filteredFilterMeta` contains an array of filterMeta that contribute to the filtered result set
 
-        // define a new temporary filter object with the addition of the
-        // `filterValue` and check if that would return more results than
-        // the current result set
-        let filter = {
-          ratings: [...this.filter.ratings],
-          level1s: [...this.filter.level1s],
-          level2s: [...this.filter.level2s]
+          // define a new temporary filter object with the addition of the
+          // `filterValue` and check if that would return more results than
+          // the current result set
+          let filter = {
+            ratings: [...this.filter.ratings],
+            level1s: [...this.filter.level1s],
+            level2s: [...this.filter.level2s]
+          }
+          filter[filterType+'s'] = [...filter[filterType+'s'], filterValue]
+
+          const possibleResults = this.checkFilteredFilterMeta(filter)
+
+          //console.log({filterValue: filterValue, filter: filter, possibleResults: possibleResults})
+
+          expectNoChange = 
+            possibleResults.length === this.filteredFilterMeta.length
+
         }
-        filter[filterType+'s'] = [...filter[filterType+'s'], filterValue]
-
-        const possibleResults = this.checkFilteredFilterMeta(filter)
-
-        //console.log({filterValue: filterValue, filter: filter, possibleResults: possibleResults})
-
-        expectNoChange = 
-          possibleResults.length === this.filteredFilterMeta.length
-
+        return mayCauseChange && expectNoChange
+      } else {
+        return false
       }
-      return mayCauseChange && expectNoChange
     },
     checkFilteredFilterMeta(filter) {
       const test = function(arr,val) {
