@@ -21,7 +21,7 @@
 
     <transition name="fade-down">
       <div class="mp-ctrls-topleft"
-        v-show="state.showCtrls && state.showSecondaryCtrls"
+        v-show="state.showCtrls && state.showSecondaryCtrls && state.isPlaying"
       >
         <div class="mp-ctrls-speed">
           <button class="mp-ctrl-btn"
