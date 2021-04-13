@@ -307,8 +307,8 @@ export default {
       return this.moviesQueryResult.data
           .map(m => {
             m.ui = {
-              level1: m.splitPath[0],
-              level2: m.splitPath[1],
+              level1: m.splitPath[0] || "-",
+              level2: m.splitPath[1] || "-",
               src: this.movieBasePath + m.path
             }
             m.rating = m.rating ? 1*m.rating : 0
