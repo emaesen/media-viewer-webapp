@@ -415,6 +415,7 @@ export default {
       this.state.isPlaying = false
       this.player.pos.current = 0
       this.videoEl.currentTime = 0
+      this.resetSpeed()
     },
     showControls() {
       if (this.tmp.ctrlsDisplayTimer) {
@@ -566,10 +567,13 @@ export default {
         this.player.isAtMaxSpeed = true
       }
     },
-    onClickResetSpeedButton() {
+    resetSpeed() {
       this.videoEl.playbackRate = this.video.playbackRate = 1
       this.player.isAtMinSpeed = false
       this.player.isAtMaxSpeed = false
+    },
+    onClickResetSpeedButton() {
+      this.resetSpeed()
     },
     skipTime(val) {
       return val * this.video.playbackRate
