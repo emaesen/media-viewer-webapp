@@ -597,7 +597,7 @@ export default {
   },
   watch: {
     playbackRate(val) {
-      const pbr = this.video.playbackRate
+      const pbr = val
       this.player.playbackRateText = (pbr >=1 ? pbr : '1/' + 1/pbr)  + ' x'
     }
   },
