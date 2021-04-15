@@ -37,7 +37,7 @@ $ cd [path/to/media-viewer-webapp]/client/public
 $ mkdir media
 # create a symlink from the movies folder on your media drive to the public movies folder
 $ cd media
-$ ln -s [path/to/media-folder-or-drive]/videos videos
+$ ln -s [path/to/movies-folder-or-drive] movies
 ```
 
 ### Setup test users (optional)
