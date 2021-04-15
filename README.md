@@ -4,17 +4,19 @@ This is a project to be run locally on a laptop or LAN network. It is by no mean
 
 ## Linux Setup
 
+### Install nodejs
+
 - Install [nvm](https://github.com/nvm-sh/nvm), the NodeJs Version Manager.
 - Use `nvm` to install NodeJs V9.0.0 or later.
     (I have this project running on an old eeepc netbook with [Linux Lite 3.8](https://osdn.net/projects/linuxlite/storage/3.8/), the last 32bit version. After much trial and error I installed Node V9.0.0 because that is the latest major version for which binaries are available)
   `nvm install v9.0.0`
 
-Get project code repository:
+### Get project code repository
 
 - Clone or download this media-viewer-webapp repo.
     All required dependables are included. You only need NodeJs (with `npm`, the NodeJs Package Manager) to pre-exist on your system.
 
-Install node modules:
+### Install node modules
 
 ```bash
 # cd to media-viewer-webapp repo directory
@@ -27,7 +29,7 @@ $ cd ../client
 $ npm install
 ```
 
-Create link to media folder:
+### Create link to media folder
 
 ```bash
 # create the client/public/media directory if it does not exist already
@@ -38,7 +40,7 @@ $ cd media
 $ ln -s [path/to/media-folder-or-drive]/videos videos
 ```
 
-Setup test users (optional):
+### Setup test users (optional)
 
 ```bash
 # cd to media-viewer-webapp repo directory
@@ -49,7 +51,11 @@ $ cd server
 $ npm run setup:dev
 ```
 
+### Register media owner
+
 Register a user through the webapp (see "Development Usage" below how to start server and client, and how to access the webapp) - this will become the owner of the media data.
+
+### Set OWNER_ID
 
 Inspect the users.db file and note the "_id" value (a 16-character string) for the registered user and export this as OWNER_ID
 
@@ -58,7 +64,7 @@ Inspect the users.db file and note the "_id" value (a 16-character string) for t
 $ export OWNER_ID=[value-from-user.db]
 ```
 
-Import the movie media information:
+### Import the movie media metadata
 
 ```bash
 # cd to media-viewer-webapp repo directory
