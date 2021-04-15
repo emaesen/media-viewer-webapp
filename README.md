@@ -8,10 +8,13 @@ This is a project to be run locally on a laptop or LAN network. It is by no mean
 - Use `nvm` to install NodeJs V9.0.0 or later.
     (I have this project running on an old eeepc netbook with [Linux Lite 3.8](https://osdn.net/projects/linuxlite/storage/3.8/), the last 32bit version. After much trial and error I installed Node V9.0.0 because that is the latest major version for which binaries are available)
   `nvm install v9.0.0`
+
+Repo setup:
+
 - Clone or download this media-viewer-webapp repo.
     All required dependables are included. You only need NodeJs (with `npm`, the NodeJs Package Manager) to pre-exist on your system.
 
-General setup:
+Repo node modules installation:
 
 ```bash
 # cd to media-viewer-webapp repo directory
@@ -22,8 +25,13 @@ $ npm install
 # install node_modules in client directory
 $ cd ../client
 $ npm install
+```
+
+Create link to media folder:
+
+```bash
 # create the client/public/media directory if it does not exist already
-$ cd public
+$ cd [path/to/media-viewer-webapp]/client/public
 $ mkdir media
 # create a symlink from the movies folder on your media drive to the public movies folder
 $ cd media
