@@ -35,6 +35,7 @@ function parseMovieFile(entry, fd) {
   // remove what we don't need
   delete entry.dirent
   delete entry.fullPath
+  delete entry.stats
   console.log('getMediaAssets movie:', entry)
   return entry
 }
