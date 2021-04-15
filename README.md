@@ -9,12 +9,12 @@ This is a project to be run locally on a laptop or LAN network. It is by no mean
     (I have this project running on an old eeepc netbook with [Linux Lite 3.8](https://osdn.net/projects/linuxlite/storage/3.8/), the last 32bit version. After much trial and error I installed Node V9.0.0 because that is the latest major version for which binaries are available)
   `nvm install v9.0.0`
 
-Repo setup:
+Get project code repository:
 
 - Clone or download this media-viewer-webapp repo.
     All required dependables are included. You only need NodeJs (with `npm`, the NodeJs Package Manager) to pre-exist on your system.
 
-Repo node modules installation:
+Install node modules:
 
 ```bash
 # cd to media-viewer-webapp repo directory
