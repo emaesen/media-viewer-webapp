@@ -1,5 +1,5 @@
 const readdirp = require('readdirp')
-const fse = require('fs-extra')
+const fs = require('fs')
 const VideoLib = require('node-video-lib')
 
 // https://www.npmjs.com/package/readdirp
@@ -50,9 +50,9 @@ async function getVideoAssets() {
     allFiles = allFiles.map( entry => {
       try {
         const file = entry.fullPath
-        const fd = fse.openSync(file, 'r')
+        const fd = fs.openSync(file, 'r')
         entry = parseMovieFile(entry, fd)
-        fse.closeSync(fd)
+        fs.closeSync(fd)
         return entry
       } catch (err) {
         console.error('getMediaAssets Error:', err)
