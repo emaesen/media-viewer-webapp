@@ -44,37 +44,20 @@ async function getVideoAssets() {
     console.log('getMediaAssets folder:', folder)
     // Iterate recursively through a folder
     // Node.js V9.0.0 implementation:
-    if (nodeVersion.replace(/v/i, "").split(".")[0] <  10) {
-      console.log("Node version prior to V10 detected")
-      allFiles = await readdirp.promise(folder, settings)
-      //console.log('getMediaAssets movies readdirp:', allFiles)
-      allFiles = allFiles.map( entry => {
-        try {
-          const file = entry.fullPath
-          const fd = fse.openSync(file, 'r')
-          entry = parseMovieFile(entry, fd)
-          fse.closeSync(fd)
-          return entry
-        } catch (err) {
-          console.error('getMediaAssets Error:', err)
-        }
-      })
 
-    } else {
-
-      // `for await` requires nodejs V10+
-      for await (let entry of readdirp(folder, settings)) {
-        try {
-          const file = entry.fullPath
-          const fd = await fse.open(file, 'r')
-          entry = parseMovieFile(entry, fd)
-          fse.closeSync(fd)
-          allFiles.push(entry)
-        } catch (err) {
-          console.error('getMediaAssets Error:', err)
-        }
+    allFiles = await readdirp.promise(folder, settings)
+    //console.log('getMediaAssets movies readdirp:', allFiles)
+    allFiles = allFiles.map( entry => {
+      try {
+        const file = entry.fullPath
+        const fd = fse.openSync(file, 'r')
+        entry = parseMovieFile(entry, fd)
+        fse.closeSync(fd)
+        return entry
+      } catch (err) {
+        console.error('getMediaAssets Error:', err)
       }
-    }
+    })
    
     //console.log('getMediaAssets movies:', allFiles)
     return allFiles
