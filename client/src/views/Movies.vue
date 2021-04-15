@@ -4,7 +4,22 @@
       <font-awesome-icon icon="film"/>Movies <span class="info">({{ totalNrOfMovies }})</span>
     </h1>
 
-    <div v-if="showControls" class="controls convert-to-block-on-small-device">
+    <div class="controls pagination convert-to-block-on-small-device">
+      <div class="filter-group">
+        <span class="filter-type">Items per page:</span>
+        <div class="filter-set">
+          <div class="filter" v-for="pageLimit in pageLimits" :key="pageLimit">
+            <input type="radio" :id="'pageLimit-' + pageLimit" :value="pageLimit" v-model="pagination.limit" >
+            <label :for="'pageLimit-' + pageLimit" class="action button">
+              {{ pageLimit }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div v-if="showFilterControls" class="controls convert-to-block-on-small-device">
       <button
         v-if="sortType==='rating'"
         @click="sortAsc = !sortAsc"
@@ -65,6 +80,22 @@
         />
       </div>
     </transition-group>
+
+    
+    <div class="controls pagination convert-to-block-on-small-device">
+      <div class="filter-group">
+        <span class="filter-type">Page Nr:</span>
+        <div class="filter-set">
+          <div class="filter" v-for="pageNr in pageNrs" :key="pageNr">
+            <input type="radio" :id="'pageNr-' + pageNr" :value="pageNr" v-model="pagination.nr" >
+            <label :for="'pageNr-' + pageNr" class="action button">
+              {{ pageNr }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="screen" v-if="hasFullWidthMovie">
     </div>
   </div>
@@ -100,9 +131,11 @@ export default {
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       pagination: {
-        limit: 30,
-        skip: 0
+        limit: 25,
+        skip: 0,
+        nr: 1,
       },
+      pageLimits: [5,10,25,50],
       intSecObsv: {
         activeIDs: [],
       },
@@ -265,14 +298,9 @@ export default {
           break;
       }
       query.$sort = sort
+      query.$limit = this.pagination.limit
+      query.$skip = this.pagination.skip
 
-      if (this.pagination && this.pagination.limit) {
-        query.$limit = this.pagination.limit
-      }
-
-      if (this.pagination && this.pagination.skip) {
-        query.$skip = this.pagination.skip
-      }
       console.log({query})
       return query;
     },
@@ -290,13 +318,13 @@ export default {
         : {}
     },
     totalNrOfMovies() {
-      return this.moviesQueryResult.total
-    },
-    maxNrOfMoviesPerPage() {
-      return this.moviesQueryResult.limit || "unlimited"
-    },
-    nrOfMoviesSkipped() {
-      return this.moviesQueryResult.skip
+      return this.user
+        ? this.findMoviesInStore({
+            query: {
+              $limit: 0
+            }
+          }).total
+        : 0
     },
     moviesUnfiltered() {
       //console.log("this.moviesQueryResult", this.moviesQueryResult)
@@ -312,7 +340,7 @@ export default {
             return m
           })
     },
-    showControls() {
+    showFilterControls() {
       return this.resultsFound || this.nrFiltersApplied > 0
     },
     nrFiltersApplied() {
@@ -335,8 +363,40 @@ export default {
         level1: movie.ui.level1,
         level2: movie.ui.level2
       }));
-    }
-
+    },
+    nrOfPages() {
+      return Math.ceil(this.totalNrOfMovies / this.pagination.limit)
+    },
+    pageNrs() {
+      // create an array of numbers 1 to nrOfPages, centered around the current page
+      const nrOfPages = this.nrOfPages
+      const displayedPageRange = 2
+      const currentPageNr = this.pagination.nr
+      let pagesArray = Array(nrOfPages).join().split(',').map((v,i) => i+1)
+      pagesArray = pagesArray.filter(nr => {
+        return nr === 1 || nr === nrOfPages || (nr >= currentPageNr - displayedPageRange && nr <= currentPageNr + displayedPageRange)
+        })
+      return pagesArray
+    },
+    pageNr() {
+      // define computed item of nested property so we can watch it easier below
+      return this.pagination.nr
+    },
+    pageLimit() {
+      // define computed item of nested property so we can watch it easier below
+      return this.pagination.limit
+    },
+  },
+  watch: {
+    pageNr(newVal, oldVal) {
+      console.log("page Nr changed from " + oldVal + " to " + newVal)
+      this.pagination.skip = this.pagination.limit * (this.pagination.nr - 1)
+    },
+    pageLimit(newVal, oldVal) {
+      console.log("page Limit changed from " + oldVal + " to " + newVal)
+      this.pagination.skip = Math.floor(this.pagination.skip * oldVal / newVal)
+      this.pagination.nr = 1 + Math.floor(this.pagination.skip / this.pagination.limit)
+    },
   }
 };
 </script>
@@ -352,6 +412,10 @@ h2.movies {
   margin-right: 1em;
   vertical-align: top;
 }
+.pagination {
+  margin: 4em 0;
+}
+
 #movies .controls {
   cursor: pointer;
   display: inline-block;
