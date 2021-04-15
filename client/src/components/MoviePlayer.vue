@@ -250,7 +250,7 @@ export default {
       default() {
         return {
           autoplay: false,
-          volume: 0.1,
+          volume: 0,
           poster: '',
           playsinline: true,
           preload: 'metadata'
