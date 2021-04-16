@@ -35,11 +35,12 @@ $ cd ../client
 $ npm install
 ```
 
-### Create link to media folder
+### Create symlink to media folder
 
 ```bash
 # create the client/public/media directory if it does not exist already
-$ cd [path/to/media-viewer-webapp]/client/public
+$ cd [path/to/media-viewer-webapp]
+$ cd client/public
 $ mkdir media
 # create a symlink from the movies folder on your media drive to the public movies folder
 $ cd media
@@ -114,7 +115,9 @@ This app is meant for local use, it's not designed to be able to handle a large 
 
 This app is meant to run on your LAN on one PC/laptop and you can then access the browser interface from any of your other devices when on the same network.
 
-When used like this, you should no longer run the server and client in "development" mode. Instead of `npm run dev` you should now build the client code with:
+When used like this, you should no longer run the server and client in "development" mode (which uses a virtual build and hot-reload logic).
+
+Instead of `npm run dev` you should run in "production" mode and build the client code to a build directory which then can be served as static files by a simple webserver:
 
 ```bash
 # in the command window for the client
