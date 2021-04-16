@@ -1,6 +1,8 @@
 # media-viewer-webapp
 
-This is a project to be run locally on a laptop or LAN network. It is by no means production worthy.
+This is a project to be run locally on a laptop or LAN network as a local media (movie) server with a webapp interface.
+
+It is by no means production worthy.
 
 ## Linux Setup
 
@@ -9,7 +11,11 @@ This is a project to be run locally on a laptop or LAN network. It is by no mean
 - Install [nvm](https://github.com/nvm-sh/nvm), the NodeJs Version Manager.
 - Use `nvm` to install NodeJs V9.0.0 or later.
     (I have this project running on an old eeepc netbook with [Linux Lite 3.8](https://osdn.net/projects/linuxlite/storage/3.8/), the last 32bit version. After much trial and error I installed Node V9.0.0 because that is the latest major version for which binaries are available)
-  `nvm install v9.0.0`
+
+  ```bash
+  # install nodejs V9
+  $ nvm install v9.0.0
+  ```
 
 ### Get project code repository
 
@@ -86,7 +92,7 @@ $ cd server
 $ npm run dev
 ```
 
-You should see a generic Feathers page at <http://localhost:3030/>.
+You should see a generic Feathers page at <http://localhost:3333/>.
 
 **In Git Bash window #2 - run client**:
 
@@ -98,7 +104,9 @@ $ cd client/public
 $ npm run dev
 ```
 
-You can view the client app at <http://localhost:8289/> (local) or at a LAN address (LAN network) - the build output will show the LAN IP address to use.
+You can view the client app at <http://localhost:7777/> (local) or at a LAN address (LAN network) - the build output will show the LAN IP address to use.
+
+For LAN access you may need to change your (Linux) firewall settings to allow incoming requests on ports 7777 and 3333.
 
 ## "Production" Usage
 
@@ -106,23 +114,35 @@ This app is meant for local use, it's not designed to be able to handle a large 
 
 This app is meant to run on your LAN on one PC/laptop and you can then access the browser interface from any of your other devices when on the same network.
 
-When used like this, you no longer need to run the server and client in "dev" mode. Instead of
-
-```bash
-# in the command windows for client and server
-npm run dev
-```
-
-you can now build the client code with
+When used like this, you should no longer run the server and client in "development" mode. Instead of `npm run dev` you should now build the client code with:
 
 ```bash
 # in the command window for the client
-npm run build
+$ cd [path/to/media-viewer-webapp]
+$ client
+# build the webapp, available later to serve from the build directory
+$ npm run build
+```
+
+but make sure to symlink the media folder to the new build directory
+
+```bash
+# in the command windows for client
+$ cd [path/to/media-viewer-webapp]
+$ cd client/build
+$ mkdir media
+$ cd media
+$ ln -s [path/to/movies-folder-or-drive] movies
 ```
 
 and start both server and client with
 
 ```bash
-# in the command windows for client and server
-npm start
+# in the command window for client
+$ npm start
+```
+
+```bash
+# in the command window for server
+$ npm start
 ```
