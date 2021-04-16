@@ -86,11 +86,12 @@
       <div class="filter-group">
         <span class="filter-type">Page Nr:</span>
         <div class="filter-set">
-          <div class="filter" v-for="pageNr in pageNrs" :key="pageNr">
-            <input type="radio" :id="'pageNr-' + pageNr" :value="pageNr" v-model="pagination.nr" >
-            <label :for="'pageNr-' + pageNr" class="action button">
+          <div class="filter" v-for="(pageNr, index) in pageNrs" :key="index">
+            <input v-if="pageNr!=='...'" type="radio" :id="'pageNr-' + pageNr" :value="pageNr" v-model="pagination.nr" >
+            <label v-if="pageNr!=='...'" :for="'pageNr-' + pageNr" class="action button">
               {{ pageNr }}
             </label>
+            <span v-if="pageNr==='...'" class="spacer">...</span>
           </div>
         </div>
       </div>
@@ -374,8 +375,22 @@ export default {
       const currentPageNr = this.pagination.nr
       let pagesArray = Array(nrOfPages).join().split(',').map((v,i) => i+1)
       pagesArray = pagesArray.filter(nr => {
-        return nr === 1 || nr === nrOfPages || (nr >= currentPageNr - displayedPageRange && nr <= currentPageNr + displayedPageRange)
+        return nrOfPages <= 2 * displayedPageRange + 3 || nr === 1 || nr === nrOfPages || (nr >= currentPageNr - displayedPageRange && nr <= currentPageNr + displayedPageRange)
         })
+      if (nrOfPages > 2 * displayedPageRange + 3) {
+        const lim1 = 2 * displayedPageRange
+        const lim2 = nrOfPages - 2 * displayedPageRange
+        if (currentPageNr <= lim1) {
+          pagesArray.splice(currentPageNr + displayedPageRange, 0, '...')
+        }
+        if (currentPageNr >= lim2) {
+          pagesArray.splice(1, 0, '...')
+        }
+        if (currentPageNr > lim1 && currentPageNr < lim2) {
+          pagesArray.splice(1, 0, '...')
+          pagesArray.splice(displayedPageRange * 2 + 3, 0, '...')
+        }
+      }
       return pagesArray
     },
     pageNr() {
@@ -478,6 +493,11 @@ h2.movies {
   background-color: #000;
   opacity:.9;
 }
+.spacer {
+  display: inline-block;
+  margin-left: .6em;
+}
+
 @media all and (max-width: 400px) {
   .grid .grid-cell {
     width: 100%;
