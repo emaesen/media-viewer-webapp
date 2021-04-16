@@ -238,60 +238,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-input,
-label {
-  display: inline-block;
-}
-input[type="checkbox"] {
-  visibility: hidden;
-  width: 1em;
-}
-span.clear.checked::before,
-input[type="checkbox"]:checked + label::before {
-  content: "✓ ";
-  margin-left: -1.2em;
-  color: #29dc58;
-}
-.clear {
-  margin-left: 0.9em;
-}
-label.action.button {
-  vertical-align: initial;
-  margin-left: -0.5em;
-  margin-right: 0.3em;
-}
-label {
-  margin-left: -0.2em;
-  margin-right: 0.3em;
-}
-label.no_change_when_clicked {
-  opacity: .45;
-  cursor: inherit;
-}
-label.no_results_when_clicked {
-  opacity: .45;
-  cursor: inherit;
-  border-color: #dd0000;
-  .cntr {
-    color: #dd0000;
-  }
-}
-.filter-set {
-  display: inline-block;
-}
-.filters {
-  padding: 5px;
-}
-.filter {
-  display: inline-block;
-}
-.none {
-  color: #948972;
-}
-.filter-type {
-  display: inline-block;
-  min-width: 3.5em;
-}
 .clr {
   margin: 0;
 }
