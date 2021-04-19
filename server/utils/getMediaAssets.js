@@ -31,7 +31,9 @@ function parseMovieFile(entry, fd) {
   entry.path = entry.path.replace(/\\/g, '/')
   const splitPath = entry.path.split('/')
   splitPath.pop()
-  entry.splitPath = splitPath
+  if (splitPath[0]) entry.level1 = splitPath[0]
+  if (splitPath[1]) entry.level2 = splitPath[1]
+  if (splitPath[2]) entry.level3 = splitPath[2]
   // remove what we don't need
   delete entry.dirent
   delete entry.fullPath

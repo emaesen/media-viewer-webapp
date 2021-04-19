@@ -37,7 +37,7 @@ export default new Vuex.Store({
         path: "",
         basename: "",
         meta: {},
-        splitPath: [],
+        level1: "",
         rating: 0,
         ui: {},
         watchedAt: null
