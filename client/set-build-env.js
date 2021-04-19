@@ -62,7 +62,7 @@ async function getMovieLevels() {
     let data = LEVELS1_PROP + "=" + levels1.join(",") + "\n" +
                LEVELS2_PROP + "=" + levels2.join(",") + "\n" +
                LEVELS3_PROP + "=" + levels3.join(",") + "\n"
-    console.log('set-build-env levels:', data)
+    //console.log('set-build-env levels:', data)
     return data
   } 
 }
