@@ -358,7 +358,7 @@ input[type="checkbox"]:checked + label::before {
   margin-left: -1.2em;
   color: #29dc58;
 }
-.clear {
+.action.button.clear {
   margin-left: 0.9em;
 }
 label.action.button {
