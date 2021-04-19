@@ -511,6 +511,8 @@ export default {
       } else {
         this.filterQuery.rating = 1 * newVal
       }
+      this.pagination.skip = 0
+      this.pagination.nr = 1
     },
     pageLevel1(newVal, oldVal) {
       console.log("page Level1 changed from " + oldVal + " to " + newVal)
@@ -519,6 +521,8 @@ export default {
       } else {
         this.filterQuery.level1 = ""
       }
+      this.pagination.skip = 0
+      this.pagination.nr = 1
     },
     pageLevel2(newVal, oldVal) {
       console.log("page Level2 changed from " + oldVal + " to " + newVal)
@@ -527,6 +531,8 @@ export default {
       } else {
         this.filterQuery.level2 = ""
       }
+      this.pagination.skip = 0
+      this.pagination.nr = 1
     },
   }
 };
