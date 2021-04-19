@@ -1,17 +1,31 @@
 <template>
   <div>
     <h1>
-      <font-awesome-icon icon="film"/>Movies <span class="info">({{ totalNrOfMovies }})</span>
+      <font-awesome-icon icon="film"/>Movies
     </h1>
 
     <div class="controls pagination convert-to-block-on-small-device">
+      <div class="pagination-info">
+        Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies)</span>
+      </div>
       <div class="filter-group">
         <span class="filter-type">Items per page:</span>
         <div class="filter-set">
-          <div class="filter" v-for="pageLimit in pageLimits" :key="pageLimit">
+          <div class="filter" v-for="pageLimit in pagination.pageLimits" :key="pageLimit">
             <input type="radio" :id="'pageLimit-' + pageLimit" :value="pageLimit" v-model="pagination.limit" >
             <label :for="'pageLimit-' + pageLimit" class="action button">
               {{ pageLimit }}
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-type">Ratings:</span>
+        <div class="filter-set">
+          <div class="filter" v-for="rating in pagination.ratings" :key="'r-'+rating">
+            <input type="radio" :id="'rating-' + rating" :value="rating" v-model="pagination.rating" >
+            <label :for="'rating-' + rating" class="action button">
+              {{ rating }}
             </label>
           </div>
         </div>
@@ -135,8 +149,19 @@ export default {
         limit: 25,
         skip: 0,
         nr: 1,
+        pageLimits: [5,10,25,50],
+        rating: "0+",
+        ratings: ["0","0+","1+","2+","3+","4+","5"],
+        level1: "",
+        level1s: [],
+        level2: "",
+        level2s: [],
       },
-      pageLimits: [5,10,25,50],
+      filterQuery: {
+        rating: {
+          $gte: 0
+        }
+      },
       intSecObsv: {
         activeIDs: [],
       },
@@ -227,16 +252,16 @@ export default {
       // Multiple ratings are `or`-ed. Multiple levels are `or`-ed.
       // Example:
       // (movie.rating === 5 || movie.rating === 4) && (movie.level1 === 'g')
-      const clrReducer = (acc, cur) => acc || movie.rating === cur;
-      const catReducer = (acc, cur) => acc || movie.ui.level1 === cur;
-      const pinReducer = (acc, cur) => acc || movie.ui.level2 === cur;
+      const ratingReducer = (acc, cur) => acc || movie.rating === cur;
+      const level1Reducer = (acc, cur) => acc || movie.level1 === cur;
+      const level2Reducer = (acc, cur) => acc || movie.level2 === cur;
       const hasRating = this.filter.ratings.length > 0;
       const hasLevel1 = this.filter.level1s.length > 0;
       const hasLevel2 = this.filter.level2s.length > 0;
       return (
-        this.filter.ratings.reduce(clrReducer, !hasRating) &&
-        this.filter.level1s.reduce(catReducer, !hasLevel1) &&
-        this.filter.level2s.reduce(pinReducer, !hasLevel2)
+        this.filter.ratings.reduce(ratingReducer, !hasRating) &&
+        this.filter.level1s.reduce(level1Reducer, !hasLevel1) &&
+        this.filter.level2s.reduce(level2Reducer, !hasLevel2)
       );
     },
     setFilterData() {
@@ -248,13 +273,13 @@ export default {
       //console.log({ ratings: this.ratings })
 
       this.level1s = this.moviesUnfiltered
-        .map(m => m.ui.level1)
+        .map(m => m.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
       //console.log({ level1s: this.level1s })
 
       this.level2s = this.moviesUnfiltered
-        .map(m => m.ui.level2)
+        .map(m => m.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
       //console.log({ level2s: this.level2s })
@@ -270,10 +295,6 @@ export default {
     resultsFound() {
       return !this.loading && this.movies && this.movies[0];
     },
-    page() {
-      // TODO: placeholder for pagination
-      return null;
-    },
     query() {
       // it is not necessary to define ownerId in the query:
       // The 'before' hooks in movies.hooks.js guarantee that only
@@ -283,8 +304,6 @@ export default {
       // We can use query to set pagination options
       // https://docs.feathersjs.com/api/databases/querying.html
       //
-      // However, the UI filtering currently only acts on the queried dataset;
-      // client-side filter options do not carry through to the DB query.
       let query = {};
       let sort = {}
       switch (this.sortType) {
@@ -302,6 +321,7 @@ export default {
       query.$limit = this.pagination.limit
       query.$skip = this.pagination.skip
 
+      query = {...this.filterQuery, ...query}
       console.log({query})
       return query;
     },
@@ -319,24 +339,17 @@ export default {
         : {}
     },
     totalNrOfMovies() {
-      return this.user
-        ? this.findMoviesInStore({
-            query: {
-              $limit: 0
-            }
-          }).total
-        : 0
+      return this.moviesQueryResult.total
     },
     moviesUnfiltered() {
       //console.log("this.moviesQueryResult", this.moviesQueryResult)
       return this.moviesQueryResult.data
           .map(m => {
             m.ui = {
-              level1: m.splitPath[0] || "-",
-              level2: m.splitPath[1] || "-",
               src: this.movieBasePath + m.path
             }
             m.rating = m.rating ? 1*m.rating : 0
+            m.level2 = m.level2 || "-"
             //console.log({m})
             return m
           })
@@ -361,8 +374,8 @@ export default {
     moviesFilterMeta() {
       return this.moviesUnfiltered.map(movie => ({
         rating: movie.rating,
-        level1: movie.ui.level1,
-        level2: movie.ui.level2
+        level1: movie.level1,
+        level2: movie.level2
       }));
     },
     nrOfPages() {
@@ -401,6 +414,10 @@ export default {
       // define computed item of nested property so we can watch it easier below
       return this.pagination.limit
     },
+    pageRating() {
+      // define computed item of nested property so we can watch it easier below
+      return this.pagination.rating
+    }
   },
   watch: {
     pageNr(newVal, oldVal) {
@@ -412,6 +429,16 @@ export default {
       this.pagination.skip = Math.floor(this.pagination.skip * oldVal / newVal)
       this.pagination.nr = 1 + Math.floor(this.pagination.skip / this.pagination.limit)
     },
+    pageRating(newVal, oldVal) {
+      console.log("page Rating changed from " + oldVal + " to " + newVal)
+      if (newVal.includes("+")) {
+        this.filterQuery.rating = {
+          $gte: 1 * newVal.replace("+","")
+        }
+      } else {
+        this.filterQuery.rating = 1 * newVal
+      }
+    }
   }
 };
 </script>
@@ -496,6 +523,9 @@ h2.movies {
 .spacer {
   display: inline-block;
   margin-left: .6em;
+}
+.pagination-info {
+  margin-bottom: .7em;
 }
 
 @media all and (max-width: 400px) {
