@@ -4,29 +4,78 @@
       <font-awesome-icon icon="film"/>Movies
     </h1>
 
+
     <div class="controls pagination convert-to-block-on-small-device">
-      <div class="pagination-info">
-        Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies)</span>
+
+      <div>
+        <span class="pagination-info">
+          Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies)</span>
+        </span>
+
+        <button @click="showQueryControls = !showQueryControls" class="action button">
+          {{ showQueryControls? 'hide' : 'show' }} query filters
+          <font-awesome-icon icon="filter" class="flush-right"/>
+        </button>
       </div>
-      <div class="filter-group">
-        <span class="filter-type">Items per page:</span>
-        <div class="filter-set">
-          <div class="filter" v-for="pageLimit in pagination.pageLimits" :key="pageLimit">
-            <input type="radio" :id="'pageLimit-' + pageLimit" :value="pageLimit" v-model="pagination.limit" >
-            <label :for="'pageLimit-' + pageLimit" class="action button">
-              {{ pageLimit }}
-            </label>
+
+      <div v-if="showQueryControls">
+        <div class="filter-group">
+          <span class="filter-type">Items per page:</span>
+          <div class="filter-set">
+            <div class="filter" v-for="pageLimit in pagination.pageLimits" :key="pageLimit">
+              <input type="radio" :id="'pageLimit-' + pageLimit" :value="pageLimit" v-model="pagination.limit" >
+              <label :for="'pageLimit-' + pageLimit" class="action button">
+                {{ pageLimit }}
+              </label>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="filter-group">
-        <span class="filter-type">Ratings:</span>
-        <div class="filter-set">
-          <div class="filter" v-for="rating in pagination.ratings" :key="'r-'+rating">
-            <input type="radio" :id="'rating-' + rating" :value="rating" v-model="pagination.rating" >
-            <label :for="'rating-' + rating" class="action button">
-              {{ rating }}
-            </label>
+
+        <div class="filter-group">
+          <span class="filter-type">Rating:</span>
+          <div class="filter-set">
+            <div class="filter" v-for="rating in pagination.ratings" :key="'r-'+rating">
+              <input type="radio" :id="'rating-' + rating" :value="rating" v-model="pagination.rating" >
+              <label :for="'rating-' + rating" class="action button">
+                {{ rating }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-type">Level 1:</span>
+          <span
+            class="action button cntr clear"
+            :class="{checked: !pagination.level1}"
+            @click="clearLevel1Query"
+          >clear</span>
+          ➔
+          <div class="filter-set">
+            <div class="filter" v-for="level1 in pagination.level1s" :key="'r-'+level1">
+              <input type="radio" :id="'level1-' + level1" :value="level1" v-model="pagination.level1" >
+              <label :for="'level1-' + level1" class="action button">
+                {{ level1 }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-type">Level 2:</span>
+          <span
+            class="action button cntr clear"
+            :class="{checked: !pagination.level2}"
+            @click="clearLevel2Query"
+          >clear</span>
+          ➔
+          <div class="filter-set">
+            <div class="filter" v-for="level2 in pagination.level2s" :key="'r-'+level2">
+              <input type="radio" :id="'level2-' + level2" :value="level2" v-model="pagination.level2" >
+              <label :for="'level2-' + level2" class="action button">
+                {{ level2 }}
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -140,6 +189,7 @@ export default {
       level1s: [],
       level2s: [],
       filter: { ratings: [], level1s: [], level2s: [] },
+      showQueryControls: false,
       showFilters: false,
       sortAsc: true,
       sortDateAsc: true,
@@ -153,14 +203,16 @@ export default {
         rating: "0+",
         ratings: ["0","0+","1+","2+","3+","4+","5"],
         level1: "",
-        level1s: [],
+        level1s: process.env.VUE_APP_LEVELS1.split(','),
         level2: "",
-        level2s: [],
+        level2s: process.env.VUE_APP_LEVELS2.split(','),
       },
       filterQuery: {
         rating: {
           $gte: 0
-        }
+        },
+        level1: "",
+        level2: "",
       },
       intSecObsv: {
         activeIDs: [],
@@ -283,7 +335,13 @@ export default {
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
       //console.log({ level2s: this.level2s })
-    }
+    },
+    clearLevel1Query() {
+      this.pagination.level1 = ""
+    },
+    clearLevel2Query() {
+      this.pagination.level2 = ""
+    },
   },
   computed: {
     ...mapState("auth", { user: "payload" }),
@@ -321,9 +379,16 @@ export default {
       query.$limit = this.pagination.limit
       query.$skip = this.pagination.skip
 
-      query = {...this.filterQuery, ...query}
+      query = {...this.purgedFilterQuery, ...query}
       console.log({query})
       return query;
+    },
+    purgedFilterQuery() {
+      let fq = {...this.filterQuery}
+      if (fq.level1 === "") delete fq.level1
+      if (fq.level2 === "") delete fq.level2
+      if (fq.rating && fq.rating.$gte === 0) delete fq.rating
+      return fq
     },
     movies() {
       return this.moviesUnfiltered
@@ -417,6 +482,14 @@ export default {
     pageRating() {
       // define computed item of nested property so we can watch it easier below
       return this.pagination.rating
+    },
+    pageLevel1() {
+      // define computed item of nested property so we can watch it easier below
+      return this.pagination.level1
+    },
+    pageLevel2() {
+      // define computed item of nested property so we can watch it easier below
+      return this.pagination.level2
     }
   },
   watch: {
@@ -438,7 +511,23 @@ export default {
       } else {
         this.filterQuery.rating = 1 * newVal
       }
-    }
+    },
+    pageLevel1(newVal, oldVal) {
+      console.log("page Level1 changed from " + oldVal + " to " + newVal)
+      if (newVal !== "") {
+        this.filterQuery.level1 = newVal
+      } else {
+        this.filterQuery.level1 = ""
+      }
+    },
+    pageLevel2(newVal, oldVal) {
+      console.log("page Level2 changed from " + oldVal + " to " + newVal)
+      if (newVal !== "") {
+        this.filterQuery.level2 = newVal
+      } else {
+        this.filterQuery.level2 = ""
+      }
+    },
   }
 };
 </script>
@@ -525,7 +614,7 @@ h2.movies {
   margin-left: .6em;
 }
 .pagination-info {
-  margin-bottom: .7em;
+  margin-right: 1em;
 }
 
 @media all and (max-width: 400px) {
