@@ -137,7 +137,7 @@
           :ref="source.id+'-playback-slider'" 
           class="mp-ctrl-playback-slider"
           @click.stop="onClickPlaybackSlider"
-          @mousedown="onMousedownPlaybackSlider"
+          @mousedown.stop="onMousedownPlaybackSlider"
         >
           <div
             :id="source.id+'-playback-head'"
@@ -180,7 +180,7 @@
             :ref="source.id+'-vol-slider'"
             class="mp-ctrl-vol-slider"
             @click.stop="onClickVolumeSlider"
-            @mousedown="onMousedownVolumeSlider"
+            @mousedown.stop="onMousedownVolumeSlider"
           >
             <div
               :id="source.id+'-vol-level'"
@@ -460,8 +460,8 @@ export default {
       this.videoEl.currentTime = Math.floor(percent * this.videoEl.duration)
     },
     togglePlay() {
-      this.state.isPlaying = !this.state.isPlaying
       if (this.videoEl) {
+        this.state.isPlaying = !this.state.isPlaying
         if (this.state.isPlaying) {
           this.videoEl.play()
           this.hideControls(5000)
@@ -470,14 +470,44 @@ export default {
         }
       }
     },
+    play() {
+      if (this.videoEl) {
+        this.videoEl.play()
+        this.state.isPlaying = true
+        this.hideControls(2000)
+      }
+    },
     onClickReloadButton() {
       this.videoEl.load()
     },
     onClickPlayButton() {
       this.togglePlay()
     },
-    onClickMovie() {
-      this.togglePlay()
+    onClickMovie(evt) {
+      const vH3 = this.videoEl.clientHeight / 3
+      const vW3 = this.videoEl.clientWidth / 3
+      const eX = evt.offsetX
+      const eY = evt.offsetY
+      // divide video in 9x9 grid and asign actions to different sections
+      if (vW3 <  eX && eX < 2*vW3 && vH3 < eY && eY < 2*vH3) {
+        // center
+        this.togglePlay()
+      }
+      if (2*vW3 <  eX && eX < 3*vW3) {
+        // right side
+        if (0 < eY && eY < vH3) {
+          // top
+          this.onClickSkipButton(30)
+        }
+        if (vH3 < eY && eY < 2*vH3) {
+          // middle
+          this.onClickSkipButton(10)
+        }
+        if (2*vH3 < eY && eY < 3*vH3) {
+          // bottom
+          this.onClickSkipButton(-10)
+        }
+      }
     },
     onMousedownVolumeSlider() {
       this.setVolumeDimensions()
