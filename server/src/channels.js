@@ -42,8 +42,10 @@ module.exports = function(app) {
 
   app.on('logout', (payload, { connection }) => {
     if (connection) {
-      //When logging out, leave all channels before joining anonymous channel
-      app.channel(app.channels).leave(connection);
+      // When logging out, leave all channels before joining anonymous channel.
+      // The connection should have been removed from all existing channels
+      // automatically, but we check to make sure
+      if (app.channels.length>0) app.channel(app.channels).leave(connection);
       app.channel('anonymous').join(connection);
     }
   });
