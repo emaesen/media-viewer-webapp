@@ -401,7 +401,7 @@ export default {
         ? this.findMoviesInStore({
             query: this.query
           })
-        : {}
+        : {data:[],total:0}
     },
     totalNrOfMovies() {
       return this.moviesQueryResult.total
