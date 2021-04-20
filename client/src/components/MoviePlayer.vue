@@ -19,6 +19,7 @@
         :type="source.type"
       />
     </video>
+    <div class="loading" v-if="!state.canPlay">loading...</div>
 
     <transition name="fade-down">
       <div class="mp-ctrls-topleft"
@@ -303,6 +304,7 @@ export default {
         isFullscreenSupported: null
       },
       state: {
+        canPlay: false,
         showCtrls: false,
         showSecondaryCtrls: true,
         vol: 0.5,
@@ -390,6 +392,10 @@ export default {
     },
     onCanplayVideo() {
       this.state.showCtrls = true
+      this.state.canPlay = true
+      // advance one second to show a video frame
+      this.videoEl.currentTime = 1
+      this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
     },
     onDurationchangeVideo() {
       if (this.player.timeRemainingText === '00:00') {
@@ -621,6 +627,11 @@ export default {
   vertical-align: bottom;
 }
 
+.loading {
+  position: absolute;
+  bottom: 3em;
+  left: 3em; 
+}
 .mp-ctrls-bottom {
   position: absolute;
   display: flex;
