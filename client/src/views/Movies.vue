@@ -135,7 +135,7 @@
         v-activate-on-intersection
       >
         <MovieContainer
-          :isActive="intSecObsv.activeIDs.includes(movie._id)"
+          v-if="intSecObsv.activeIDs.includes(movie._id)"
           :movie="movie"
           @edit-movie="editMovie"
           @toggle-fullwidth="onToggleFullWidth"
@@ -172,6 +172,8 @@ import MovieFilter from "@/components/MovieFilter";
 import activateOnIntersection from '@/mixins/activate-on-intersection.js';
 
 import { mapState, mapGetters, mapActions } from "vuex";
+
+import { logMessage } from '@/utils/logger.js'
 
 export default {
   name: "Movies",
@@ -237,7 +239,7 @@ export default {
       }
     },
     editMovie(props) {
-      console.log("Edit movie ", props);
+      logMessage("Edit movie ", props);
       // save the modifictions
       props.movie.rating = props.mod.rating;
       props.movie.watchedAt = Date.now();
@@ -246,7 +248,7 @@ export default {
       props.movie
         .update()
         .then(movie => {
-          console.log("edit succesful", movie);
+          logMessage("edit succesful", movie);
           this.setFilterData()
         })
         .catch(err => {
@@ -262,7 +264,7 @@ export default {
         typeIndex = 0;
       }
       this.sortType = this.types[typeIndex];
-      //console.log(this.sortType + " " + typeIndex);
+      //logMessage(this.sortType + " " + typeIndex);
     },
     sortByDate(a, b, type) {
       type = type || this.sortDateDefault;
@@ -322,19 +324,19 @@ export default {
         .map(m => m.rating)
         .filter((c, i, s) => c!=="" && s.indexOf(c) === i)
         .sort()
-      //console.log({ ratings: this.ratings })
+      //logMessage({ ratings: this.ratings })
 
       this.level1s = this.moviesUnfiltered
         .map(m => m.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
-      //console.log({ level1s: this.level1s })
+      //logMessage({ level1s: this.level1s })
 
       this.level2s = this.moviesUnfiltered
         .map(m => m.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
-      //console.log({ level2s: this.level2s })
+      //logMessage({ level2s: this.level2s })
     },
     clearLevel1Query() {
       this.pagination.level1 = ""
@@ -342,6 +344,10 @@ export default {
     clearLevel2Query() {
       this.pagination.level2 = ""
     },
+    resetPage() {
+      this.pagination.skip = 0
+      this.pagination.nr = 1
+    }
   },
   computed: {
     ...mapState("auth", { user: "payload" }),
@@ -380,7 +386,7 @@ export default {
       query.$skip = this.pagination.skip
 
       query = {...this.purgedFilterQuery, ...query}
-      console.log({query})
+      logMessage({query})
       return query;
     },
     purgedFilterQuery() {
@@ -407,7 +413,7 @@ export default {
       return this.moviesQueryResult.total
     },
     moviesUnfiltered() {
-      //console.log("this.moviesQueryResult", this.moviesQueryResult)
+      //logMessage("this.moviesQueryResult", this.moviesQueryResult)
       return this.moviesQueryResult.data
           .map(m => {
             m.ui = {
@@ -415,7 +421,7 @@ export default {
             }
             m.rating = m.rating ? 1*m.rating : 0
             m.level2 = m.level2 || "-"
-            //console.log({m})
+            //logMessage({m})
             return m
           })
     },
@@ -494,16 +500,16 @@ export default {
   },
   watch: {
     pageNr(newVal, oldVal) {
-      console.log("page Nr changed from " + oldVal + " to " + newVal)
+      logMessage("page Nr changed from " + oldVal + " to " + newVal)
       this.pagination.skip = this.pagination.limit * (this.pagination.nr - 1)
     },
     pageLimit(newVal, oldVal) {
-      console.log("page Limit changed from " + oldVal + " to " + newVal)
+      logMessage("page Limit changed from " + oldVal + " to " + newVal)
       this.pagination.skip = Math.floor(this.pagination.skip * oldVal / newVal)
       this.pagination.nr = 1 + Math.floor(this.pagination.skip / this.pagination.limit)
     },
     pageRating(newVal, oldVal) {
-      console.log("page Rating changed from " + oldVal + " to " + newVal)
+      logMessage("page Rating changed from " + oldVal + " to " + newVal)
       if (newVal.includes("+")) {
         this.filterQuery.rating = {
           $gte: 1 * newVal.replace("+","")
@@ -511,29 +517,32 @@ export default {
       } else {
         this.filterQuery.rating = 1 * newVal
       }
-      this.pagination.skip = 0
-      this.pagination.nr = 1
+      this.resetPage()
     },
     pageLevel1(newVal, oldVal) {
-      console.log("page Level1 changed from " + oldVal + " to " + newVal)
+      logMessage("page Level1 changed from " + oldVal + " to " + newVal)
       if (newVal !== "") {
         this.filterQuery.level1 = newVal
       } else {
         this.filterQuery.level1 = ""
       }
-      this.pagination.skip = 0
-      this.pagination.nr = 1
+      this.resetPage()
     },
     pageLevel2(newVal, oldVal) {
-      console.log("page Level2 changed from " + oldVal + " to " + newVal)
+      logMessage("page Level2 changed from " + oldVal + " to " + newVal)
       if (newVal !== "") {
         this.filterQuery.level2 = newVal
       } else {
         this.filterQuery.level2 = ""
       }
-      this.pagination.skip = 0
-      this.pagination.nr = 1
+      this.resetPage()
     },
+    movies(newVal, oldVal) {
+      this.intSecObsv.activeIDs = []
+      newVal.forEach(m => this.intSecObsv.activeIDs.push(m._id))
+      logMessage("Movie results changed - re-evaluating active IDs...")
+      logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
+    }
   }
 };
 </script>
