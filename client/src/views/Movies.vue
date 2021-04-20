@@ -34,9 +34,9 @@
         <div class="filter-group">
           <span class="filter-type">Rating:</span>
           <div class="filter-set">
-            <div class="filter" v-for="rating in pagination.ratings" :key="'r-'+rating">
-              <input type="radio" :id="'rating-' + rating" :value="rating" v-model="pagination.rating" >
-              <label :for="'rating-' + rating" class="action button">
+            <div class="filter" v-for="rating in pagination.ratings" :key="'qr-'+rating">
+              <input type="radio" :id="'qrating-' + rating" :value="rating" v-model="pagination.rating" >
+              <label :for="'qrating-' + rating" class="action button">
                 {{ rating }}
               </label>
             </div>
@@ -52,9 +52,9 @@
           >clear</span>
           ➔
           <div class="filter-set">
-            <div class="filter" v-for="level1 in pagination.level1s" :key="'r-'+level1">
-              <input type="radio" :id="'level1-' + level1" :value="level1" v-model="pagination.level1" >
-              <label :for="'level1-' + level1" class="action button">
+            <div class="filter" v-for="level1 in pagination.level1s" :key="'qr-'+level1">
+              <input type="radio" :id="'qlevel1-' + level1" :value="level1" v-model="pagination.level1" >
+              <label :for="'qlevel1-' + level1" class="action button">
                 {{ level1 }}
               </label>
             </div>
@@ -70,9 +70,9 @@
           >clear</span>
           ➔
           <div class="filter-set">
-            <div class="filter" v-for="level2 in pagination.level2s" :key="'r-'+level2">
-              <input type="radio" :id="'level2-' + level2" :value="level2" v-model="pagination.level2" >
-              <label :for="'level2-' + level2" class="action button">
+            <div class="filter" v-for="level2 in pagination.level2s" :key="'qr-'+level2">
+              <input type="radio" :id="'qlevel2-' + level2" :value="level2" v-model="pagination.level2" >
+              <label :for="'qlevel2-' + level2" class="action button">
                 {{ level2 }}
               </label>
             </div>
