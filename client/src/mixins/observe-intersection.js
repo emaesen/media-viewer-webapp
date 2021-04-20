@@ -63,6 +63,7 @@ export default {
           target.dataset[dataIntsecObservable] = NO;
           this.intsecObserver.unobserve(target)
           delete target.dataset[dataIntsecInview]
+          this.intsecHandler(target, {observedonce:true})
         }
       } else {
         if (target.dataset[dataIntsecObservable] === YES 
@@ -75,6 +76,7 @@ export default {
     },
     intsecHandler(/*target, opts*/) {
       // ADD THIS METHOD WITH DESIRED IMPLEMENTATION IN UPSTREAM MIXIN/COMPONENT
+      // opts = {init:Boolean, inview:Boolean, observedonce:Boolean}
     }
   }
 }

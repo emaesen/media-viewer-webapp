@@ -1,10 +1,9 @@
 /**
- * Mixin to implement animation when element comes into view
+ * Mixin to implement some action when element comes into view
  *
  * Add custom directive `v-activate-on-intersection` to an element to add
- * an observer which will trigger an animation behavior 
- * (default class is defined by this.defaultAnimationClass;
- *  override this with a custom class on the element).
+ * an observer which will add `v-activate-xyz` classes to indicate
+ * intersection state.
  * 
  */
 
@@ -23,7 +22,7 @@ export default {
     return {
       intsecObserverBehavior: {
         // keep observing to de-activate when out-of-view 
-        observeOnlyOnce: false,
+        observeOnlyOnce: true,
       },
       // the component that implements this observer is expected to set:
       // intSecObsv: {
@@ -39,7 +38,7 @@ export default {
         this.init(target)
       } else if (opts && opts.inview) {
         this.activate(target)
-      } else {
+      } else if (opts && !opts.observedonce) {
         this.deActivate(target)
       }
     },
