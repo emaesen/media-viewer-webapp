@@ -19,7 +19,14 @@
         :type="source.type"
       />
     </video>
-    <div class="mp-loading" v-if="!state.canPlay">loading...</div>
+    <div class="mp-loading" v-if="!state.canPlay">
+      loading...
+      <button class="mp-reload-btn action button"
+        @click.stop="onClickReloadButton"
+      >
+        reload
+      </button>
+    </div>
 
     <transition name="fade-down">
       <div class="mp-ctrls-topleft"
@@ -462,6 +469,9 @@ export default {
           this.videoEl.pause()
         }
       }
+    },
+    onClickReloadButton() {
+      this.videoEl.load()
     },
     onClickPlayButton() {
       this.togglePlay()
