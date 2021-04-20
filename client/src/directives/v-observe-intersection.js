@@ -6,7 +6,7 @@
  * property `intsecObserver`.
  */
 
-import {logError} from '@/utils/logger.js'
+import {logError,logMessage} from '@/utils/logger.js'
 
 const YES = "yes";
 const NO = "no";
@@ -38,12 +38,14 @@ function observe(el, observer) {
     observer.observe(el);
     markObservable(el);
     cacheObserver(el, observer);
+    logMessage("observe " + el.id, {observer})
   }
 }
 function unobserve(el, observer) {
   if (enableIntsecObs) {
     if (el && observer instanceof IntersectionObserver) {
       observer.unobserve(el);
+      logMessage("unobserve " + el.id, {observer})
     }
     if (el) {
       markUnobservable(el);
