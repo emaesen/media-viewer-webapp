@@ -198,7 +198,7 @@ export default {
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       pagination: {
-        limit: 25,
+        limit: 10,
         skip: 0,
         nr: 1,
         pageLimits: [5,10,25,50],
