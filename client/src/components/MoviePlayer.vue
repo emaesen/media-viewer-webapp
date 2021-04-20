@@ -19,7 +19,7 @@
         :type="source.type"
       />
     </video>
-    <div class="loading" v-if="!state.canPlay">loading...</div>
+    <div class="mp-loading" v-if="!state.canPlay">loading...</div>
 
     <transition name="fade-down">
       <div class="mp-ctrls-topleft"
@@ -627,10 +627,12 @@ export default {
   vertical-align: bottom;
 }
 
-.loading {
+.mp-loading {
   position: absolute;
   bottom: 3em;
-  left: 3em; 
+  left: 3em;
+  color: #ffa04c;
+  font-style: italic;
 }
 .mp-ctrls-bottom {
   position: absolute;
