@@ -1,5 +1,6 @@
 <template>
   <div :class="['movie-container', {'full-width': isFullWidth}]">
+
     <div class="sub-container">
       <div class="rating">
         <Rating
@@ -14,9 +15,10 @@
         {{ movieTitle }}
       </div>
       <MoviePlayer 
+        v-if="embedPlayer"
         class="movie" 
         :source="{src:movieSrc, type:mimeType, id:movie._id}"
-        :options="{autoplay:false, volume:0.1}"
+        :options="options"
         @toggle-fullwidth="onToggleFullWidth"
       />
     </div>
@@ -29,15 +31,23 @@ import MoviePlayer from "@/components/MoviePlayer";
 
 export default {
   name:"MovieContainer",
-  props: ['movie'],
+  props: ['movie', 'isActive'],
   components: {
     Rating,
     MoviePlayer
   },
   data() {
     return {
-      isFullWidth: false
+      isFullWidth: false,
+      embedPlayer: false,
+      options: {
+        autoplay:false,
+        volume:0,
+      }
     }
+  },
+  mounted() {
+    this.embedPlayer = this.isActive
   },
   computed: {
     movieSrc() {
@@ -75,7 +85,13 @@ export default {
       }
     }
   },
-
+  watch: {
+    isActive(newVal,oldVal) {
+      if(newVal || oldVal) {
+        this.embedPlayer = true
+      }
+    }
+  }
 }
 </script>
 

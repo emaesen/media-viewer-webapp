@@ -135,7 +135,7 @@
         v-activate-on-intersection
       >
         <MovieContainer
-          v-if="intSecObsv.activeIDs.includes(movie._id)"
+          :isActive="intSecObsv.activeIDs.includes(movie._id)"
           :movie="movie"
           @edit-movie="editMovie"
           @toggle-fullwidth="onToggleFullWidth"
@@ -197,6 +197,7 @@ export default {
       sortDateAsc: true,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
+      moviesFound: false,
       pagination: {
         limit: 10,
         skip: 0,
@@ -537,11 +538,15 @@ export default {
       }
       this.resetPage()
     },
-    movies(newVal, oldVal) {
-      this.intSecObsv.activeIDs = []
-      newVal.forEach(m => this.intSecObsv.activeIDs.push(m._id))
-      logMessage("Movie results changed - re-evaluating active IDs...")
-      logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
+    movies(newVal) {
+      if (this.moviesFound) {
+        this.intSecObsv.activeIDs = []
+        newVal.forEach(m => this.intSecObsv.activeIDs.push(m._id))
+        logMessage("Movie results changed - re-evaluating active IDs...")
+        logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
+      } else {
+        this.moviesFound = true
+      }
     }
   }
 };
