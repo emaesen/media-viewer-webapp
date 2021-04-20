@@ -63,7 +63,9 @@ export default {
     ...mapActions("auth", { authLogout: "logout" }),
     logout() {
       console.log("logging out...");
-      this.authLogout().then(() => this.$router.push("login"));
+      this.authLogout()
+        .then(() => this.$router.push("login"))
+        .catch((err) => console.error({err}))
     }
   },
 };
