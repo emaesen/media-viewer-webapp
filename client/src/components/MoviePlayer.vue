@@ -303,7 +303,7 @@ export default {
         isFullscreenSupported: null
       },
       state: {
-        showCtrls: true,
+        showCtrls: false,
         showSecondaryCtrls: true,
         vol: 0.5,
         currentTime: 0,
@@ -365,6 +365,7 @@ export default {
     },
     initVideo() {
       this.videoEl.addEventListener('durationchange', this.onDurationchangeVideo)
+      this.videoEl.addEventListener('canplay', this.onCanplayVideo)
       this.videoEl.addEventListener('progress', this.onProgressVideo)
       this.videoEl.addEventListener('timeupdate', this.onTimeupdateVideo)
       this.videoEl.addEventListener('ended', this.onEndedVideo)
@@ -386,6 +387,9 @@ export default {
         this.setPlaybackDimensions()
         this.setVolumeDimensions()
       })
+    },
+    onCanplayVideo() {
+      this.state.showCtrls = true
     },
     onDurationchangeVideo() {
       if (this.player.timeRemainingText === '00:00') {
