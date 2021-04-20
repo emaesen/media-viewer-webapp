@@ -619,6 +619,7 @@ export default {
   position: relative;
   width: 100%;
   background-color: #000;
+  font-size: 14px;
 }
 
 .mp-video {
