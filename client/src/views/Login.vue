@@ -79,6 +79,7 @@ export default {
   methods: {
     ...mapActions("auth", ["authenticate"]),
     login(evt) {
+      this.clearError()
       if (this.validForm()) {
         //submit form
         console.log("submitting login form");
@@ -154,5 +155,8 @@ ul {
   font-size: 0.85rem;
   color: #999;
   font-style: italic;
+}
+label {
+  display: flex;
 }
 </style>
