@@ -135,7 +135,7 @@
         v-activate-on-intersection
       >
         <MovieContainer
-          v-if="intSecObsv.activeIDs.includes(movie._id)"
+          :isActive="intSecObsv.activeIDs.includes(movie._id)"
           :movie="movie"
           @edit-movie="editMovie"
           @toggle-fullwidth="onToggleFullWidth"

@@ -45,7 +45,7 @@ export default {
     },
     init(el) {
       if (!el.classList.contains('v-activate--init')) {
-        logMessage("activate intsecHandler INIT: " + el.id)
+        logMessage("actOnIntsecHandler INIT: " + el.id)
         el.classList.add('v-activate--init')
       }
     },
@@ -59,7 +59,7 @@ export default {
         this.intSecObsv.activeIDs = 
           this.intSecObsv.activeIDs
             .filter((x,i,a) => a.indexOf(x) === i)
-        logMessage("activate intsecHandler ACTIVATE: " + el.id)
+        logMessage("actOnIntsecHandler ACTIVATE: " + el.id)
         logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
       }
     },
@@ -69,7 +69,7 @@ export default {
         el.classList.remove('v-activate--active')
         el.classList.add('v-activate--deactive')
         this.intSecObsv.activeIDs = this.intSecObsv.activeIDs.filter(id => id!==el.id)
-        logMessage("activate intsecHandler DE-ACTIVATE: " + el.id)
+        logMessage("actOnIntsecHandler DE-ACTIVATE: " + el.id)
         logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
       }
     }
