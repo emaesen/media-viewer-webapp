@@ -28,7 +28,7 @@
       </button>
     </div>
     <div class="mp-info-msg" v-if="state.stalled && !state.error">
-      stalled!
+      {{state.stalledMsg}}
     </div>
     <div class="mp-info-msg" v-if="state.error">
       {{state.errorMsg}}
@@ -327,6 +327,7 @@ export default {
         isFullscreen: false,
         isPlaying: false,
         error: false,
+        stalledMsg: "",
         errorMsg: ""
       }
     }
@@ -410,6 +411,8 @@ export default {
     },
     onStalledVideo() {
       this.state.stalled = true
+      const nwStates = ["EMPTY", "IDLE", "LOADING", "NO_SOURCE"]
+      this.state.stalledMsg = "stalled... (NETWORK_" + nwStates[this.videoEl.networkState] + ")"
     },
     onErrorVideo() {
       this.state.stalled = false
