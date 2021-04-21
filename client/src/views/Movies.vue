@@ -502,6 +502,8 @@ export default {
   watch: {
     pageNr(newVal, oldVal) {
       logMessage("page Nr changed from " + oldVal + " to " + newVal)
+      // scroll to top
+      window.scrollTo({top:0, left:0, behavior:'smooth'})
       this.pagination.skip = this.pagination.limit * (this.pagination.nr - 1)
     },
     pageLimit(newVal, oldVal) {
