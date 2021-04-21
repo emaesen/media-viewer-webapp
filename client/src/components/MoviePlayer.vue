@@ -27,8 +27,11 @@
         reload
       </button>
     </div>
-    <div class="mp-stalled" v-if="state.stalled">
+    <div class="mp-info-msg" v-if="state.stalled && !state.error">
       stalled!
+    </div>
+    <div class="mp-info-msg" v-if="state.error">
+      {{state.errorMsg}}
     </div>
 
     <transition name="fade-down">
@@ -322,7 +325,9 @@ export default {
         currentTime: 0,
         isFullWidth: false,
         isFullscreen: false,
-        isPlaying: false
+        isPlaying: false,
+        error: false,
+        errorMsg: ""
       }
     }
   },
@@ -383,6 +388,7 @@ export default {
       this.videoEl.addEventListener('durationchange', this.onDurationchangeVideo)
       this.videoEl.addEventListener('timeupdate', this.onTimeupdateVideo)
       this.videoEl.addEventListener('ended', this.onEndedVideo)
+      this.videoEl.addEventListener('error', this.onErrorVideo)
     },
     setVolumeDimensions() {
       let v = this.volume
@@ -405,10 +411,16 @@ export default {
     onStalledVideo() {
       this.state.stalled = true
     },
+    onErrorVideo() {
+      this.state.stalled = false
+      this.state.error = true
+      this.state.errorMsg = this.videoEl.error.code
+    },
     onCanplayVideo() {
       this.state.showCtrls = true
       this.state.canPlay = true
       this.state.stalled = false
+      this.state.error = false
       // advance one second to show a video frame
       this.videoEl.currentTime = 1
       this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
@@ -420,6 +432,8 @@ export default {
       }
     },
     onProgressVideo() {
+      this.state.stalled = false
+      this.state.error = false
       let duration = this.videoEl.duration
       if (duration > 0) {
         let buffered = this.videoEl.buffered
@@ -678,7 +692,7 @@ export default {
   vertical-align: bottom;
 }
 
-.mp-stalled,
+.mp-info-msg,
 .mp-loading {
   position: absolute;
   bottom: 3em;
@@ -686,7 +700,7 @@ export default {
   color: #ffa04c;
   font-style: italic;
 }
-.mp-stalled {
+.mp-info-msg {
   bottom: 2em;
   color: #ff1313;
 }
