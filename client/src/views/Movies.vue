@@ -237,7 +237,7 @@ export default {
       });
   },
   mounted() {
-    init()
+    this.init()
   },
   methods: {
     ...mapActions("movies", { findMovies: "find" }),
