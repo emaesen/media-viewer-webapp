@@ -27,6 +27,9 @@
         reload
       </button>
     </div>
+    <div class="mp-stalled" v-if="state.stalled">
+      stalled!
+    </div>
 
     <transition name="fade-down">
       <div class="mp-ctrls-topleft"
@@ -311,6 +314,7 @@ export default {
         isFullscreenSupported: null
       },
       state: {
+        stalled: false,
         canPlay: false,
         showCtrls: false,
         showSecondaryCtrls: true,
@@ -373,9 +377,10 @@ export default {
       this.setVolumeDimensions()
     },
     initVideo() {
-      this.videoEl.addEventListener('durationchange', this.onDurationchangeVideo)
+      this.videoEl.addEventListener('stalled', this.onStalledVideo)
       this.videoEl.addEventListener('canplay', this.onCanplayVideo)
       this.videoEl.addEventListener('progress', this.onProgressVideo)
+      this.videoEl.addEventListener('durationchange', this.onDurationchangeVideo)
       this.videoEl.addEventListener('timeupdate', this.onTimeupdateVideo)
       this.videoEl.addEventListener('ended', this.onEndedVideo)
     },
@@ -397,9 +402,13 @@ export default {
         this.setVolumeDimensions()
       })
     },
+    onStalledVideo() {
+      this.state.stalled = true
+    },
     onCanplayVideo() {
       this.state.showCtrls = true
       this.state.canPlay = true
+      this.state.stalled = false
       // advance one second to show a video frame
       this.videoEl.currentTime = 1
       this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
@@ -479,6 +488,7 @@ export default {
     },
     onClickReloadButton() {
       this.videoEl.load()
+      this.state.stalled = false
     },
     onClickPlayButton() {
       this.togglePlay()
@@ -668,12 +678,17 @@ export default {
   vertical-align: bottom;
 }
 
+.mp-stalled,
 .mp-loading {
   position: absolute;
   bottom: 3em;
   left: 3em;
   color: #ffa04c;
   font-style: italic;
+}
+.mp-stalled {
+  bottom: 2em;
+  color: #ff1313;
 }
 .mp-ctrls-bottom {
   position: absolute;
