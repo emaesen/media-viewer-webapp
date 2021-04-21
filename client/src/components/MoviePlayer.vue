@@ -283,8 +283,8 @@ export default {
       volume: {
         sliderEl: null,
         levelEl: null,
-        muted: false,
-        percent: 60,
+        muted: true,
+        percent: 0,
         hasMousedown: false,
         pos: {
           start: 0,
@@ -375,7 +375,7 @@ export default {
     initVolume() {
       const sliderEl = this.$refs && this.$refs[this.source.id+'-vol-slider']
       const levelEl = this.$refs && this.$refs[this.source.id+'-vol-level']
-      const vol = this.options.volume || 0.9
+      const vol = this.options.volume || 0
       this.setVolume(vol)
       this.volume.sliderEl = sliderEl
       this.volume.levelEl = levelEl
