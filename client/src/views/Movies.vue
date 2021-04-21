@@ -174,6 +174,11 @@ import activateOnIntersection from '@/mixins/activate-on-intersection.js';
 import { mapState, mapGetters, mapActions } from "vuex";
 
 import { logMessage } from '@/utils/logger.js'
+import {
+  persistPaginationState,
+  retrievePaginationState,
+  clearPaginationState
+} from "@/utils/persistence.js"
 
 export default {
   name: "Movies",
@@ -231,8 +236,19 @@ export default {
         this.handleError(err);
       });
   },
+  mounted() {
+    init()
+  },
   methods: {
     ...mapActions("movies", { findMovies: "find" }),
+    init() {
+      const op = this.pagination
+      this.pagination = retrievePaginationState(this.pagination)
+      const p = this.pagination
+      if (p.rating !== op.rating || p.level1 || p.level2) {
+        this.showQueryControls = true
+      }
+    },
     handleError(e) {
       console.error("Movies Error: ", e);
       if (e.name === "NotAuthenticated") {
@@ -548,6 +564,13 @@ export default {
         logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
       } else {
         this.moviesFound = true
+      }
+    },
+    pagination: {
+      deep: true,
+      handler: function(newVal) {
+        logMessage("pagination changed to ", newVal)
+        persistPaginationState(newVal)
       }
     }
   }
