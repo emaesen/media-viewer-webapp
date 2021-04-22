@@ -1,4 +1,5 @@
 /* very basic persistence logic */
+/* eslint-disable */
 
 const localStore = (typeof window !== 'undefined') && window.localStorage
 const sessionStore = (typeof window !== 'undefined') && window.sessionStorage
