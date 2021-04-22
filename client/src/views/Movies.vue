@@ -207,7 +207,7 @@ export default {
         limit: 10,
         skip: 0,
         nr: 1,
-        pageLimits: [5,10,25,50],
+        pageLimits: [5,10,20,40],
         rating: "0+",
         ratings: ["0","0+","1+","2+","3+","4+","5"],
         level1: "",
@@ -524,8 +524,8 @@ export default {
     },
     pageLimit(newVal, oldVal) {
       logMessage("page Limit changed from " + oldVal + " to " + newVal)
-      this.pagination.skip = Math.floor(this.pagination.skip * oldVal / newVal)
-      this.pagination.nr = 1 + Math.floor(this.pagination.skip / this.pagination.limit)
+      this.pagination.nr = 1 + Math.floor((this.pagination.nr - 1)*(oldVal/newVal))
+      this.pagination.skip = (this.pagination.nr - 1) * newVal
     },
     pageRating(newVal, oldVal) {
       logMessage("page Rating changed from " + oldVal + " to " + newVal)
