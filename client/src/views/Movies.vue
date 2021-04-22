@@ -22,8 +22,8 @@
         <div class="filter-group">
           <span class="filter-type">Items per page:</span>
           <div class="filter-set">
-            <div class="filter" v-for="pageLimit in pagination.pageLimits" :key="pageLimit">
-              <input type="radio" :id="'pageLimit-' + pageLimit" :value="pageLimit" v-model="pagination.limit" >
+            <div class="filter" v-for="pageLimit in paginationOptions.pageLimits" :key="pageLimit">
+              <input type="radio" :id="'pageLimit-' + pageLimit" :value="pageLimit" v-model="paginationState.limit" >
               <label :for="'pageLimit-' + pageLimit" class="action button">
                 {{ pageLimit }}
               </label>
@@ -34,8 +34,8 @@
         <div class="filter-group">
           <span class="filter-type">Rating:</span>
           <div class="filter-set">
-            <div class="filter" v-for="rating in pagination.ratings" :key="'qr-'+rating">
-              <input type="radio" :id="'qrating-' + rating" :value="rating" v-model="pagination.rating" >
+            <div class="filter" v-for="rating in paginationOptions.ratings" :key="'qr-'+rating">
+              <input type="radio" :id="'qrating-' + rating" :value="rating" v-model="paginationState.rating" >
               <label :for="'qrating-' + rating" class="action button">
                 {{ rating }}
               </label>
@@ -47,13 +47,13 @@
           <span class="filter-type">Level 1:</span>
           <span
             class="action button cntr clear"
-            :class="{checked: !pagination.level1}"
+            :class="{checked: !paginationState.level1}"
             @click="clearLevel1Query"
           >clear</span>
           ➔
           <div class="filter-set">
-            <div class="filter" v-for="level1 in pagination.level1s" :key="'qr-'+level1">
-              <input type="radio" :id="'qlevel1-' + level1" :value="level1" v-model="pagination.level1" >
+            <div class="filter" v-for="level1 in paginationOptions.level1s" :key="'qr-'+level1">
+              <input type="radio" :id="'qlevel1-' + level1" :value="level1" v-model="paginationState.level1" >
               <label :for="'qlevel1-' + level1" class="action button">
                 {{ level1 }}
               </label>
@@ -65,13 +65,13 @@
           <span class="filter-type">Level 2:</span>
           <span
             class="action button cntr clear"
-            :class="{checked: !pagination.level2}"
+            :class="{checked: !paginationState.level2}"
             @click="clearLevel2Query"
           >clear</span>
           ➔
           <div class="filter-set">
-            <div class="filter" v-for="level2 in pagination.level2s" :key="'qr-'+level2">
-              <input type="radio" :id="'qlevel2-' + level2" :value="level2" v-model="pagination.level2" >
+            <div class="filter" v-for="level2 in paginationOptions.level2s" :key="'qr-'+level2">
+              <input type="radio" :id="'qlevel2-' + level2" :value="level2" v-model="paginationState.level2" >
               <label :for="'qlevel2-' + level2" class="action button">
                 {{ level2 }}
               </label>
@@ -150,7 +150,7 @@
         <span class="filter-type">Page Nr:</span>
         <div class="filter-set">
           <div class="filter" v-for="(pageNr, index) in pageNrs" :key="index">
-            <input v-if="pageNr!=='...'" type="radio" :id="'pageNr-' + pageNr" :value="pageNr" v-model="pagination.nr" >
+            <input v-if="pageNr!=='...'" type="radio" :id="'pageNr-' + pageNr" :value="pageNr" v-model="paginationState.nr" >
             <label v-if="pageNr!=='...'" :for="'pageNr-' + pageNr" class="action button">
               {{ pageNr }}
             </label>
@@ -203,17 +203,19 @@ export default {
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       moviesFound: false,
-      pagination: {
+      paginationOptions: {
+        pageLimits: [5,10,20,40,80],
+        ratings: ["0","0+","1+","2+","3+","4+","5"],
+        level1s: process.env.VUE_APP_LEVELS1.split(','),
+        level2s: process.env.VUE_APP_LEVELS2.split(','),
+      },
+      paginationState: {
         limit: 10,
         skip: 0,
         nr: 1,
-        pageLimits: [5,10,20,40],
         rating: "0+",
-        ratings: ["0","0+","1+","2+","3+","4+","5"],
         level1: "",
-        level1s: process.env.VUE_APP_LEVELS1.split(','),
         level2: "",
-        level2s: process.env.VUE_APP_LEVELS2.split(','),
       },
       filterQuery: {
         rating: {
@@ -242,9 +244,18 @@ export default {
   methods: {
     ...mapActions("movies", { findMovies: "find" }),
     init() {
-      const op = this.pagination
-      this.pagination = retrievePaginationState(this.pagination)
-      const p = this.pagination
+      const op = this.paginationState
+      let p = retrievePaginationState(this.paginationState)
+      // backwards compatibility test:
+      // ignore stored state if it contains a pageLimits property
+      if (!p.pageLimits) {
+        // new version - use
+        this.paginationState = p
+      } else {
+        // old version - replace
+        p = this.paginationState
+        persistPaginationState(p)
+      }
       if (p.rating !== op.rating || p.level1 || p.level2) {
         this.showQueryControls = true
       }
@@ -356,14 +367,14 @@ export default {
       //logMessage({ level2s: this.level2s })
     },
     clearLevel1Query() {
-      this.pagination.level1 = ""
+      this.paginationState.level1 = ""
     },
     clearLevel2Query() {
-      this.pagination.level2 = ""
+      this.paginationState.level2 = ""
     },
     resetPage() {
-      this.pagination.skip = 0
-      this.pagination.nr = 1
+      this.paginationState.skip = 0
+      this.paginationState.nr = 1
     }
   },
   computed: {
@@ -399,8 +410,8 @@ export default {
           break;
       }
       query.$sort = sort
-      query.$limit = this.pagination.limit
-      query.$skip = this.pagination.skip
+      query.$limit = this.paginationState.limit
+      query.$skip = this.paginationState.skip
 
       query = {...this.purgedFilterQuery, ...query}
       logMessage({query})
@@ -443,7 +454,7 @@ export default {
           })
     },
     showFilterControls() {
-      return this.resultsFound || this.nrFiltersApplied > 0
+      return (this.resultsFound && this.paginationState.limit > 30) || this.nrFiltersApplied > 0
     },
     nrFiltersApplied() {
       return (
@@ -467,13 +478,13 @@ export default {
       }));
     },
     nrOfPages() {
-      return Math.ceil(this.totalNrOfMovies / this.pagination.limit)
+      return Math.ceil(this.totalNrOfMovies / this.paginationState.limit)
     },
     pageNrs() {
       // create an array of numbers 1 to nrOfPages, centered around the current page
       const nrOfPages = this.nrOfPages
       const displayedPageRange = 2
-      const currentPageNr = this.pagination.nr
+      const currentPageNr = this.paginationState.nr
       let pagesArray = Array(nrOfPages).join().split(',').map((v,i) => i+1)
       pagesArray = pagesArray.filter(nr => {
         return nrOfPages <= 2 * displayedPageRange + 3 || nr === 1 || nr === nrOfPages || (nr >= currentPageNr - displayedPageRange && nr <= currentPageNr + displayedPageRange)
@@ -496,23 +507,23 @@ export default {
     },
     pageNr() {
       // define computed item of nested property so we can watch it easier below
-      return this.pagination.nr
+      return this.paginationState.nr
     },
     pageLimit() {
       // define computed item of nested property so we can watch it easier below
-      return this.pagination.limit
+      return this.paginationState.limit
     },
     pageRating() {
       // define computed item of nested property so we can watch it easier below
-      return this.pagination.rating
+      return this.paginationState.rating
     },
     pageLevel1() {
       // define computed item of nested property so we can watch it easier below
-      return this.pagination.level1
+      return this.paginationState.level1
     },
     pageLevel2() {
       // define computed item of nested property so we can watch it easier below
-      return this.pagination.level2
+      return this.paginationState.level2
     }
   },
   watch: {
@@ -520,12 +531,12 @@ export default {
       logMessage("page Nr changed from " + oldVal + " to " + newVal)
       // scroll to top
       window.scrollTo({top:0, left:0, behavior:'smooth'})
-      this.pagination.skip = this.pagination.limit * (this.pagination.nr - 1)
+      this.paginationState.skip = this.paginationState.limit * (this.paginationState.nr - 1)
     },
     pageLimit(newVal, oldVal) {
       logMessage("page Limit changed from " + oldVal + " to " + newVal)
-      this.pagination.nr = 1 + Math.floor((this.pagination.nr - 1)*(oldVal/newVal))
-      this.pagination.skip = (this.pagination.nr - 1) * newVal
+      this.paginationState.nr = 1 + Math.floor((this.paginationState.nr - 1)*(oldVal/newVal))
+      this.paginationState.skip = (this.paginationState.nr - 1) * newVal
     },
     pageRating(newVal, oldVal) {
       logMessage("page Rating changed from " + oldVal + " to " + newVal)
@@ -566,10 +577,10 @@ export default {
         this.moviesFound = true
       }
     },
-    pagination: {
+    paginationState: {
       deep: true,
       handler: function(newVal) {
-        logMessage("pagination changed to ", newVal)
+        logMessage("paginationState changed to ", newVal)
         persistPaginationState(newVal)
       }
     }
