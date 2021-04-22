@@ -176,8 +176,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import { logMessage } from '@/utils/logger.js'
 import {
   persistPaginationState,
-  retrievePaginationState,
-  clearPaginationState
+  retrievePaginationState
 } from "@/utils/persistence.js"
 
 export default {
