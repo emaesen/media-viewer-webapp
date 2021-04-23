@@ -450,8 +450,9 @@ export default {
       }
     },
     onTimeupdateVideo() {
-      const percent = this.videoEl.currentTime / this.videoEl.duration
-      this.player.pos.current = (this.player.pos.width * percent).toFixed(3)
+      const fraction = this.videoEl.currentTime / this.videoEl.duration
+      if (this.player.pos.width === 0) this.setPlaybackDimensions()
+      this.player.pos.current = (this.player.pos.width * fraction).toFixed(3)
       this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
       this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
     },
@@ -478,7 +479,9 @@ export default {
       }, delay)
     },
     onMouseenterVideo() {
-      this.showControls()
+      if (this.state.canPlay) {
+        this.showControls()
+      }
     },
     onMouseleaveVideo() {
       this.hideControls(3000)
