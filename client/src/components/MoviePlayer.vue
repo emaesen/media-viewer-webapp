@@ -420,6 +420,7 @@ export default {
       const errNames = ["ABORTED", "NETWORK", "DECODE", "SRC_NOT_SUPPORTED"]
       this.state.errorMsg = "error... (MEDIA_ERR_" + errNames[this.videoEl.error.code] + ")"
       this.state.canPlay = false
+      this.state.showCtrls = false
     },
     onCanplayVideo() {
       this.state.showCtrls = true
@@ -604,7 +605,7 @@ export default {
         this.volumeSlideMove(e)
       } else if (this.player.hasMousedown) {
         this.playbackSlideMove(e)
-      } else {
+      } else if (this.state.canPlay) {
         this.showControls()
       }
     },
