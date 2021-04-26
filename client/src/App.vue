@@ -3,7 +3,6 @@
     <header id="header">
       <img src="/img/icons/favicon-32x32.png" class="icon"/>
       <div class="header">Media Viewer</div>
-      <pa-clock/>
     </header>
     <div id="auth">
       <div v-if="user" class="auth-state">
@@ -30,15 +29,14 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import Clock from "@/components/Clock";
 
 export default {
   name: "App",
   components: {
-    "pa-clock": Clock
   },
   data() {
-    return {};
+    return {
+    };
   },
   computed: {
     ...mapState("auth", { user: "user" }),
@@ -118,7 +116,7 @@ h2 {
   font-family: monospace;
   text-align: center;
   color: #fffef5;
-  padding-bottom: 3px;
+  padding: 3px 0;
   border-bottom: 5px solid #333;
   opacity: 0.8;
 }
