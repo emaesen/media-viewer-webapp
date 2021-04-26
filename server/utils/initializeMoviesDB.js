@@ -41,5 +41,5 @@ async function createMovie(data, user) {
 module.exports.createMovies = createMovies
 
 // allow command line execution:
-// `node getMediaAssets.js`
+// `node utils/getMediaAssets.js`
 if(require.main == module) createMovies()
