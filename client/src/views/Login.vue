@@ -89,7 +89,7 @@ export default {
         })
           .then(resp => {
             console.log("logged in: ", resp);
-            this.$router.push("/home");
+            this.$router.push("/");
           })
           .catch(e => {
             console.error("Authentication error: ", e);
