@@ -33,6 +33,9 @@
     <div class="mp-info-msg" v-if="state.error">
       {{state.errorMsg}}
     </div>
+    <div class="mp-log-msg">
+      {{state.logMsg}}
+    </div>
 
     <transition name="fade-down">
       <div class="mp-ctrls-topleft"
@@ -328,7 +331,9 @@ export default {
         isPlaying: false,
         error: false,
         stalledMsg: "",
-        errorMsg: ""
+        errorMsg: "",
+        logMsg: "",
+        autoReload: 0
       }
     }
   },
@@ -413,6 +418,8 @@ export default {
       this.state.stalled = true
       const nwStates = ["EMPTY", "IDLE", "LOADING", "NO_SOURCE"]
       this.state.stalledMsg = "stalled... (NETWORK_" + nwStates[this.videoEl.networkState] + ")"
+      // auto-reload
+      setTimeout(this.autoReload, 30 * 1000)
     },
     onErrorVideo() {
       this.state.stalled = false
@@ -421,6 +428,8 @@ export default {
       this.state.errorMsg = "error... (MEDIA_ERR_" + errNames[this.videoEl.error.code] + ")"
       this.state.canPlay = false
       this.state.showCtrls = false
+      // auto-reload
+      setTimeout(this.autoReload, 10 * 1000)
     },
     onCanplayVideo() {
       this.state.showCtrls = true
@@ -509,9 +518,20 @@ export default {
         this.hideControls(2000)
       }
     },
-    onClickReloadButton() {
+    reload() {
       this.videoEl.load()
       this.state.stalled = false
+      this.state.error = false
+    },
+    autoReload() {
+      if (this.state.error || this.state.stalled) {
+        this.state.logMsg = this.state.logMsg + this.state.autoReload + ": " + this.state.errorMsg + " | "
+        this.state.autoReload++
+        this.reload()
+      }
+    },
+    onClickReloadButton() {
+      this.reload()
     },
     onClickPlayButton() {
       this.togglePlay()
@@ -712,6 +732,14 @@ export default {
 .mp-info-msg {
   bottom: 2em;
   color: #ff1313;
+}
+.mp-log-msg {
+  position: absolute;
+  bottom: -3.5em;
+  left: 0;
+  font-size: 80%;
+  font-style: italic;
+  color: #ffa04c77;
 }
 .mp-ctrls-bottom {
   position: absolute;
