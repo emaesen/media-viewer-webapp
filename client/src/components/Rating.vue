@@ -39,7 +39,7 @@ export default {
     showRating(i) {
       this.displayRating = i
     },
-    resetRating(i) {
+    resetRating() {
       this.displayRating = this.rating
     },
   }
