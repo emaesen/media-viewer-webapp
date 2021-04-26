@@ -4,7 +4,6 @@
       <font-awesome-icon icon="film"/>Movies
     </h1>
 
-
     <div class="controls pagination convert-to-block-on-small-device">
 
       <div>
@@ -81,43 +80,6 @@
       </div>
     </div>
 
-
-    <div v-if="showFilterControls" class="controls convert-to-block-on-small-device">
-      <button
-        v-if="sortType==='rating'"
-        @click="sortAsc = !sortAsc"
-        class="action button"
-      >sort
-        <font-awesome-icon
-          :icon="sortAsc? 'sort-amount-down' : 'sort-amount-up'"
-          class="flush-right"
-        />
-      </button>
-      <button v-else @click="sortDateAsc = !sortDateAsc" class="action button">sort
-        <font-awesome-icon
-          :icon="sortDateAsc? 'sort-amount-down' : 'sort-amount-up'"
-          class="flush-right"
-        />
-      </button>
-      <button @click="cycleSortType" class="action button">
-        ➔ by
-        {{ sortType }}
-        <font-awesome-icon icon="check" class="flush-right"/>
-      </button>
-      <button @click="toggleFilters" class="action button">
-        {{ showFilters? 'hide' : 'show' }} filters
-        <font-awesome-icon icon="filter" class="flush-right"/>
-        <span class="filter-cntr">({{ nrFiltersApplied }} applied)</span>
-      </button>
-    </div>
-    <MovieFilter
-      v-show="showFilters"
-      :ratings="ratings"
-      :level1s="level1s"
-      :level2s="level2s"
-      :filter="filter"
-      :filterMeta="moviesFilterMeta"
-    />
     <div v-if="loading" class="loading">loading...</div>
     <div v-if="!resultsFound" class="noresults">{{ noResultsText }}</div>
     <transition-group
@@ -167,7 +129,6 @@
 
 <script>
 import MovieContainer from "@/components/MovieContainer";
-import MovieFilter from "@/components/MovieFilter";
 
 import activateOnIntersection from '@/mixins/activate-on-intersection.js';
 
@@ -184,7 +145,6 @@ export default {
   mixins: [activateOnIntersection],
   components: {
     MovieContainer,
-    MovieFilter,
   },
   data() {
     return {
@@ -196,7 +156,6 @@ export default {
       level2s: [],
       filter: { ratings: [], level1s: [], level2s: [] },
       showQueryControls: false,
-      showFilters: false,
       sortAsc: true,
       sortDateAsc: true,
       hasFullWidthMovie: false,
@@ -230,8 +189,8 @@ export default {
     };
   },
   created() {
-    // Find all movies from server. We'll filter/sort on the client.
-    this.findMovies({ query: {} })
+    // Find all movies from server.
+    this.findMovies({query: {}})
       .then(this.setFilterData)
       .catch(err => {
         this.handleError(err);
@@ -285,14 +244,7 @@ export default {
     onToggleFullWidth() {
       this.hasFullWidthMovie = !this.hasFullWidthMovie
     },
-    cycleSortType() {
-      let typeIndex = this.types.findIndex(t => t === this.sortType) + 1;
-      if (typeIndex >= this.types.length) {
-        typeIndex = 0;
-      }
-      this.sortType = this.types[typeIndex];
-      //logMessage(this.sortType + " " + typeIndex);
-    },
+
     sortByDate(a, b, type) {
       type = type || this.sortDateDefault;
       let dateDiff;
@@ -324,10 +276,6 @@ export default {
       }
       return result;
     },
-    toggleFilters(evt) {
-      evt.target.blur();
-      this.showFilters = !this.showFilters;
-    },
     uiFilter(movie) {
       // Filter by selected ratings, level1 and level2.
       // Multiple ratings are `or`-ed. Multiple levels are `or`-ed.
@@ -347,19 +295,20 @@ export default {
     },
     setFilterData() {
       // get list of user-defined ratings and levels, and remove duplicates
-      this.ratings = this.moviesUnfiltered
+      const moviesUnfiltered = this.moviesUnfiltered
+      this.ratings = moviesUnfiltered
         .map(m => m.rating)
         .filter((c, i, s) => c!=="" && s.indexOf(c) === i)
         .sort()
       //logMessage({ ratings: this.ratings })
 
-      this.level1s = this.moviesUnfiltered
+      this.level1s = moviesUnfiltered
         .map(m => m.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
       //logMessage({ level1s: this.level1s })
 
-      this.level2s = this.moviesUnfiltered
+      this.level2s = moviesUnfiltered
         .map(m => m.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
@@ -413,7 +362,7 @@ export default {
       query.$skip = this.paginationState.skip
 
       query = {...this.purgedFilterQuery, ...query}
-      logMessage({query})
+      logMessage("query: ", query)
       return query;
     },
     purgedFilterQuery() {
@@ -452,22 +401,8 @@ export default {
             return m
           })
     },
-    showFilterControls() {
-      return (this.resultsFound && this.paginationState.limit > 30) || this.nrFiltersApplied > 0
-    },
-    nrFiltersApplied() {
-      return (
-        this.filter.ratings.length +
-        this.filter.level1s.length +
-        this.filter.level2s.length
-      );
-    },
     noResultsText() {
-      if (this.nrFiltersApplied === 0) {
-        return "No movies found..."
-      } else {
-        return "No movies match the filter settings..."
-      }
+      return "No movies found..."
     },
     moviesFilterMeta() {
       return this.moviesUnfiltered.map(movie => ({
