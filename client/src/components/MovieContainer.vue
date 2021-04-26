@@ -21,6 +21,9 @@
         :options="options"
         @toggle-fullwidth="onToggleFullWidth"
       />
+      <div class="meta info">
+        {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }}
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +31,22 @@
 <script>
 import Rating from "@/components/Rating";
 import MoviePlayer from "@/components/MoviePlayer";
+
+const pad = (val) => {
+  val = Math.floor(val)
+  if (val < 10) {
+    return '0' + val
+  }
+  return val + ''
+}
+const timeParse = (sec) => {
+  let hrs = 0
+  let min = 0
+  hrs = Math.floor(sec / 60 / 60)
+  min = Math.floor(sec / 60) - hrs * 60
+  sec = sec - min * 60 - hrs * 60 * 60
+  return (hrs ? hrs + ':' : '') + pad(min) + ':' + pad(sec)
+}
 
 export default {
   name:"MovieContainer",
@@ -58,6 +77,15 @@ export default {
     },
     movieTitle() {
       return this.movie.basename.replace(".mp4","").replace(/[-_]/g, " ")
+    },
+    movieSize() {
+      return Math.round(this.movie.meta.sizeInMB) + " MB"
+    },
+    movieDimensions() {
+      return this.movie.meta.width + "⨯" + this.movie.meta.height
+    },
+    movieDuration() {
+      return timeParse(this.movie.meta.durationInSec)
     },
     moviePath() {
       let levels =  this.movie.level1 
@@ -133,5 +161,11 @@ export default {
 .movie {
   width: 100%;
   max-height: 100vh;
+  border: 1px solid rgb(108, 108, 108);
+}
+.meta.info {
+  font-size: 80%;
+  text-align: center;
+  margin-top: 1em;
 }
 </style>
