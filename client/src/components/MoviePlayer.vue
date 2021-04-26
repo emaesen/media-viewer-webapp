@@ -419,6 +419,7 @@ export default {
       this.state.error = true
       const errNames = ["ABORTED", "NETWORK", "DECODE", "SRC_NOT_SUPPORTED"]
       this.state.errorMsg = "error... (MEDIA_ERR_" + errNames[this.videoEl.error.code] + ")"
+      this.state.canPlay = false
     },
     onCanplayVideo() {
       this.state.showCtrls = true
