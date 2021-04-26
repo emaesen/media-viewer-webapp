@@ -1,6 +1,10 @@
+
+const { getMovies } = require('./getDBMovies')
+
 const readdirp = require('readdirp')
 const fs = require('fs')
 const VideoLib = require('node-video-lib')
+
 
 // https://www.npmjs.com/package/readdirp
 const folder = "../client/public/media/movies"
@@ -28,7 +32,6 @@ function parseMovieFile(entry, fd) {
     sizeInMB: (movie.size() / 1000 / 1000).toFixed(1)
   }
   entry.meta = meta
-  entry.path = entry.path.replace(/\\/g, '/')
   const splitPath = entry.path.split('/')
   splitPath.pop()
   if (splitPath[0]) entry.level1 = splitPath[0]
@@ -43,6 +46,9 @@ function parseMovieFile(entry, fd) {
 }
 
 async function getVideoAssets() {
+  const moviePathsInDB = await getMovies()
+  //console.log("getMediaAssets Info: movies in DB: ", moviePathsInDB)
+
   if (folder) {
     console.log('getMediaAssets folder:', folder)
     // Iterate recursively through a folder
@@ -50,17 +56,26 @@ async function getVideoAssets() {
 
     allFiles = await readdirp.promise(folder, settings)
     //console.log('getMediaAssets movies readdirp:', allFiles)
-    allFiles = allFiles.map( entry => {
-      try {
-        const file = entry.fullPath
-        const fd = fs.openSync(file, 'r')
-        entry = parseMovieFile(entry, fd)
-        fs.closeSync(fd)
+    allFiles = allFiles
+      .filter(entry => {
+          entry.path = entry.path.replace(/\\/g, '/')
+          const isAlreadyInDB = moviePathsInDB.indexOf(entry.path)>=0
+          if (isAlreadyInDB) {
+            console.log("getMediaAssets Info: is already in DB:", entry.path)
+          }
+          return !isAlreadyInDB
+      })
+      .map( entry => {
+        try {
+          const file = entry.fullPath
+          const fd = fs.openSync(file, 'r')
+          entry = parseMovieFile(entry, fd)
+          fs.closeSync(fd)
+        } catch (err) {
+          console.error('getMediaAssets Error:', err)
+        }
         return entry
-      } catch (err) {
-        console.error('getMediaAssets Error:', err)
-      }
-    })
+      })
    
     //console.log('getMediaAssets movies:', allFiles)
     return allFiles
@@ -72,5 +87,5 @@ async function getVideoAssets() {
 module.exports.getVideoAssets = getVideoAssets
 
 // allow command line execution:
-// `node getMediaAssets.js`
+// `node utils/getMediaAssets.js`
 if(require.main == module) getVideoAssets()
