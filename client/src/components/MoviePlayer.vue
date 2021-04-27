@@ -333,7 +333,6 @@ export default {
         stalledMsg: "",
         errorMsg: "",
         logMsg: "",
-        autoReload: 0
       }
     }
   },
@@ -418,8 +417,6 @@ export default {
       this.state.stalled = true
       const nwStates = ["EMPTY", "IDLE", "LOADING", "NO_SOURCE"]
       this.state.stalledMsg = "stalled... (NETWORK_" + nwStates[this.videoEl.networkState] + ")"
-      // auto-reload
-      setTimeout(this.autoReload, 30 * 1000)
     },
     onErrorVideo() {
       this.state.stalled = false
@@ -428,8 +425,6 @@ export default {
       this.state.errorMsg = "error... (MEDIA_ERR_" + errNames[this.videoEl.error.code] + ")"
       this.state.canPlay = false
       this.state.showCtrls = false
-      // auto-reload
-      setTimeout(this.autoReload, 10 * 1000)
     },
     onCanplayVideo() {
       this.state.showCtrls = true
@@ -522,13 +517,6 @@ export default {
       this.videoEl.load()
       this.state.stalled = false
       this.state.error = false
-    },
-    autoReload() {
-      if (this.state.error || this.state.stalled) {
-        this.state.logMsg = this.state.logMsg + this.state.autoReload + ": " + this.state.errorMsg + " | "
-        this.state.autoReload++
-        this.reload()
-      }
     },
     onClickReloadButton() {
       this.reload()
