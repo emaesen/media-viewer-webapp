@@ -21,6 +21,13 @@
         :options="options"
         @toggle-fullwidth="onToggleFullWidth"
       />
+      <div v-if="!embedPlayer">
+        <button class="action button"
+          @click.stop="embedPlayer = true"
+        >
+          embed player
+        </button>
+      </div>
       <div class="meta info">
         {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }}
       </div>
