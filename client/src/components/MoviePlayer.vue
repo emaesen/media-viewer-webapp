@@ -336,6 +336,16 @@ export default {
       this.player.playerEl.removeEventListener('mousemove', this.onMousemovePlayer)
       this.player.playerEl.removeEventListener('mouseup', this.onMouseupPlayer)
     }
+    if (this.videoEl) {
+      // stop any ongoing download(-attempt)s
+      // by removing any source references and calling load
+      const vEl = this.videoEl
+      vEl.removeAttribute("src")
+      while (vEl.firstChild) {
+        vEl.removeChild(vEl.firstChild);
+      }
+      vEl.load()
+    }
     logMessage("destroy movieplayer for: " + this.source.id)
   },
   methods: {
