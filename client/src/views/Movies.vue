@@ -160,7 +160,6 @@ export default {
       sortDateAsc: true,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
-      moviesFound: false,
       paginationOptions: {
         pageLimits: [5,10,20,40,80],
         ratings: ["0","0+","1+","2+","3+","4+","5"],
@@ -500,16 +499,6 @@ export default {
         this.filterQuery.level2 = ""
       }
       this.resetPage()
-    },
-    movies(newVal) {
-      if (this.moviesFound) {
-        this.intSecObsv.activeIDs = []
-        newVal.forEach(m => this.intSecObsv.activeIDs.push(m._id))
-        logMessage("Movie results changed - re-evaluating active IDs...")
-        logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
-      } else {
-        this.moviesFound = true
-      }
     },
     paginationState: {
       deep: true,
