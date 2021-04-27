@@ -19,22 +19,16 @@
         :type="source.type"
       />
     </video>
-    <div class="mp-loading" v-if="!state.canPlay">
+    <div class="mp-loading" v-if="!state.canPlay && !state.loadIssue">
       loading...
+    </div>
+    <div class="mp-issue-msg" v-if="state.loadIssue">
+      {{state.loadIssueMsg}}
       <button class="mp-reload-btn action button"
         @click.stop="onClickReloadButton"
       >
         reload
       </button>
-    </div>
-    <div class="mp-info-msg" v-if="state.stalled && !state.error">
-      {{state.stalledMsg}}
-    </div>
-    <div class="mp-info-msg" v-if="state.error">
-      {{state.errorMsg}}
-    </div>
-    <div class="mp-log-msg">
-      {{state.logMsg}}
     </div>
 
     <transition name="fade-down">
@@ -320,7 +314,6 @@ export default {
         isFullscreenSupported: null
       },
       state: {
-        stalled: false,
         canPlay: false,
         showCtrls: false,
         showSecondaryCtrls: true,
@@ -329,10 +322,8 @@ export default {
         isFullWidth: false,
         isFullscreen: false,
         isPlaying: false,
-        error: false,
-        stalledMsg: "",
-        errorMsg: "",
-        logMsg: "",
+        loadIssue: null,
+        loadIssueMsg: "",
       }
     }
   },
@@ -388,6 +379,7 @@ export default {
     },
     initVideo() {
       this.videoEl.addEventListener('stalled', this.onStalledVideo)
+      this.videoEl.addEventListener('waiting', this.onWaitingVideo)
       this.videoEl.addEventListener('canplay', this.onCanplayVideo)
       this.videoEl.addEventListener('progress', this.onProgressVideo)
       this.videoEl.addEventListener('durationchange', this.onDurationchangeVideo)
@@ -414,21 +406,23 @@ export default {
       })
     },
     onStalledVideo() {
-      this.state.stalled = true
+      this.state.loadIssue = "stalled"
       const nwStates = ["EMPTY", "IDLE", "LOADING", "NO_SOURCE"]
-      this.state.stalledMsg = "stalled... (NETWORK_" + nwStates[this.videoEl.networkState] + ")"
+      this.state.loadIssueMsg = "stalled... (NETWORK_" + nwStates[this.videoEl.networkState] + ")"
+    },
+    onWaitingVideo() {
+      this.state.loadIssue = "waiting"
+      this.state.loadIssueMsg = "waiting..."
     },
     onErrorVideo() {
-      this.state.stalled = false
-      this.state.error = true
+      this.state.loadIssue = "error"
       const errNames = ["ABORTED", "NETWORK", "DECODE", "SRC_NOT_SUPPORTED"]
-      this.state.errorMsg = "error... (MEDIA_ERR_" + errNames[this.videoEl.error.code] + ")"
+      this.state.loadIssueMsg = "error... (MEDIA_ERR_" + errNames[this.videoEl.error.code] + ")"
     },
     onCanplayVideo() {
       this.state.showCtrls = true
       this.state.canPlay = true
-      this.state.stalled = false
-      this.state.error = false
+      this.state.loadIssue = null
       // advance one second to show a video frame
       this.videoEl.currentTime = 1
       this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
@@ -440,8 +434,7 @@ export default {
       }
     },
     onProgressVideo() {
-      this.state.stalled = false
-      this.state.error = false
+      this.state.loadIssue = null
       let duration = this.videoEl.duration
       if (duration > 0) {
         let buffered = this.videoEl.buffered
@@ -513,8 +506,7 @@ export default {
     },
     reload() {
       this.videoEl.load()
-      this.state.stalled = false
-      this.state.error = false
+      this.state.loadIssue = null
     },
     onClickReloadButton() {
       this.reload()
@@ -707,7 +699,7 @@ export default {
   vertical-align: bottom;
 }
 
-.mp-info-msg,
+.mp-issue-msg,
 .mp-loading {
   position: absolute;
   bottom: 3em;
@@ -715,18 +707,11 @@ export default {
   color: #ffa04c;
   font-style: italic;
 }
-.mp-info-msg {
+.mp-issue-msg {
   bottom: 2em;
   color: #ff1313;
 }
-.mp-log-msg {
-  position: absolute;
-  bottom: -3.5em;
-  left: 0;
-  font-size: 80%;
-  font-style: italic;
-  color: #ffa04c77;
-}
+
 .mp-ctrls-bottom {
   position: absolute;
   display: flex;
