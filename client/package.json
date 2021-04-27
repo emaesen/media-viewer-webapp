@@ -10,6 +10,7 @@
     "dev": "npm run serve:dev",
     "build": "npm run set:env && npm run build:dist",
     "serve:prod": "serve -s dist -p 7777",
+    "serve:prod2": "npx http-server ./dist -p 7777",
     "prod": "npm run build && npm run serve:prod",
     "start": "npm run serve:prod",
     "set:env": "node set-build-env.js"
@@ -23,6 +24,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.5.0",
     "@fortawesome/vue-fontawesome": "^0.1.2",
     "feathers-vuex": "1.6.2",
+    "http-server": "^0.12.3",
     "register-service-worker": "^1.0.0",
     "serve": "^11.3.2",
     "socket.io-client": "2.1.1",
