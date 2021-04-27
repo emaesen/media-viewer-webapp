@@ -118,6 +118,9 @@
             </label>
             <span v-if="pageNr==='...'" class="spacer">...</span>
           </div>
+          <div class="filter" v-if="pageNrs.length > 7">
+            <input class="input-page-number" type="number" min="1" :max="pageNrs.length" v-model="paginationState.nr"/>
+          </div>
         </div>
       </div>
     </div>
@@ -161,7 +164,7 @@ export default {
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       paginationOptions: {
-        pageLimits: [5,10,20,40,80],
+        pageLimits: [3,6,9,18,36,45,90],
         ratings: ["0","0+","1+","2+","3+","4+","5"],
         level1s: process.env.VUE_APP_LEVELS1.split(','),
         level2s: process.env.VUE_APP_LEVELS2.split(','),
@@ -594,6 +597,11 @@ h2.movies {
 }
 .pagination-info {
   margin-right: 1em;
+}
+.input-page-number {
+  margin-left: 2em;
+  width: 2.7em;
+  padding: 5px
 }
 
 @media all and (max-width: 400px) {
