@@ -43,7 +43,9 @@
         <button v-if="!loading" :disabled="!isValid" class="action button">
           <font-awesome-icon icon="sign-in-alt"/>Login
         </button>
-        <input v-if="loading" class="button loading" type="submit" value="in progress..." disabled>
+        <button v-if="loading" class="action button loading" disabled>
+          in progress..
+        </button>
         <span class="register">-or- &nbsp;
           <router-link to="/register">
             <font-awesome-icon icon="user-plus"/>Register
