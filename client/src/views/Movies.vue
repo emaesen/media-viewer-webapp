@@ -118,7 +118,7 @@
             </label>
             <span v-if="pageNr==='...'" class="spacer">...</span>
           </div>
-          <div class="filter" v-if="pageNrs.length > 7">
+          <div class="filter" v-if="showPageNrInput">
             <input class="input-page-number" type="number" min="1" :max="pageNrs.length" v-model="paginationState.nr"/>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default {
         level2s: process.env.VUE_APP_LEVELS2.split(','),
       },
       paginationState: {
-        limit: 10,
+        limit: 9,
         skip: 0,
         nr: 1,
         rating: "0+",
@@ -416,6 +416,9 @@ export default {
     nrOfPages() {
       return Math.ceil(this.totalNrOfMovies / this.paginationState.limit)
     },
+    showPageNrInput() {
+      return this.nrOfPages > 0
+    },
     pageNrs() {
       // create an array of numbers 1 to nrOfPages, centered around the current page
       const nrOfPages = this.nrOfPages
@@ -598,7 +601,7 @@ h2.movies {
 .pagination-info {
   margin-right: 1em;
 }
-.input-page-number {
+input[type="number"].input-page-number {
   margin-left: 2em;
   width: 2.7em;
   padding: 5px
