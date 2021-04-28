@@ -54,6 +54,7 @@
       </div>
       <div v-if="authError" class="auth-error">{{ authError }}</div>
     </fieldset>
+    <img class="feathers-icon" :src="feathersServerIcon"/>
   </form>
 </template>
 
@@ -76,7 +77,14 @@ export default {
     isValid() {
       return this.validUsername() && this.validPassword();
     },
-    ...mapState("auth", { loading: "isAuthenticatePending" })
+    ...mapState("auth", { loading: "isAuthenticatePending" }),
+    feathersServerIcon() {
+      //display the feathers icon as indication that the server is up and running
+      const loc = window.location
+      const feathersServer = loc.protocol + "//" + loc.hostname + ":3333"
+      console.log("this:",this)
+      return feathersServer + "/favicon.ico"
+    }
   },
   methods: {
     ...mapActions("auth", ["authenticate"]),
@@ -160,5 +168,9 @@ ul {
 }
 label {
   display: flex;
+}
+.feathers-icon {
+  vertical-align: top;
+  margin: 10px 0 0 10px;
 }
 </style>
