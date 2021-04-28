@@ -9,8 +9,7 @@
     "lint": "vue-cli-service lint",
     "dev": "npm run serve:dev",
     "build": "npm run set:env && npm run build:dist",
-    "serve:prod": "serve -s dist -p 7777",
-    "serve:prod2": "npx http-server ./dist -p 7777",
+    "serve:prod": "npx http-server ./dist -p 7777",
     "prod": "npm run build && npm run serve:prod",
     "start": "npm run serve:prod",
     "set:env": "node set-build-env.js"
