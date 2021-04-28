@@ -198,7 +198,7 @@ input,
 textarea,
 select,
 button {
-  background-color: rgba(206, 192, 161, 0.54);
+  background-color: rgba(231, 231, 231, 0.87);
   color: #0e0d0f;
   font-weight: 400;
   border: 1px solid #333;
@@ -218,7 +218,7 @@ select:focus {
   outline-color: #888;
   outline-width: 1px;
   color: #050505;
-  background-color: rgba(206, 192, 161, 0.81);
+  background-color: rgba(207, 206, 204, 0.938);
 }
 button:focus {
   outline: none;
