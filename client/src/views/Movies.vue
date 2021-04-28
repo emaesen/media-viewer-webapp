@@ -163,6 +163,7 @@ export default {
       sortDateAsc: true,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
+      isInit: true,
       paginationOptions: {
         pageLimits: [3,6,9,18,36,45,90],
         ratings: ["0","0+","1+","2+","3+","4+","5"],
@@ -211,6 +212,7 @@ export default {
       if (!p.pageLimits) {
         // new version - use
         this.paginationState = p
+        logMessage("Using stored pagination state ", p);
       } else {
         // old version - replace
         p = this.paginationState
@@ -219,6 +221,9 @@ export default {
       if (p.rating !== op.rating || p.level1 || p.level2) {
         this.showQueryControls = true
       }
+      this.$nextTick(() => {
+        this.isInit = false
+      })
     },
     handleError(e) {
       console.error("Movies Error: ", e);
@@ -417,7 +422,7 @@ export default {
       return Math.ceil(this.totalNrOfMovies / this.paginationState.limit)
     },
     showPageNrInput() {
-      return this.nrOfPages > 0
+      return this.nrOfPages > 5
     },
     pageNrs() {
       // create an array of numbers 1 to nrOfPages, centered around the current page
@@ -467,15 +472,19 @@ export default {
   },
   watch: {
     pageNr(newVal, oldVal) {
-      logMessage("page Nr changed from " + oldVal + " to " + newVal)
-      // scroll to top
-      window.scrollTo({top:0, left:0, behavior:'smooth'})
-      this.paginationState.skip = this.paginationState.limit * (this.paginationState.nr - 1)
+      if (!this.isInit) {
+        logMessage("page Nr changed from " + oldVal + " to " + newVal)
+        // scroll to top
+        window.scrollTo({top:0, left:0, behavior:'smooth'})
+        this.paginationState.skip = this.paginationState.limit * (this.paginationState.nr - 1)
+      }
     },
     pageLimit(newVal, oldVal) {
-      logMessage("page Limit changed from " + oldVal + " to " + newVal)
-      this.paginationState.nr = 1 + Math.floor((this.paginationState.nr - 1)*(oldVal/newVal))
-      this.paginationState.skip = (this.paginationState.nr - 1) * newVal
+      if (!this.isInit) {
+        logMessage("page Limit changed from " + oldVal + " to " + newVal)
+        this.paginationState.nr = 1 + Math.floor((this.paginationState.nr - 1)*(oldVal/newVal))
+        this.paginationState.skip = (this.paginationState.nr - 1) * newVal
+      }
     },
     pageRating(newVal, oldVal) {
       logMessage("page Rating changed from " + oldVal + " to " + newVal)
