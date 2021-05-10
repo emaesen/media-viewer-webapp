@@ -351,20 +351,26 @@ input[type="checkbox"] {
   visibility: hidden;
   width: 1em;
 }
+
+span.clear::before,
+input[type="radio"] + label::before,
+input[type="checkbox"] + label::before {
+  content: "✓ ";
+  opacity: .18;
+}
 span.clear.checked::before,
 input[type="radio"]:checked + label::before,
 input[type="checkbox"]:checked + label::before {
   content: "✓ ";
-  margin-left: -1.2em;
   color: #29dc58;
+  opacity: 1;
 }
 .action.button.clear {
   margin-left: 0.9em;
 }
 label.action.button {
   vertical-align: initial;
-  margin-left: -0.5em;
-  margin-right: 0.3em;
+  margin-left: -0.9em;
   min-width: 1.3em;
   text-align: center;
 }
