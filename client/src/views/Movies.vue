@@ -160,7 +160,7 @@ export default {
       filter: { ratings: [], level1s: [], level2s: [] },
       showQueryControls: false,
       sortAsc: true,
-      sortDateAsc: true,
+      sortDateAsc: false,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       isInit: true,
