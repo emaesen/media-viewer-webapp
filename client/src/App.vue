@@ -365,6 +365,8 @@ label.action.button {
   vertical-align: initial;
   margin-left: -0.5em;
   margin-right: 0.3em;
+  min-width: 1.3em;
+  text-align: center;
 }
 label {
   margin-left: -0.2em;
