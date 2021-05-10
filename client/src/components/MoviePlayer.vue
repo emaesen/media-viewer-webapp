@@ -468,6 +468,8 @@ export default {
       this.player.pos.current = 0
       this.videoEl.currentTime = 0
       this.resetSpeed()
+      if (this.state.isFullWidth) this.toggleFullWidth()
+      if (this.state.isFullscreen) this.toggleFullScreen()
     },
     showControls() {
       if (this.tmp.ctrlsDisplayTimer) {
@@ -576,11 +578,17 @@ export default {
       }
     },
     onClickFullWidthButton() {
+      this.toggleFullWidth()
+    },
+    toggleFullWidth() {
       this.$emit('toggle-fullwidth')
       this.state.isFullWidth = !this.state.isFullWidth
       this.setPlayerDimensions()
     },
     onClickFullscreenButton() {
+      this.toggleFullScreen()
+    },
+    toggleFullScreen() {
       const elem = this.player.playerEl
       const isFullScreen = !!(document.fullscreenElement || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement)
       if (!isFullScreen) {
