@@ -410,10 +410,10 @@ export default {
       p.pos.width = p.playbackSliderEl.getBoundingClientRect().width - p.pos.innerWidth
     },
     setPlayerDimensions() {
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.setPlaybackDimensions()
         this.setVolumeDimensions()
-      })
+      }, 500)
     },
     onStalledVideo() {
       this.state.loadIssue = "stalled"
@@ -458,7 +458,7 @@ export default {
     },
     onTimeupdateVideo() {
       const fraction = this.videoEl.currentTime / this.videoEl.duration
-      if (this.player.pos.width === 0) this.setPlaybackDimensions()
+      if (this.player.pos.width === 0 || this.videoEl.currentTime < 10) this.setPlaybackDimensions()
       this.player.pos.current = (this.player.pos.width * fraction).toFixed(3)
       this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
       this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
@@ -507,6 +507,7 @@ export default {
         } else {
           this.videoEl.pause()
         }
+        this.setPlaybackDimensions()
       }
     },
     play() {
