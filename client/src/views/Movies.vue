@@ -119,7 +119,12 @@
             <span v-if="pageNr==='...'" class="spacer">...</span>
           </div>
           <div class="filter" v-if="showPageNrInput">
-            <input class="input-page-number" type="number" min="1" :max="pageNrs.length" v-model="paginationState.nr"/>
+            <input class="input-page-number" type="number"
+              min="1"
+              :max="nrOfPages"
+              :step="Math.floor(nrOfPages / 10)"
+              v-model="paginationState.nr"
+            />
           </div>
         </div>
       </div>
@@ -422,7 +427,7 @@ export default {
       return Math.ceil(this.totalNrOfMovies / this.paginationState.limit)
     },
     showPageNrInput() {
-      return this.nrOfPages > 5
+      return this.nrOfPages > 10
     },
     pageNrs() {
       // create an array of numbers 1 to nrOfPages, centered around the current page
