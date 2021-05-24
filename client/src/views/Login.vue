@@ -53,6 +53,7 @@
         </span>
       </div>
       <div v-if="authError" class="auth-error">{{ authError }}</div>
+      <div v-if="retryMsg" class="auth-retry">{{ retryMsg }}</div>
     </fieldset>
     <img class="feathers-icon" :src="feathersServerIcon"/>
   </form>
@@ -70,7 +71,11 @@ export default {
         username: "",
         password: ""
       },
-      authError: ""
+      authError: "",
+      retryCntr: 0,
+      retryDelay: 10,
+      maxRetry: 2,
+      retryCountdown: 0,
     };
   },
   computed: {
@@ -84,12 +89,16 @@ export default {
       const feathersServer = loc.protocol + "//" + loc.hostname + ":3333"
       console.log("this:",this)
       return feathersServer + "/favicon.ico"
-    }
+    },
+    retryMsg() {
+      return this.retryCountdown > 0 ? "Retry in " + this.retryCountdown + " seconds (" + this.retryCntr + ")": ""
+    },
   },
   methods: {
     ...mapActions("auth", ["authenticate"]),
     login(evt) {
       this.clearError()
+      this.clearRetry()
       if (this.validForm()) {
         //submit form
         console.log("submitting login form");
@@ -104,12 +113,24 @@ export default {
           .catch(e => {
             console.error("Authentication error: ", e);
             this.authError = e.message;
+            this.retryLogin()
           });
       }
       evt.preventDefault();
     },
+    retryLogin() {
+      if (this.retryCntr<this.maxRetry) {
+        this.retryCountdown = this.retryDelay
+        this.cntDwnIntv = setInterval(()=>this.retryCountdown--, 1000)
+        setTimeout(this.login, this.retryCountdown*1000) 
+        this.retryCntr++
+      }
+    },
+    clearRetry() {
+      clearInterval(this.cntDwnIntv)
+    },
     clearError() {
-      this.authError = "";
+      this.authError = ""
     },
     validForm() {
       // form has html5 validation
@@ -154,8 +175,13 @@ input:valid + span + span.validation {
   font-size: 0.85rem;
   color: #e67d09;
 }
+.auth-retry,
 .auth-error {
   margin-left: 0.2em;
+}
+.auth-retry {
+  font-size: 0.85rem;
+  font-style: italic;
 }
 ul {
   margin: 0 -1em 1em 0;
