@@ -116,7 +116,7 @@ export default {
             this.retryLogin()
           });
       }
-      evt.preventDefault();
+      if(evt) evt.preventDefault();
     },
     retryLogin() {
       if (this.retryCntr<this.maxRetry) {
