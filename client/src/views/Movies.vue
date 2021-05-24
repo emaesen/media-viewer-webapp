@@ -124,6 +124,7 @@
               :max="nrOfPages"
               :step="Math.floor(nrOfPages / 10)"
               v-model="paginationState.nr"
+              @change="ensurePaginationStateNrIsNumber"
             />
           </div>
         </div>
@@ -335,6 +336,9 @@ export default {
     resetPage() {
       this.paginationState.skip = 0
       this.paginationState.nr = 1
+    },
+    ensurePaginationStateNrIsNumber() {
+      this.paginationState.nr = 1 * this.paginationState.nr
     }
   },
   computed: {
@@ -433,7 +437,7 @@ export default {
       // create an array of numbers 1 to nrOfPages, centered around the current page
       const nrOfPages = this.nrOfPages
       const displayedPageRange = 2
-      const currentPageNr = this.paginationState.nr
+      const currentPageNr = 1 * this.paginationState.nr
       let pagesArray = Array(nrOfPages).join().split(',').map((v,i) => i+1)
       pagesArray = pagesArray.filter(nr => {
         return nrOfPages <= 2 * displayedPageRange + 3 || nr === 1 || nr === nrOfPages || (nr >= currentPageNr - displayedPageRange && nr <= currentPageNr + displayedPageRange)
@@ -481,7 +485,7 @@ export default {
         logMessage("page Nr changed from " + oldVal + " to " + newVal)
         // scroll to top
         window.scrollTo({top:0, left:0, behavior:'smooth'})
-        this.paginationState.skip = this.paginationState.limit * (this.paginationState.nr - 1)
+        this.paginationState.skip = this.paginationState.limit * (1 * this.paginationState.nr - 1)
       }
     },
     pageLimit(newVal, oldVal) {
