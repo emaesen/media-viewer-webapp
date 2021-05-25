@@ -529,6 +529,7 @@ export default {
       this.togglePlay()
     },
     onClickMovie(evt) {
+      this.showControls()
       const vH3 = this.videoEl.clientHeight / 3
       const vW3 = this.videoEl.clientWidth / 3
       const eX = evt.offsetX
@@ -553,6 +554,7 @@ export default {
           this.onClickSkipButton(-10)
         }
       }
+      this.hideControls(3000)
     },
     onMousedownVolumeSlider() {
       this.setVolumeDimensions()
@@ -690,7 +692,6 @@ export default {
       this.player.skipTimeText = null
     },
     onKeydown(evt) {
-      console.log("onKeydown ", {evt})
       if (evt.isComposing || evt.keyCode === 229) {
         return
       }
