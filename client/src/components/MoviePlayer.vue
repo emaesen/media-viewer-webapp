@@ -6,6 +6,7 @@
     @mouseenter="onMouseenterVideo"
     @mouseleave="onMouseleaveVideo"
     @click.stop="onClickMovie"
+    @keydown="onKeydown"
   >
     <video
       :id="source.id+'-video'"
@@ -26,7 +27,7 @@
       {{state.loadIssueMsg}}
       <button class="mp-reload-btn action button"
         @click.stop="onClickReloadButton"
-      >
+      > 
         reload
       </button>
     </div>
@@ -688,6 +689,49 @@ export default {
     onMouseleaveSkipButton() {
       this.player.skipTimeText = null
     },
+    onKeydown(evt) {
+      console.log("onKeydown ", {evt})
+      if (evt.isComposing || evt.keyCode === 229) {
+        return
+      }
+      if (!evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
+        if (evt.key===" ") {
+          this.togglePlay()
+        }
+        if (evt.key==="ArrowRight") {
+          this.onClickSkipButton(10)
+        }
+        if (evt.key==="ArrowLeft") {
+          this.onClickSkipButton(-10)
+        }
+        if (evt.key==="-" || evt.key==="[") {
+          this.onClickReduceSpeedButton()
+        }
+        if (evt.key==="]") {
+          this.onClickIncreaseSpeedButton()
+        }
+        if (evt.key==="=") {
+          this.resetSpeed()
+        }
+      }
+      if (evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
+        if (evt.key==="ArrowRight") {
+          this.onClickSkipButton(30)
+        }
+        if (evt.key==="ArrowLeft") {
+          this.onClickSkipButton(-30)
+        }
+      }
+      if (!evt.ctrlKey && !evt.altKey && evt.shiftKey) {
+        if (evt.key==="+") {
+          this.onClickIncreaseSpeedButton()
+        }
+      }
+      if (evt.key!=="Escape") {
+        evt.preventDefault()
+        evt.stopPropagation()
+      }
+    }
   },
   computed: {
     playbackRate() {
