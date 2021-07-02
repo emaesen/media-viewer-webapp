@@ -167,6 +167,12 @@ export default {
 .hide {
   float: right;
   cursor: pointer;
+  svg {
+    color: rgba(151, 23, 0, 0.699);
+  }
+  svg:hover {
+    color: rgb(253, 38, 0);
+  }
 }
 .path,
 .title {
