@@ -281,7 +281,7 @@ export default {
       volume: {
         sliderEl: null,
         levelEl: null,
-        muted: true,
+        muted: false,
         percent: 0,
         hasMousedown: false,
         pos: {
@@ -383,10 +383,12 @@ export default {
       const sliderEl = this.$refs && this.$refs[this.source.id+'-vol-slider']
       const levelEl = this.$refs && this.$refs[this.source.id+'-vol-level']
       const vol = this.options.volume || 0
-      this.setVolume(vol)
       this.volume.sliderEl = sliderEl
       this.volume.levelEl = levelEl
       this.setVolumeDimensions()
+      setTimeout(() => {
+        this.setVolume(vol)
+      },500)
     },
     initVideo() {
       this.videoEl.addEventListener('stalled', this.onStalledVideo)
@@ -576,6 +578,7 @@ export default {
     },
     setVolume(val) {
       if (this.videoEl) {
+        if (this.volume.pos.width==0) this.setVolumeDimensions()
         this.volume.pos.current = val * this.volume.pos.width
         this.volume.percent = val * 100
         this.videoEl.volume = val
