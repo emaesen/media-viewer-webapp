@@ -764,6 +764,7 @@ export default {
   width: 100%;
   height: 100%;
   vertical-align: bottom;
+  max-height: 100vh;
 }
 
 .mp-issue-msg,
