@@ -101,6 +101,7 @@
           :movie="movie"
           @edit-movie="editMovie"
           @toggle-fullwidth="onToggleFullWidth"
+          @hide-movie="hideMovie"
           class="cell-content"
         />
       </div>
@@ -190,6 +191,9 @@ export default {
         },
         level1: "",
         level2: "",
+        hidden: {
+          $ne: true
+        },
       },
       intSecObsv: {
         activeIDs: [],
@@ -248,6 +252,22 @@ export default {
         .update()
         .then(movie => {
           logMessage("edit succesful", movie);
+          this.setFilterData()
+        })
+        .catch(err => {
+          this.handleError(err);
+        });
+    },
+    hideMovie(props) {
+      logMessage("Hide movie ", props);
+      // save the modifictions
+      props.movie.hidden = true;
+      // prevent ui-specific properties from cluttering the DB
+      delete props.movie.ui
+      props.movie
+        .update()
+        .then(movie => {
+          logMessage("hide succesful", movie);
           this.setFilterData()
         })
         .catch(err => {

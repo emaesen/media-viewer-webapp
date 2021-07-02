@@ -2,6 +2,9 @@
   <div :class="['movie-container', {'full-width': isFullWidth}]">
 
     <div class="sub-container">
+      <div class="hide">
+        <font-awesome-icon icon="eye-slash" @click="onClickHideMovie"/>
+      </div>
       <div class="rating">
         <Rating
           :rating="movieRating"
@@ -118,6 +121,9 @@ export default {
       if (this.isFullWidth) {
         this.$el.scrollIntoView({behavior: "smooth"})
       }
+    },
+    onClickHideMovie() {
+      this.$emit('hide-movie', {movie:this.movie})
     }
   },
   watch: {
@@ -157,6 +163,10 @@ export default {
     display: none;
     height: 0;
   }
+}
+.hide {
+  float: right;
+  cursor: pointer;
 }
 .path,
 .title {
