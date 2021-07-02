@@ -6,6 +6,8 @@
         @click="setRating(i)"
         @mouseover="showRating(i)"
         @mouseout="resetRating()"
+        class="rating-star"
+        :class="[i > rating ? 'open': 'closed']"
       />
     </span>
   </div>
@@ -45,3 +47,19 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.rating-star {
+  cursor: pointer;
+}
+.rating-star.closed {
+  color: rgb(178, 157, 228);
+}
+.rating-star.open {
+  opacity: .4;
+}
+.rating:hover .rating-star.open {
+  opacity: .8;
+  color: rgb(157, 228, 184);
+}
+</style>
