@@ -1,5 +1,5 @@
 <template>
-  <div class="rating">
+  <div class="rating-bar">
     <span v-for="i in maxRating" :key="i">
       <font-awesome-icon 
         :icon="[i > displayRating ? 'far': 'fas', 'star']"
@@ -49,6 +49,9 @@ export default {
 </script>
 
 <style scoped>
+.rating-bar {
+  display: inline-block;
+}
 .rating-star {
   cursor: pointer;
 }
@@ -58,7 +61,7 @@ export default {
 .rating-star.open {
   opacity: .4;
 }
-.rating:hover .rating-star.open {
+.rating-bar:hover .rating-star.open {
   opacity: .8;
   color: rgb(157, 228, 184);
 }
