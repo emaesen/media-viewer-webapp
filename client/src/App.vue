@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header id="header">
-      <img src="/img/icons/favicon-32x32.png" class="icon"/>
+      <a href="/"><img src="/img/icons/favicon-32x32.png" class="icon"/></a>
       <div class="header">Media Viewer</div>
     </header>
     <div id="auth">
