@@ -68,7 +68,7 @@ export default {
       embedPlayer: false,
       options: {
         autoplay:false,
-        volume:0,
+        volume:.69,
       }
     }
   },
