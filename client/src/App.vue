@@ -369,7 +369,6 @@ input[type="checkbox"]:checked + label::before {
   margin-left: 0.9em;
 }
 label.action.button {
-  vertical-align: initial;
   margin-left: -0.9em;
   min-width: 1.3em;
   text-align: center;
