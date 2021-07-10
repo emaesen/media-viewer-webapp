@@ -11,7 +11,7 @@
           Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies)</span>
         </span>
 
-        <button @click="shuffle" class="action button">
+        <button v-if="sortType==='random'" @click="shuffle" class="action button">
           shuffle
           <font-awesome-icon icon="random" class="flush-right"/>
         </button>
@@ -23,6 +23,18 @@
       </div>
 
       <div v-if="showQueryControls">
+        <div class="filter-group">
+          <span class="filter-type">Sort by:</span>
+          <div class="filter-set">
+            <div class="filter" v-for="type in sortTypes" :key="type">
+              <input type="radio" :id="'type-' + type" :value="type" v-model="sortType" >
+              <label :for="'type-' + type" class="action button">
+                {{ type }}
+              </label>
+            </div>
+          </div>
+        </div>
+
         <div class="filter-group">
           <span class="filter-type">Items per page:</span>
           <div class="filter-set">
@@ -163,7 +175,7 @@ export default {
   },
   data() {
     return {
-      types: ["random", "rating", "date created", "date updated"],
+      sortTypes: ["random", "rating", "date created", "date updated"],
       sortType: "random",
       sortDateDefault: "created",
       ratings: [],
@@ -399,7 +411,7 @@ export default {
       // We can use query to set pagination options
       // https://docs.feathersjs.com/api/databases/querying.html
       //
-      let query = {};
+      let query = {}
       let sort = {}
       switch (this.sortType) {
         case "random":
