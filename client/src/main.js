@@ -19,6 +19,7 @@ import {
   faPause, // pause
   faPlay, // start, play
   faPlusSquare, // plus sign in square
+  faRandom, // random/shuffle
   faSignInAlt, // log/sign in
   faSignOutAlt, // log/sign out
   faSortAmountDown, // sort down
@@ -61,6 +62,7 @@ library.add(
   faPause,
   faPlay,
   faPlusSquare,
+  faRandom,
   faSignInAlt,
   faSignOutAlt,
   faSortAmountDown,

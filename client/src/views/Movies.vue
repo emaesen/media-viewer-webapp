@@ -11,6 +11,11 @@
           Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies)</span>
         </span>
 
+        <button @click="shuffle" class="action button">
+          shuffle
+          <font-awesome-icon icon="random" class="flush-right"/>
+        </button>
+
         <button @click="showQueryControls = !showQueryControls" class="action button">
           {{ showQueryControls? 'hide' : 'show' }} query filters
           <font-awesome-icon icon="filter" class="flush-right"/>
@@ -158,8 +163,8 @@ export default {
   },
   data() {
     return {
-      types: ["rating", "date created", "date updated"],
-      sortType: "date created",
+      types: ["random", "rating", "date created", "date updated"],
+      sortType: "random",
       sortDateDefault: "created",
       ratings: [],
       level1s: [],
@@ -292,6 +297,14 @@ export default {
       let dir = this.sortAsc ? 1 : -1;
       let result;
       switch (this.sortType) {
+        case "random":
+          result =
+            b.rnr < a.rnr
+              ? 1 * dir
+              : b.rnr > a.rnr
+              ? -1 * dir
+              : 0;
+          break;
         case "rating":
           result =
             b.rating < a.rating
@@ -359,6 +372,12 @@ export default {
     },
     ensurePaginationStateNrIsNumber() {
       this.paginationState.nr = 1 * this.paginationState.nr
+    },
+    shuffle() {
+      this.moviesUnfiltered.forEach( movie => {
+        movie.rnr = Math.round(Math.random()*1e9)
+        movie.update()
+      })
     }
   },
   computed: {
@@ -383,6 +402,9 @@ export default {
       let query = {};
       let sort = {}
       switch (this.sortType) {
+        case "random":
+          sort.rnr = this.sortAsc ? 1 : -1
+          break;
         case "rating":
           sort.rating = this.sortAsc ? 1 : -1
           break;
