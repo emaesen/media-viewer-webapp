@@ -11,11 +11,6 @@
           Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies)</span>
         </span>
 
-        <button v-if="sortType==='random'" @click="shuffle" class="action button">
-          shuffle
-          <font-awesome-icon icon="random" class="flush-right"/>
-        </button>
-
         <button @click="showQueryControls = !showQueryControls" class="action button">
           {{ showQueryControls? 'hide' : 'show' }} query filters
           <font-awesome-icon icon="filter" class="flush-right"/>
@@ -33,6 +28,25 @@
               </label>
             </div>
           </div>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-type">Sort direction:</span>
+          <div class="filter-set">
+            <div class="filter" v-for="sortUp in [true,false]" :key="sortUp">
+              <input type="radio" :id="'sortUp-' + sortUp" :value="sortUp" v-model="sortAsc" >
+              <label :for="'sortUp-' + sortUp" class="action button">
+                <font-awesome-icon :icon="sortUp? 'sort-amount-up' : 'sort-amount-down'" class="flush-right"/>
+              </label>
+            </div>
+          </div>
+          <span v-if="sortType==='random'" class="shuffle">
+            ⇝
+            <button @click="shuffle" class="action button shuffle">
+              shuffle
+              <font-awesome-icon icon="random" class="flush-right"/>
+            </button>
+          </span>
         </div>
 
         <div class="filter-group">
@@ -389,6 +403,9 @@ export default {
         movie.rnr = Math.round(Math.random()*1e9)
         movie.update()
       })
+    },
+    toggleSort() {
+      this.sortAsc = !this.sortAsc
     }
   },
   computed: {
@@ -614,6 +631,12 @@ h2.movies {
   font-weight: 400;
   color: #948972;
   margin-left: 0.2em;
+}
+span.shuffle{
+  margin-left:2em;
+}
+.action.button.shuffle {
+  margin-left:1em;
 }
 .grid {
   position: relative;
