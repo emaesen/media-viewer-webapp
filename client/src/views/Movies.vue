@@ -184,7 +184,6 @@ export default {
       filter: { ratings: [], level1s: [], level2s: [] },
       showQueryControls: false,
       sortAsc: true,
-      sortDateAsc: false,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       isInit: true,
@@ -302,7 +301,7 @@ export default {
         type === "updated"
           ? new Date(b.updatedAt) - new Date(a.updatedAt)
           : new Date(b.createdAt) - new Date(a.createdAt);
-      return this.sortDateAsc ? -dateDiff : dateDiff;
+      return this.sortAsc ? -dateDiff : dateDiff;
     },
     uiSort(a, b) {
       // TODO: implement sort selector
@@ -413,18 +412,19 @@ export default {
       //
       let query = {}
       let sort = {}
+      const sortInd = this.sortAsc ? 1 : -1
       switch (this.sortType) {
         case "random":
-          sort.rnr = this.sortAsc ? 1 : -1
+          sort.rnr = sortInd
           break;
         case "rating":
-          sort.rating = this.sortAsc ? 1 : -1
+          sort.rating = sortInd
           break;
         case "date created":
-          sort.createdAt = this.sortDateAsc ? 1 : -1
+          sort.createdAt = sortInd
           break;
         case "date updated":
-          sort.updatedAt = this.sortDateAsc ? 1 : -1
+          sort.updatedAt = sortInd
           break;
       }
       query.$sort = sort
