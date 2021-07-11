@@ -399,7 +399,10 @@ export default {
       this.paginationState.nr = 1 * this.paginationState.nr
     },
     shuffle() {
-      this.moviesUnfiltered.forEach( movie => {
+      const allMovies = this.findMoviesInStore({
+            query: {}
+          }).data
+      allMovies.forEach( movie => {
         movie.rnr = Math.round(Math.random()*1e9)
         movie.update()
       })
