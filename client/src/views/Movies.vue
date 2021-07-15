@@ -17,7 +17,7 @@
         </button>
         
         <button @click="showDeleteButtons = !showDeleteButtons" class="action button">
-          {{ showDeleteButtons? 'hide' : 'show' }} delete buttons
+          {{ showDeleteButtons? 'disable' : 'enable' }} hide buttons
           <font-awesome-icon icon="eye-slash" class="flush-right"/>
         </button>
       </div>
@@ -138,6 +138,7 @@
           @edit-movie="editMovie"
           @toggle-fullwidth="onToggleFullWidth"
           @hide-movie="hideMovie"
+          @unhide-movie="unhideMovie"
           class="cell-content"
           :showDeleteButton="showDeleteButtons"
         />
@@ -195,7 +196,7 @@ export default {
   },
   data() {
     return {
-      sortTypes: ["random", "rating", "date created", "date updated"],
+      sortTypes: ["random", "rating", "date created", "date updated", "hidden"],
       sortType: "random",
       sortDateDefault: "created",
       ratings: [],
@@ -311,6 +312,22 @@ export default {
           this.handleError(err);
         });
     },
+    unhideMovie(props) {
+      logMessage("Unhide movie ", props);
+      // save the modifictions
+      props.movie.hidden = false;
+      // prevent ui-specific properties from cluttering the DB
+      delete props.movie.ui
+      props.movie
+        .update()
+        .then(movie => {
+          logMessage("unhide succesful", movie);
+          this.setFilterData()
+        })
+        .catch(err => {
+          this.handleError(err);
+        });
+    },
     onToggleFullWidth() {
       this.hasFullWidthMovie = !this.hasFullWidthMovie
     },
@@ -351,6 +368,11 @@ export default {
         case "date updated":
           result = this.sortByDate(a, b, "updated");
           break;
+        case "hidden":
+          result = 
+            b.hidden === true
+              ? 1 * dir
+              : -1 * dir;
       }
       return result;
     },
@@ -453,6 +475,8 @@ export default {
         case "date updated":
           sort.updatedAt = sortInd
           break;
+        case "hidden":
+          sort.hidden = sortInd
       }
       query.$sort = sort
       query.$limit = this.paginationState.limit
@@ -610,6 +634,17 @@ export default {
       handler: function(newVal) {
         logMessage("paginationState changed to ", newVal)
         persistPaginationState(newVal)
+      }
+    },
+    sortType(newVal) {
+      if (newVal === "hidden") {
+        this.filterQuery.hidden = {
+          $eq: true
+        }
+      } else {
+        this.filterQuery.hidden =  {
+          $ne: true
+        }
       }
     }
   }

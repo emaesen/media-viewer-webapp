@@ -2,8 +2,11 @@
   <div :class="['movie-container', {'full-width': isFullWidth}]">
 
     <div class="sub-container">
-      <div class="hide" v-if="showDeleteButton">
+      <div class="hide" v-if="showDeleteButton && !movie.hidden">
         <font-awesome-icon icon="eye-slash" @click="onClickHideMovie"/>
+      </div>
+      <div class="unhide" v-if="movie.hidden">
+        <font-awesome-icon icon="eye" @click="onClickUnhideMovie"/>
       </div>
       <div class="rating">
         <Rating
@@ -124,6 +127,9 @@ export default {
     },
     onClickHideMovie() {
       this.$emit('hide-movie', {movie:this.movie})
+    },
+    onClickUnhideMovie() {
+      this.$emit('unhide-movie', {movie:this.movie})
     }
   },
   watch: {
@@ -164,6 +170,7 @@ export default {
     height: 0;
   }
 }
+.unhide,
 .hide {
   float: right;
   cursor: pointer;
@@ -172,6 +179,14 @@ export default {
   }
   svg:hover {
     color: rgb(253, 38, 0);
+  }
+}
+.unhide {
+  svg {
+    color: rgba(111, 151, 0, 0.699);
+  }
+  svg:hover {
+    color: rgb(122, 253, 0);
   }
 }
 .path,

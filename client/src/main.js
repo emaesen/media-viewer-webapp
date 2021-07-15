@@ -5,6 +5,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   // these use default "fas" prefix
+  faEye, // show
   faEyeSlash, // hide
   faCheck, // check
   faCompress, // compress - box corners
@@ -48,6 +49,7 @@ import store from "./store";
 //import "./registerServiceWorker";
 
 library.add(
+  faEye,
   faEyeSlash,
   faCheck,
   faCompress,
