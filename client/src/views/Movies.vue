@@ -15,6 +15,11 @@
           {{ showQueryControls? 'hide' : 'show' }} query filters
           <font-awesome-icon icon="filter" class="flush-right"/>
         </button>
+        
+        <button @click="showDeleteButtons = !showDeleteButtons" class="action button">
+          {{ showDeleteButtons? 'hide' : 'show' }} delete buttons
+          <font-awesome-icon icon="eye-slash" class="flush-right"/>
+        </button>
       </div>
 
       <div v-if="showQueryControls">
@@ -134,6 +139,7 @@
           @toggle-fullwidth="onToggleFullWidth"
           @hide-movie="hideMovie"
           class="cell-content"
+          :showDeleteButton="showDeleteButtons"
         />
       </div>
     </transition-group>
@@ -197,6 +203,7 @@ export default {
       level2s: [],
       filter: { ratings: [], level1s: [], level2s: [] },
       showQueryControls: false,
+      showDeleteButtons: false,
       sortAsc: true,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",

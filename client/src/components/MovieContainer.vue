@@ -2,7 +2,7 @@
   <div :class="['movie-container', {'full-width': isFullWidth}]">
 
     <div class="sub-container">
-      <div class="hide">
+      <div class="hide" v-if="showDeleteButton">
         <font-awesome-icon icon="eye-slash" @click="onClickHideMovie"/>
       </div>
       <div class="rating">
@@ -60,7 +60,7 @@ const timeParse = (sec) => {
 
 export default {
   name:"MovieContainer",
-  props: ['movie', 'isActive'],
+  props: ['movie', 'isActive', 'showDeleteButton'],
   components: {
     Rating,
     MoviePlayer
