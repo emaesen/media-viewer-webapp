@@ -15,11 +15,6 @@
           {{ showQueryControls? 'hide' : 'show' }} query filters
           <font-awesome-icon icon="filter" class="flush-right"/>
         </button>
-        
-        <button @click="showDeleteButtons = !showDeleteButtons" class="action button">
-          {{ showDeleteButtons? 'disable' : 'enable' }} hide buttons
-          <font-awesome-icon icon="eye-slash" class="flush-right"/>
-        </button>
       </div>
 
       <div v-if="showQueryControls">
@@ -45,9 +40,9 @@
               </label>
             </div>
           </div>
-          <span v-if="sortType==='random'" class="shuffle">
+          <span v-if="sortType==='random'" class="side-button">
             ⇝
-            <button @click="shuffle" class="action button shuffle">
+            <button @click="shuffle" class="action button side-button">
               shuffle
               <font-awesome-icon icon="random" class="flush-right"/>
             </button>
@@ -113,6 +108,30 @@
             </div>
           </div>
         </div>
+
+
+        <div class="filter-group">
+          <span class="filter-type">View hidden items:</span>
+          <div class="filter-set">
+            <div class="filter" v-for="showHidden in [false,true]" :key="showHidden">
+              <input type="radio" :id="'showHidden-' + showHidden" :value="showHidden" v-model="queryHidden" >
+              <label :for="'showHidden-' + showHidden" class="action button">
+                {{ showHidden? 'yes' : 'no' }}
+                <font-awesome-icon :icon="showHidden? 'eye' : 'eye-slash'" class="flush-right"/>
+              </label>
+            </div>
+          </div>
+
+          <span class="side-button">
+            ⇝
+            <button @click="showDeleteButtons = !showDeleteButtons" class="action button side-button">
+              {{ showDeleteButtons? 'disable' : 'enable' }} hide buttons
+              <font-awesome-icon icon="eye-slash" class="flush-right"/>
+            </button>
+          </span>
+        </div>
+
+
       </div>
     </div>
 
@@ -196,7 +215,7 @@ export default {
   },
   data() {
     return {
-      sortTypes: ["random", "rating", "date created", "date updated", "hidden"],
+      sortTypes: ["random", "rating", "date created", "date updated"],
       sortType: "random",
       sortDateDefault: "created",
       ratings: [],
@@ -223,6 +242,7 @@ export default {
         level1: "",
         level2: "",
       },
+      queryHidden: false,
       filterQuery: {
         rating: {
           $gte: 0
@@ -368,11 +388,6 @@ export default {
         case "date updated":
           result = this.sortByDate(a, b, "updated");
           break;
-        case "hidden":
-          result = 
-            b.hidden === true
-              ? 1 * dir
-              : -1 * dir;
       }
       return result;
     },
@@ -475,8 +490,6 @@ export default {
         case "date updated":
           sort.updatedAt = sortInd
           break;
-        case "hidden":
-          sort.hidden = sortInd
       }
       query.$sort = sort
       query.$limit = this.paginationState.limit
@@ -636,11 +649,9 @@ export default {
         persistPaginationState(newVal)
       }
     },
-    sortType(newVal) {
-      if (newVal === "hidden") {
-        this.filterQuery.hidden = {
-          $eq: true
-        }
+    queryHidden(newVal) {
+      if (newVal === true) {
+        this.filterQuery.hidden = true
       } else {
         this.filterQuery.hidden =  {
           $ne: true
@@ -677,10 +688,10 @@ h2.movies {
   color: #948972;
   margin-left: 0.2em;
 }
-span.shuffle{
+span.side-button{
   margin-left:2em;
 }
-.action.button.shuffle {
+.action.button.side-button {
   margin-left:1em;
 }
 .grid {
