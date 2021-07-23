@@ -2,8 +2,6 @@
 
 This is a project to be run locally on a laptop or LAN network as a local media (movie) server with a webapp interface.
 
-It is by no means production worthy.
-
 ## Linux Setup
 
 ### Install nodejs
@@ -149,3 +147,23 @@ $ npm start
 # in the command window for server
 $ npm start
 ```
+
+### Single Page Application (SPA) server
+
+In order to be able to reload the movies page in proper SPA fashion, a proxy needs to be defined in the "serve:prod" script in the client's `package.json` file, otherwise the server will return a 404 'file-not-found' error on attempted reload.
+
+This proxy requires your local IP to be hardcoded.
+
+Assuming the local IP is '192.168.0.2', the existing script
+
+```json
+"serve:prod": "npx http-server ./dist -p 7777"
+```
+
+should be replaced by
+
+```json
+"serve:prod": "npx http-server ./dist -p 7777 -proxy http://192.168.0.2:7777?"
+```
+
+(obviously this means that your PC/laptop needs to be setup with a static IP address)
