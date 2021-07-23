@@ -353,14 +353,14 @@ input[type="checkbox"] {
 }
 
 span.clear::before,
-input[type="radio"] + label::before,
-input[type="checkbox"] + label::before {
+input[type="radio"] + label:not(.nocheck)::before,
+input[type="checkbox"] + label:not(.nocheck)::before {
   content: "✓ ";
   opacity: .18;
 }
 span.clear.checked::before,
-input[type="radio"]:checked + label::before,
-input[type="checkbox"]:checked + label::before {
+input[type="radio"]:checked + label:not(.nocheck)::before,
+input[type="checkbox"]:checked + label:not(.nocheck)::before {
   content: "✓ ";
   color: #29dc58;
   opacity: 1;
@@ -377,6 +377,7 @@ label {
   margin-left: -0.2em;
   margin-right: 0.3em;
 }
+label.inactive,
 label.no_change_when_clicked {
   opacity: .45;
   cursor: inherit;

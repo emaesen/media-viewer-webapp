@@ -173,12 +173,24 @@
       <div class="filter-group">
         <span class="filter-type">Page Nr:</span>
         <div class="filter-set">
+          <div class="filter">
+            <input type="radio" :id="'prev'" :value="paginationState.nr > 1 ? paginationState.nr - 1 : 1" v-model="paginationState.nr" >
+            <label :for="'prev'" class="action button nocheck" :class="paginationState.nr === 1 ? 'inactive' : ''">
+              &lt; prev
+            </label>
+          </div>
           <div class="filter" v-for="(pageNr, index) in pageNrs" :key="index">
             <input v-if="pageNr!=='...'" type="radio" :id="'pageNr-' + pageNr" :value="pageNr" v-model="paginationState.nr" >
             <label v-if="pageNr!=='...'" :for="'pageNr-' + pageNr" class="action button">
               {{ pageNr }}
             </label>
             <span v-if="pageNr==='...'" class="spacer">...</span>
+          </div>
+          <div class="filter">
+            <input type="radio" :id="'next'" :value="paginationState.nr < nrOfPages ? paginationState.nr + 1 : paginationState.nr" v-model="paginationState.nr" >
+            <label :for="'next'" class="action button nocheck" :class="paginationState.nr === nrOfPages ? 'inactive' : ''">
+              next &gt;
+            </label>
           </div>
           <div class="filter" v-if="showPageNrInput">
             <input class="input-page-number" type="number"
