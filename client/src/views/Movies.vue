@@ -15,6 +15,10 @@
           {{ showQueryControls? 'hide' : 'show' }} query filters
           <font-awesome-icon icon="filter" class="flush-right"/>
         </button>
+
+        <span class="info" v-if="!showQueryControls">
+          &nbsp;⇝ {{ paginationState.rating }} &nbsp; {{ paginationState.level1 || 'all' }} / {{ paginationState.level2 || 'all' }}
+        </span>
       </div>
 
       <div v-if="showQueryControls">
@@ -79,7 +83,7 @@
             class="action button cntr clear"
             :class="{checked: !paginationState.level1}"
             @click="clearLevel1Query"
-          >clear</span>
+          >all</span>
           ➔
           <div class="filter-set">
             <div class="filter" v-for="level1 in paginationOptions.level1s" :key="'qr-'+level1">
@@ -97,7 +101,7 @@
             class="action button cntr clear"
             :class="{checked: !paginationState.level2}"
             @click="clearLevel2Query"
-          >clear</span>
+          >all</span>
           ➔
           <div class="filter-set">
             <div class="filter" v-for="level2 in paginationOptions.level2s" :key="'qr-'+level2">
@@ -273,7 +277,6 @@ export default {
   methods: {
     ...mapActions("movies", { findMovies: "find" }),
     init() {
-      const op = this.paginationState
       let p = retrievePaginationState(this.paginationState)
       // backwards compatibility test:
       // ignore stored state if it contains a pageLimits property
