@@ -286,9 +286,7 @@ export default {
         p = this.paginationState
         persistPaginationState(p)
       }
-      if (p.rating !== op.rating || p.level1 || p.level2) {
-        this.showQueryControls = true
-      }
+
       this.$nextTick(() => {
         this.isInit = false
       })
