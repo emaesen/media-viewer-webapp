@@ -6,8 +6,8 @@ const hooks = require('./movies.hooks');
 module.exports = function (app) {
   const Model = createModel(app);
   const paginate = {
-    default: 1500,
-    max: 3000
+    default: 2000,
+    max: 4000
   }
 
   const options = {
