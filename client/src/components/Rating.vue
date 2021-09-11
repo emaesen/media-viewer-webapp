@@ -37,7 +37,7 @@ export default {
     }
   },
   computed: {
-    debounceRating(i) {
+    debounceRating() {
       return debounce((i)=>this.setRating(i), 2000)
     },
   },
