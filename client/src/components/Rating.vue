@@ -3,17 +3,22 @@
     <span v-for="i in maxRating" :key="i">
       <font-awesome-icon 
         :icon="[i > displayRating ? 'far': 'fas', 'star']"
-        @click="setRating(i)"
+        @click="onRatingClick(i)"
         @mouseover="showRating(i)"
         @mouseout="resetRating()"
         class="rating-star"
-        :class="[i > rating ? 'open': 'closed']"
+        :class="[i > (changedRating || rating) ? 'open': 'closed']"
       />
     </span>
+    {{ changedRating }}
   </div>
 </template>
 
 <script>
+import {
+  debounce
+} from "@/utils/helper.js"
+
 export default {
   name: "Rating",
   props: {
@@ -28,15 +33,24 @@ export default {
     return {
       maxRating: 5,
       displayRating: this.rating,
+      changedRating: null
     }
   },
   computed: {
+    debounceRating(i) {
+      return debounce((i)=>this.setRating(i), 2000)
+    },
   },
   methods: {
+    onRatingClick(i) {
+      this.changedRating = i
+      this.debounceRating(i)
+    },
     setRating(i) {
       this.displayRating = i
-      console.log('set rating to ' + i)
+      console.log('apply request to set rating to ' + i)
       this.$emit('set-rating', i)
+      this.changedRating = null
     },
     showRating(i) {
       this.displayRating = i
