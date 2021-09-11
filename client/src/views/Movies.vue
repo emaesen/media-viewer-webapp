@@ -246,7 +246,7 @@ export default {
       isInit: true,
       paginationOptions: {
         pageLimits: [3,6,9,18,36,45,90],
-        ratings: ["0","0+","1+","2+","3+","4+","5"],
+        ratings: ["0","1","2","3","4","5","0+","1+","2+","3+","4+"],
         level1s: process.env.VUE_APP_LEVELS1.split(','),
         level2s: process.env.VUE_APP_LEVELS2.split(','),
       },
