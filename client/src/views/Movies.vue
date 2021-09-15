@@ -701,6 +701,7 @@ export default {
           $ne: true
         }
       }
+      this.resetPage()
     }
   }
 };
