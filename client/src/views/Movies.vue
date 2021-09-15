@@ -170,6 +170,7 @@
           @toggle-fullwidth="onToggleFullWidth"
           @hide-movie="hideMovie"
           @unhide-movie="unhideMovie"
+          @remove-movie="removeMovie"
           class="cell-content"
           :showDeleteButton="showDeleteButtons"
         />
@@ -363,6 +364,18 @@ export default {
         .update()
         .then(movie => {
           logMessage("unhide succesful", movie);
+          this.setFilterData()
+        })
+        .catch(err => {
+          this.handleError(err);
+        });
+    },
+    removeMovie(props) {
+      logMessage("remove movie ", props);
+      props.movie
+        .remove()
+        .then(movie => {
+          logMessage("remove succesful", movie);
           this.setFilterData()
         })
         .catch(err => {

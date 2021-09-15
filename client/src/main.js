@@ -31,6 +31,7 @@ import {
   faStepForward, // small jump/skip forwards
   faStop, // stop
   faTachometerAlt, // dashboard
+  faTrashAlt, // delete, trashcan
   faUserCheck, // logged-in user
   faUserPlus, // register new user
   faFilm, // movie
@@ -76,6 +77,7 @@ library.add(
   faStepForward,
   faStop,
   faTachometerAlt,
+  faTrashAlt,
   faUserCheck,
   faUserPlus,
   faFilm,

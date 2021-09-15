@@ -2,11 +2,16 @@
   <div :class="['movie-container', {'full-width': isFullWidth}]">
 
     <div class="sub-container">
-      <div class="hide" v-if="showDeleteButton && !movie.hidden">
-        <font-awesome-icon icon="eye-slash" @click="onClickHideMovie"/>
-      </div>
-      <div class="unhide" v-if="movie.hidden">
-        <font-awesome-icon icon="eye" @click="onClickUnhideMovie"/>
+      <div class="actions">
+        <div class="hide" v-if="showDeleteButton && !movie.hidden">
+          <font-awesome-icon icon="eye-slash" @click="onClickHideMovie"/>
+        </div>
+        <div class="unhide" v-if="movie.hidden">
+          <font-awesome-icon icon="eye" @click="onClickUnhideMovie"/>
+        </div>
+        <div class="remove" v-if="movie.hidden">
+          <font-awesome-icon icon="trash-alt" @click="onClickRemoveMovie"/>
+        </div>
       </div>
       <div class="rating">
         <Rating
@@ -130,7 +135,10 @@ export default {
     },
     onClickUnhideMovie() {
       this.$emit('unhide-movie', {movie:this.movie})
-    }
+    },
+    onClickRemoveMovie() {
+      this.$emit('remove-movie', {movie:this.movie})
+    },
   },
   watch: {
     isActive(newVal,oldVal) {
@@ -170,12 +178,16 @@ export default {
     height: 0;
   }
 }
+.actions {
+  float: right;
+}
+.remove,
 .unhide,
 .hide {
-  float: right;
+  display: inline-block;
   cursor: pointer;
   svg {
-    color: rgba(151, 23, 0, 0.699);
+    color: rgba(190, 29, 0, 0.747);
   }
   svg:hover {
     color: rgb(253, 38, 0);
@@ -183,11 +195,14 @@ export default {
 }
 .unhide {
   svg {
-    color: rgba(111, 151, 0, 0.699);
+    color: rgba(111, 151, 0, 0.952);
   }
   svg:hover {
     color: rgb(122, 253, 0);
   }
+}
+.remove {
+  margin: 0 0 0 1em
 }
 .path,
 .title {
