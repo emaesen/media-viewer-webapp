@@ -88,7 +88,11 @@
           <div class="filter-set">
             <div class="filter" v-for="level1 in paginationOptions.level1s" :key="'qr-'+level1">
               <input type="radio" :id="'qlevel1-' + level1" :value="level1" v-model="paginationState.level1" >
-              <label :for="'qlevel1-' + level1" class="action button">
+              <label :for="'qlevel1-' + level1" class="action button"
+                :class="{
+                  no_results_when_clicked: hasEmptySetWhenFiltered('level1', level1)
+                  }"
+              >
                 {{ level1 }}
               </label>
             </div>
@@ -106,7 +110,11 @@
           <div class="filter-set">
             <div class="filter" v-for="level2 in paginationOptions.level2s" :key="'qr-'+level2">
               <input type="radio" :id="'qlevel2-' + level2" :value="level2" v-model="paginationState.level2" >
-              <label :for="'qlevel2-' + level2" class="action button">
+              <label :for="'qlevel2-' + level2" class="action button"
+                :class="{
+                  no_results_when_clicked: hasEmptySetWhenFiltered('level2', level2)
+                  }"
+              >
                 {{ level2 }}
               </label>
             </div>
@@ -428,19 +436,27 @@ export default {
         .map(m => m.rating)
         .filter((c, i, s) => c!=="" && s.indexOf(c) === i)
         .sort()
-      //logMessage({ ratings: this.ratings })
+      //logMessage("ratings:", this.ratings)
 
       this.level1s = moviesUnfiltered
         .map(m => m.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
-      //logMessage({ level1s: this.level1s })
+      logMessage("level1s:", this.level1s)
 
       this.level2s = moviesUnfiltered
         .map(m => m.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
-      //logMessage({ level2s: this.level2s })
+      logMessage("level2s:", this.level2s)
+    },
+    hasEmptySetWhenFiltered(filterType, filterValue) {
+      const test = function(arr,val) {
+        return !(arr.length > 0 
+          && typeof arr.find(el => el === val) !== "undefined")
+      }
+      const expectEmptySet = test(this[filterType+"s"], filterValue)
+      return expectEmptySet
     },
     clearLevel1Query() {
       this.paginationState.level1 = ""
@@ -451,6 +467,7 @@ export default {
     resetPage() {
       this.paginationState.skip = 0
       this.paginationState.nr = 1
+      this.setFilterData()
     },
     ensurePaginationStateNrIsNumber() {
       this.paginationState.nr = 1 * this.paginationState.nr
@@ -466,7 +483,7 @@ export default {
     },
     toggleSort() {
       this.sortAsc = !this.sortAsc
-    }
+    },
   },
   computed: {
     ...mapState("auth", { user: "payload" }),
@@ -555,7 +572,8 @@ export default {
       return this.moviesUnfiltered.map(movie => ({
         rating: movie.rating,
         level1: movie.level1,
-        level2: movie.level2
+        level2: movie.level2,
+        path: movie.path
       }));
     },
     nrOfPages() {

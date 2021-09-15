@@ -378,17 +378,9 @@ label {
   margin-right: 0.3em;
 }
 label.inactive,
-label.no_change_when_clicked {
-  opacity: .45;
-  cursor: inherit;
-}
+label.no_change_when_clicked,
 label.no_results_when_clicked {
   opacity: .45;
-  cursor: inherit;
-  border-color: #dd0000;
-  .cntr {
-    color: #dd0000;
-  }
 }
 .filter-set {
   display: inline-block;
