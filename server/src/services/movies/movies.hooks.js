@@ -9,7 +9,7 @@ module.exports = {
         ownerField: 'ownerId'
       }),
       async function(context) {
-        console.log("in movies `find` hook", context.params.query)
+        console.log("in movies `before-find` hook", context.params.query)
         return context
       }
     ],
@@ -18,7 +18,7 @@ module.exports = {
         ownerField: 'ownerId'
       }),
       async function(context) {
-        console.log("in movies `get` hook", context.params.query)
+        console.log("in movies `before-get` hook", context.params.query)
         return context
       }
     ],
@@ -27,7 +27,7 @@ module.exports = {
         as: 'ownerId'
       }),
       async function(context) {
-        console.log("in movies `create` hook", context.data)
+        console.log("in movies `before-create` hook", context.data)
         return context
       }
     ],
@@ -36,21 +36,25 @@ module.exports = {
         ownerField: 'ownerId'
       }),
       async function(context) {
-        console.log("in movies `update` hook", context.data)
+        console.log("in movies `before-update` hook", context.data)
         return context
       }
     ],
     patch: [
       hooks.restrictToOwner({
         ownerField: 'ownerId'
-      })
+      }),
+      async function(context) {
+        console.log("in movies `before-patch` hook", context.data)
+        return context
+      }
     ],
     remove: [
       hooks.restrictToOwner({
         ownerField: 'ownerId'
       }),
       async function(context) {
-        console.log("in movies `remove` hook", context.data)
+        console.log("in movies `before-remove` hook", context.data)
         return context
       }
     ]
@@ -58,7 +62,12 @@ module.exports = {
 
   after: {
     all: [],
-    find: [],
+    find: [
+      async function(context) {
+        console.log("in movies `after-find` hook", {total: context.result.total})
+        return context
+      }
+    ],
     get: [],
     create: [],
     update: [],
