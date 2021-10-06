@@ -240,7 +240,7 @@ export default {
   },
   data() {
     return {
-      sortTypes: ["random", "rating", "date created", "date updated"],
+      sortTypes: ["random", "rating", "date created", "date updated", "name", "duration"],
       sortType: "random",
       sortDateDefault: "created",
       ratings: [],
@@ -533,6 +533,12 @@ export default {
         case "date updated":
           sort.updatedAt = sortInd
           break;
+        case "name":
+          sort.basename = sortInd
+          break;
+        case "duration":
+          sort.metaDurationInSec = sortInd
+          break;
       }
       query.$sort = sort
       query.$limit = this.paginationState.limit
@@ -551,9 +557,9 @@ export default {
     },
     movies() {
       return this.moviesUnfiltered
-        .filter(this.uiFilter)
-        .sort(this.sortByDate)
-        .sort(this.uiSort);
+        //.filter(this.uiFilter)
+        //.sort(this.sortByDate)
+        //.sort(this.uiSort);
     },
     moviesQueryResult() {
       return this.user

@@ -3,12 +3,30 @@ import Vuex from "vuex";
 import feathersVuex from "feathers-vuex";
 import feathersClient from "./feathers-client";
 
+import { logMessage } from '@/utils/logger.js'
+
 const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
   idField: "_id"
 });
 
 Vue.use(Vuex);
 Vue.use(FeathersVuex);
+
+feathersClient.service('movies')
+  .hooks({
+    after: {
+      find: [
+        context => {
+          // https://feathers-vuex-v1.netlify.app/common-patterns.html#accessing-the-store-from-hooks
+          context.result.data.map(m => {
+            m.metaDurationInSec = 1 * m.meta.durationInSec
+          })
+          logMessage("store-movies - after_find hook", context)
+        }
+      ]
+    }
+  })
+
 
 export default new Vuex.Store({
   state: {
