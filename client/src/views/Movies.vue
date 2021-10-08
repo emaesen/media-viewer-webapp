@@ -387,20 +387,21 @@ export default {
     },
     setFilterData() {
       // get list of user-defined ratings and levels, and remove duplicates
-      const moviesAmended = this.moviesAmended
-      this.ratings = moviesAmended
+      const movies = this.allMoviesforQuery
+      logMessage("allMoviesforQuery", movies)
+      this.ratings = movies
         .map(m => m.rating)
         .filter((c, i, s) => c!=="" && s.indexOf(c) === i)
         .sort()
       //logMessage("ratings:", this.ratings)
 
-      this.level1s = moviesAmended
+      this.level1s = movies
         .map(m => m.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
       logMessage("level1s:", this.level1s)
 
-      this.level2s = moviesAmended
+      this.level2s = movies
         .map(m => m.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
@@ -429,10 +430,7 @@ export default {
       this.paginationState.nr = 1 * this.paginationState.nr
     },
     shuffle() {
-      const allMovies = this.findMoviesInStore({
-            query: {}
-          }).data
-      allMovies.forEach( movie => {
+      this.allMovies.forEach( movie => {
         movie.rnr = Math.round(Math.random()*1e9)
         movie.update()
       })
@@ -500,6 +498,25 @@ export default {
     },
     movies() {
       return this.moviesAmended
+    },
+    allMovies() {
+      // all movies irrespective of query and pagination settings
+      return this.user
+        ? this.findMoviesInStore({
+            query: {}
+          }).data
+        : []
+    },
+    allMoviesforQuery() {
+      // all movies by query irrespective of pagination settings
+      let query = this.query
+      query.$limit=5000
+      query.$skip=0
+      return this.user
+        ? this.findMoviesInStore({
+            query: query
+          }).data
+        : []
     },
     moviesQueryResult() {
       return this.user
