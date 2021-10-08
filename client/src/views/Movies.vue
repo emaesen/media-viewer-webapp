@@ -254,8 +254,8 @@ export default {
       movieBasePath: "/media/movies/",
       isInit: true,
       paginationOptions: {
-        pageLimits: [3,6,9,18,36,45,90],
-        ratings: ["0","1","2","3","4","5","0+","1+","2+","3+","4+"],
+        pageLimits: [3,4,5,6,8,9,10,12,18,20,50,100],
+        ratings: ["0","0+","1","1+","2","2+","3","3+","4","4+","5"],
         level1s: process.env.VUE_APP_LEVELS1.split(','),
         level2s: process.env.VUE_APP_LEVELS2.split(','),
       },
@@ -831,6 +831,11 @@ input[type="number"].input-page-number {
   }
 }
 @media all and (min-width: 1600px) {
+  .grid .grid-cell {
+    width: 20%;
+  }
+}
+@media all and (min-width: 2000px) {
   .grid .grid-cell {
     width: 16.666%;
   }
