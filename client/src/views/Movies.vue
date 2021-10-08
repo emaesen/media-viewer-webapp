@@ -4,7 +4,7 @@
       <font-awesome-icon icon="film"/>Movies
     </h1>
 
-    <div class="controls pagination convert-to-block-on-small-device">
+    <div class="controls filters convert-to-block-on-small-device">
 
       <div>
         <span class="pagination-info">
@@ -671,7 +671,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
 h1 .info {
   font-weight: 400;
   font-size: 70%;
@@ -682,7 +682,7 @@ h2.movies {
   margin-right: 1em;
   vertical-align: top;
 }
-.pagination {
+.filters {
   margin: 4em 0;
 }
 
@@ -709,7 +709,7 @@ span.side-button{
   flex-direction: row;
   flex-wrap: wrap;
   align-items: stretch;
-  margin: 0 -0.2rem;
+  margin: 0 -0.2rem 5rem;
 }
 .grid .cell-content {
   margin: 5px;
@@ -766,7 +766,20 @@ input[type="number"].input-page-number {
   width: 2.7em;
   padding: 5px
 }
-
+.controls.pagination {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  padding: 8px 0 20px 0;
+  width: 100%;
+  text-align: center;
+  z-index: 99;
+  background-color: #17161c;
+  .filter-group {
+    border-top: 3px dashed #454545;
+    padding-top: 3px;
+  }
+}
 @media all and (max-width: 400px) {
   .grid .grid-cell {
     width: 100%;
