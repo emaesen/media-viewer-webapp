@@ -106,9 +106,9 @@ h2 {
 #main {
   min-height: calc(100vh - 180px);
 }
-#header {
+#header,
+.build-info {
   position: fixed;
-  top: 0;
   left: 0;
   width: 100%;
   z-index: 999;
@@ -116,15 +116,17 @@ h2 {
   font-family: monospace;
   text-align: center;
   color: #fffef5;
+}
+#header {
+  top: 0;
   padding: 3px 0;
   border-bottom: 5px solid #333;
   opacity: 0.8;
 }
 
 .build-info{
-  font-family: monospace;
-  text-align: center;
-  color: #fffef5;
+  bottom: 0;
+  border-top: 5px solid #333;
   opacity: 0.6;
   letter-spacing: .45em;
   font-size: 72%;
