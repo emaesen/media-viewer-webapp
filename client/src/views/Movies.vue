@@ -178,7 +178,7 @@
     </transition-group>
 
     
-    <div class="controls pagination convert-to-block-on-small-device">
+    <div v-if="showPaginationControls" class="controls pagination convert-to-block-on-small-device">
       <div class="filter-group">
         <span class="filter-type">Page Nr:</span>
         <div class="filter-set">
@@ -557,6 +557,9 @@ export default {
     },
     showPageNrInput() {
       return this.nrOfPages > 10
+    },
+    showPaginationControls() {
+      return this.nrOfPages > 1
     },
     pageNrs() {
       // create an array of numbers 1 to nrOfPages, centered around the current page
