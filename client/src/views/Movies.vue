@@ -652,7 +652,8 @@ export default {
       if (!this.isInit) {
         logMessage("page Nr changed from " + oldVal + " to " + newVal)
         // scroll to top
-        window.scrollTo({top:0, left:0, behavior:'smooth'})
+        window.scrollTo({top:400, left:0, behavior:'instant'})
+        window.scrollTo({top:130, left:0, behavior:'smooth'})
         this.paginationState.skip = this.paginationState.limit * (1 * this.paginationState.nr - 1)
       }
     },
