@@ -385,79 +385,22 @@ export default {
     onToggleFullWidth() {
       this.hasFullWidthMovie = !this.hasFullWidthMovie
     },
-
-    sortByDate(a, b, type) {
-      type = type || this.sortDateDefault;
-      let dateDiff;
-      dateDiff =
-        type === "updated"
-          ? new Date(b.updatedAt) - new Date(a.updatedAt)
-          : new Date(b.createdAt) - new Date(a.createdAt);
-      return this.sortAsc ? -dateDiff : dateDiff;
-    },
-    uiSort(a, b) {
-      // TODO: implement sort selector
-      let dir = this.sortAsc ? 1 : -1;
-      let result;
-      switch (this.sortType) {
-        case "random":
-          result =
-            b.rnr < a.rnr
-              ? 1 * dir
-              : b.rnr > a.rnr
-              ? -1 * dir
-              : 0;
-          break;
-        case "rating":
-          result =
-            b.rating < a.rating
-              ? 1 * dir
-              : b.rating > a.rating
-              ? -1 * dir
-              : 0;
-          break;
-        case "date created":
-          result = this.sortByDate(a, b, "created");
-          break;
-        case "date updated":
-          result = this.sortByDate(a, b, "updated");
-          break;
-      }
-      return result;
-    },
-    uiFilter(movie) {
-      // Filter by selected ratings, level1 and level2.
-      // Multiple ratings are `or`-ed. Multiple levels are `or`-ed.
-      // Example:
-      // (movie.rating === 5 || movie.rating === 4) && (movie.level1 === 'g')
-      const ratingReducer = (acc, cur) => acc || movie.rating === cur;
-      const level1Reducer = (acc, cur) => acc || movie.level1 === cur;
-      const level2Reducer = (acc, cur) => acc || movie.level2 === cur;
-      const hasRating = this.filter.ratings.length > 0;
-      const hasLevel1 = this.filter.level1s.length > 0;
-      const hasLevel2 = this.filter.level2s.length > 0;
-      return (
-        this.filter.ratings.reduce(ratingReducer, !hasRating) &&
-        this.filter.level1s.reduce(level1Reducer, !hasLevel1) &&
-        this.filter.level2s.reduce(level2Reducer, !hasLevel2)
-      );
-    },
     setFilterData() {
       // get list of user-defined ratings and levels, and remove duplicates
-      const moviesUnfiltered = this.moviesUnfiltered
-      this.ratings = moviesUnfiltered
+      const moviesAmended = this.moviesAmended
+      this.ratings = moviesAmended
         .map(m => m.rating)
         .filter((c, i, s) => c!=="" && s.indexOf(c) === i)
         .sort()
       //logMessage("ratings:", this.ratings)
 
-      this.level1s = moviesUnfiltered
+      this.level1s = moviesAmended
         .map(m => m.level1)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
       logMessage("level1s:", this.level1s)
 
-      this.level2s = moviesUnfiltered
+      this.level2s = moviesAmended
         .map(m => m.level2)
         .filter((c, i, s) => c && s.indexOf(c) === i)
         .sort()
@@ -556,10 +499,7 @@ export default {
       return fq
     },
     movies() {
-      return this.moviesUnfiltered
-        //.filter(this.uiFilter)
-        //.sort(this.sortByDate)
-        //.sort(this.uiSort);
+      return this.moviesAmended
     },
     moviesQueryResult() {
       return this.user
@@ -571,7 +511,7 @@ export default {
     totalNrOfMovies() {
       return this.moviesQueryResult.total
     },
-    moviesUnfiltered() {
+    moviesAmended() {
       //logMessage("this.moviesQueryResult", this.moviesQueryResult)
       return this.moviesQueryResult.data
           .map(m => {
@@ -588,7 +528,7 @@ export default {
       return "No movies found..."
     },
     moviesFilterMeta() {
-      return this.moviesUnfiltered.map(movie => ({
+      return this.moviesAmended.map(movie => ({
         rating: movie.rating,
         level1: movie.level1,
         level2: movie.level2,
