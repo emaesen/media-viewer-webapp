@@ -531,6 +531,11 @@ export default {
     moviesAmended() {
       //logMessage("this.moviesQueryResult", this.moviesQueryResult)
       return this.moviesQueryResult.data
+          /* there's a problem with the feathersjs store implementation where
+            sometimes all results are returned instead of the page-set,
+            thus the below filter to limit the array size to the page limit
+          */
+          .filter((m, i) => i < this.paginationState.limit)
           .map(m => {
             m.ui = {
               src: this.movieBasePath + m.path
