@@ -2,7 +2,7 @@
   <div class="rating-bar">
     <span v-for="i in maxRating" :key="i">
       <font-awesome-icon 
-        :icon="[i > displayRating ? 'far': 'fas', 'star']"
+        :icon="[i > displayRating ? 'far': 'fas', i===6 ? 'heart' :'star']"
         @click="onRatingClick(i)"
         @mouseover="showRating(i)"
         @mouseout="resetRating()"
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      maxRating: 5,
+      maxRating: 6,
       displayRating: this.rating,
       changedRating: null
     }

@@ -15,6 +15,7 @@ import {
   faFastBackward, // larger jump/skip backwards
   faFastForward, //larger jump/skip forwards
   faFilter, // filter
+  faHeart, // heart
   faHome, // home
   faMinusSquare, // minus sign in square
   faPause, // pause
@@ -41,6 +42,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   // these require explicit "far" prefix
+  faHeart as farHeart, // heart
   faStar as farStar, // star
 } from "@fortawesome/free-regular-svg-icons";
 
@@ -61,6 +63,8 @@ library.add(
   faFastForward,
   faFilter,
   faHome,
+  faHeart,
+  farHeart,
   faMinusSquare,
   faPause,
   faPlay,
