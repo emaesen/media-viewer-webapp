@@ -163,7 +163,7 @@ export default {
   left: 0;
   right: 0;
   background-color: #000;
-  z-index: 999;
+  z-index: 9999;
   max-height: 100vh;
   max-width: 100vw;
   margin: -7px;
