@@ -3,7 +3,7 @@
 
     <div class="sub-container">
       <div class="actions">
-        <div class="hide" v-if="showDeleteButton && !movie.hidden">
+        <div class="hide" v-if="showHideButton && !movie.hidden">
           <font-awesome-icon icon="eye-slash" @click="onClickHideMovie"/>
         </div>
         <div class="unhide" v-if="movie.hidden">
@@ -68,7 +68,7 @@ const timeParse = (sec) => {
 
 export default {
   name:"MovieContainer",
-  props: ['movie', 'isActive', 'showDeleteButton'],
+  props: ['movie', 'isActive', 'showHideButton'],
   components: {
     Rating,
     MoviePlayer

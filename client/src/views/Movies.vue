@@ -136,8 +136,8 @@
 
           <span class="side-button">
             ⇝
-            <button @click="showDeleteButtons = !showDeleteButtons" class="action button side-button">
-              {{ showDeleteButtons? 'disable' : 'enable' }} hide buttons
+            <button @click="showHideButtons = !showHideButtons" class="action button side-button">
+              {{ showHideButtons? 'disable' : 'enable' }} hide buttons
               <font-awesome-icon icon="eye-slash" class="flush-right"/>
             </button>
           </span>
@@ -172,7 +172,7 @@
           @unhide-movie="unhideMovie"
           @remove-movie="removeMovie"
           class="cell-content"
-          :showDeleteButton="showDeleteButtons"
+          :showHideButton="showHideButtons"
         />
       </div>
     </transition-group>
@@ -248,7 +248,7 @@ export default {
       level2s: [],
       filter: { ratings: [], level1s: [], level2s: [] },
       showQueryControls: false,
-      showDeleteButtons: false,
+      showHideButtons: false,
       sortAsc: true,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
@@ -260,6 +260,7 @@ export default {
         level2s: process.env.VUE_APP_LEVELS2.split(','),
       },
       paginationState: {
+        sortType: "",
         limit: 9,
         skip: 0,
         nr: 1,
