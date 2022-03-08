@@ -25,8 +25,8 @@
         <div class="filter-group">
           <span class="filter-type">Sort by:</span>
           <div class="filter-set">
-            <div class="filter" v-for="type in sortTypes" :key="type">
-              <input type="radio" :id="'type-' + type" :value="type" v-model="sortType" >
+            <div class="filter" v-for="type in paginationOptions.sortTypes" :key="type">
+              <input type="radio" :id="'type-' + type" :value="type" v-model="paginationState.sortType" >
               <label :for="'type-' + type" class="action button">
                 {{ type }}
               </label>
@@ -38,13 +38,13 @@
           <span class="filter-type">Sort direction:</span>
           <div class="filter-set">
             <div class="filter" v-for="sortUp in [true,false]" :key="sortUp">
-              <input type="radio" :id="'sortUp-' + sortUp" :value="sortUp" v-model="sortAsc" >
+              <input type="radio" :id="'sortUp-' + sortUp" :value="sortUp" v-model="paginationState.sortAsc" >
               <label :for="'sortUp-' + sortUp" class="action button">
                 <font-awesome-icon :icon="sortUp? 'sort-amount-up' : 'sort-amount-down'" class="flush-right"/>
               </label>
             </div>
           </div>
-          <span v-if="sortType==='random'" class="side-button">
+          <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
             <button @click="shuffle" class="action button side-button">
               shuffle
@@ -240,8 +240,6 @@ export default {
   },
   data() {
     return {
-      sortTypes: ["random", "rating", "date created", "date updated", "name", "duration"],
-      sortType: "random",
       sortDateDefault: "created",
       ratings: [],
       level1s: [],
@@ -249,18 +247,19 @@ export default {
       filter: { ratings: [], level1s: [], level2s: [] },
       showQueryControls: false,
       showHideButtons: false,
-      sortAsc: true,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       isInit: true,
       paginationOptions: {
+        sortTypes: ["random", "rating", "date created", "date updated", "name", "duration"],
         pageLimits: [4,6,8,12,16,20,24,30,36,60,100],
         ratings: ["0+","0","1","1+","2","2+","3","3+","4","4+","5", "5+", "6"],
         level1s: process.env.VUE_APP_LEVELS1.split(','),
         level2s: process.env.VUE_APP_LEVELS2.split(','),
       },
       paginationState: {
-        sortType: "",
+        sortType: "random",
+        sortAsc: true,
         limit: 9,
         skip: 0,
         nr: 1,
@@ -437,7 +436,7 @@ export default {
       })
     },
     toggleSort() {
-      this.sortAsc = !this.sortAsc
+      this.paginationState.sortAsc = !this.paginationState.sortAsc
     },
   },
   computed: {
@@ -461,8 +460,8 @@ export default {
       //
       let query = {}
       let sort = {}
-      const sortInd = this.sortAsc ? 1 : -1
-      switch (this.sortType) {
+      const sortInd = this.paginationState.sortAsc ? 1 : -1
+      switch (this.paginationState.sortType) {
         case "random":
           sort.rnr = sortInd
           break;
