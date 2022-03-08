@@ -11,17 +11,17 @@
           Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies)</span>
         </span>
 
-        <button @click="showQueryControls = !showQueryControls" class="action button">
-          {{ showQueryControls? 'hide' : 'show' }} query filters
+        <button @click="paginationState.showQueryControls = !paginationState.showQueryControls" class="action button">
+          {{ paginationState.showQueryControls? 'hide' : 'show' }} query filters
           <font-awesome-icon icon="filter" class="flush-right"/>
         </button>
 
-        <span class="info" v-if="!showQueryControls">
+        <span class="info" v-if="!paginationState.showQueryControls">
           &nbsp;⇝ {{ paginationState.rating }} &nbsp; {{ paginationState.level1 || 'all' }} / {{ paginationState.level2 || 'all' }}
         </span>
       </div>
 
-      <div v-if="showQueryControls">
+      <div v-if="paginationState.showQueryControls">
         <div class="filter-group">
           <span class="filter-type">Sort by:</span>
           <div class="filter-set">
@@ -136,8 +136,8 @@
 
           <span class="side-button">
             ⇝
-            <button @click="showHideButtons = !showHideButtons" class="action button side-button">
-              {{ showHideButtons? 'disable' : 'enable' }} hide buttons
+            <button @click="paginationState.showHideButtons = !paginationState.showHideButtons" class="action button side-button">
+              {{ paginationState.showHideButtons? 'disable' : 'enable' }} hide buttons
               <font-awesome-icon icon="eye-slash" class="flush-right"/>
             </button>
           </span>
@@ -172,7 +172,7 @@
           @unhide-movie="unhideMovie"
           @remove-movie="removeMovie"
           class="cell-content"
-          :showHideButton="showHideButtons"
+          :showHideButton="paginationState.showHideButtons"
         />
       </div>
     </transition-group>
@@ -245,8 +245,6 @@ export default {
       level1s: [],
       level2s: [],
       filter: { ratings: [], level1s: [], level2s: [] },
-      showQueryControls: false,
-      showHideButtons: false,
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       isInit: true,
@@ -266,6 +264,8 @@ export default {
         rating: "0+",
         level1: "",
         level2: "",
+        showQueryControls: false,
+        showHideButtons: false,
       },
       queryHidden: false,
       filterQuery: {
@@ -301,12 +301,14 @@ export default {
       let p = retrievePaginationState(this.paginationState)
       // backwards compatibility test:
       // ignore stored state if it contains a pageLimits property
-      if (!p.pageLimits) {
+      console.log("p.showQueryControls = " + p.showQueryControls)
+      if (!p.pageLimits && p.showQueryControls !== undefined) {
         // new version - use
         this.paginationState = p
         logMessage("Using stored pagination state ", p);
       } else {
         // old version - replace
+        logMessage("Using default pagination state ", p);
         p = this.paginationState
         persistPaginationState(p)
       }
