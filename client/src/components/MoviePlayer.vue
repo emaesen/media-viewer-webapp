@@ -541,6 +541,17 @@ export default {
         // center
         this.togglePlay()
       }
+      if (eX < vW3) {
+        // left side
+        if (vH3 < eY && eY < 2*vH3) {
+          // middle
+          this.onClickSkipButton(1)
+        }
+        if (2*vH3 < eY && eY < 3*vH3) {
+          // bottom
+          this.onClickSkipButton(-1)
+        }
+      }
       if (2*vW3 <  eX && eX < 3*vW3) {
         // right side
         if (0 < eY && eY < vH3) {
