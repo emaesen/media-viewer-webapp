@@ -713,6 +713,12 @@ export default {
         if (evt.key===" ") {
           this.togglePlay()
         }
+        if (evt.key===".") {
+          this.onClickSkipButton(1)
+        }
+        if (evt.key===",") {
+          this.onClickSkipButton(-1)
+        }
         if (evt.key==="ArrowRight") {
           this.onClickSkipButton(10)
         }
