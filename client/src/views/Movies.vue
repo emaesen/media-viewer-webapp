@@ -168,6 +168,7 @@
           :movie="movie"
           @edit-movie="editMovie"
           @toggle-fullwidth="onToggleFullWidth"
+          @set-startflagtime="onSetStartFlagTime"
           @hide-movie="hideMovie"
           @unhide-movie="unhideMovie"
           @remove-movie="removeMovie"
@@ -386,6 +387,20 @@ export default {
     },
     onToggleFullWidth() {
       this.hasFullWidthMovie = !this.hasFullWidthMovie
+    },
+    onSetStartFlagTime(props) {
+      console.log({props})
+      // prevent ui-specific properties from cluttering the DB
+      delete props.movie.ui
+      props.movie
+        .update()
+        .then(movie => {
+          logMessage("startflagtime update succesful", movie);
+          this.setFilterData()
+        })
+        .catch(err => {
+          this.handleError(err);
+        });
     },
     setFilterData() {
       // get list of user-defined ratings and levels, and remove duplicates

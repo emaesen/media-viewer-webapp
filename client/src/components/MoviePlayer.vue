@@ -114,6 +114,24 @@
       </div>
     </transition>
 
+    <transition name="fade-down">
+      <div class="mp-ctrls-topright"
+        v-show="state.showCtrls && state.showSecondaryCtrls && (state.
+        isFullWidth || state.isFullscreen)"
+      >
+        <div class="mp-ctrls-flags">
+          <button class="mp-ctrl-btn"
+            @click.stop="onClickStartFlagButton"
+          >
+            <font-awesome-icon
+              :class="{activated:hasCustomStartFlagTime}"
+              icon="flag-checkered"
+            />
+          </button>
+        </div>
+      </div>
+    </transition>
+
 
     <transition name="fade-up">
       <div class="mp-ctrls-bottom"
@@ -268,7 +286,8 @@ export default {
           preload: 'metadata'
         }
       }
-    }
+    },
+    hasCustomStartFlagTime: Boolean
   },
   data() {
     return {
@@ -411,6 +430,8 @@ export default {
       p.pos.start = p.playbackSliderEl.getBoundingClientRect().left
       p.pos.innerWidth = p.playbackHeadEl.getBoundingClientRect().width
       p.pos.width = p.playbackSliderEl.getBoundingClientRect().width - p.pos.innerWidth
+      // fake a time update event to ensure proper position of play head
+      this.onTimeupdateVideo({preventSetPlaybackDimensions: true})
     },
     setPlayerDimensions() {
       setTimeout(() => {
@@ -436,8 +457,8 @@ export default {
       this.state.showCtrls = true
       this.state.canPlay = true
       this.state.loadIssue = null
-      // advance one second to show a video frame
-      this.videoEl.currentTime = 1
+      // advance startFlagTime seconds to show a video frame
+      this.videoEl.currentTime = this.source.startFlagTime
       this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
     },
     onDurationchangeVideo() {
@@ -459,9 +480,9 @@ export default {
         }
       }
     },
-    onTimeupdateVideo() {
+    onTimeupdateVideo(opts) {
       const fraction = this.videoEl.currentTime / this.videoEl.duration
-      if (this.player.pos.width === 0 || this.videoEl.currentTime < 10) this.setPlaybackDimensions()
+      if ( !opts.preventSetPlaybackDimensions && (this.player.pos.width === 0 || this.videoEl.currentTime <= this.source.startFlagTime + 1) ) this.setPlaybackDimensions()
       this.player.pos.current = (this.player.pos.width * fraction).toFixed(3)
       this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
       this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
@@ -705,6 +726,10 @@ export default {
     onMouseleaveSkipButton() {
       this.player.skipTimeText = null
     },
+    onClickStartFlagButton() {
+      const startFlagTime = this.videoEl.currentTime
+      this.$emit('set-startflagtime', {startFlagTime: startFlagTime})
+    },
     onKeydown(evt) {
       if (evt.isComposing || evt.keyCode === 229) {
         return
@@ -807,13 +832,19 @@ export default {
   width: 100%;
   z-index: 3;
 }
-.mp-ctrls-topleft {
+.mp-ctrls-topleft,
+.mp-ctrls-topright {
   position: absolute;
   left: 0;
   top: 0;
   background-color: rgba(0, 0, 0, 0.54);
   z-index: 3;
   padding-right: .7em;
+}
+.mp-ctrls-topright {
+  left: auto;
+  right: 0;
+  padding-left: .7em;
 }
 .mp-ctrls-speed,
 .mp-ctrls-skip {

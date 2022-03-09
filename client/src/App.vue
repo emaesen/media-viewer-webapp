@@ -444,6 +444,10 @@ label.no_results_when_clicked {
   color: #cec0a1;
   margin-right: 0.3em;
 }
+
+.svg-inline--fa.activated {
+  color: #80d14a;
+}
 .svg-inline--fa.flush-right {
   margin-right: 0;
 }

@@ -28,9 +28,11 @@
       <MoviePlayer 
         v-if="embedPlayer"
         class="movie" 
-        :source="{src:movieSrc, type:mimeType, id:movie._id}"
+        :source="{src:movieSrc, type:mimeType, id:movie._id, startFlagTime:startFlagTime}"
+        :hasCustomStartFlagTime="hasCustomStartFlagTime"
         :options="options"
         @toggle-fullwidth="onToggleFullWidth"
+        @set-startflagtime="onSetStartFlagTime"
       />
       <div v-if="!embedPlayer">
         <button class="action button"
@@ -77,6 +79,7 @@ export default {
     return {
       isFullWidth: false,
       embedPlayer: false,
+      startFlagTimeDefault: 1,
       options: {
         autoplay:false,
         volume:.69,
@@ -113,6 +116,12 @@ export default {
     movieRating() {
       return this.movie.rating
     },
+    startFlagTime() {
+      return this.movie.sft == 0 ? 0 : this.movie.sft || this.startFlagTimeDefault
+    },
+    hasCustomStartFlagTime() {
+      return this.movie.sft >= 0 && this.movie.sft !== this.startFlagTimeDefault
+    }
   },
   methods: {
     setRating(i) {
@@ -129,6 +138,10 @@ export default {
       if (this.isFullWidth) {
         this.$el.scrollIntoView({behavior: "smooth"})
       }
+    },
+    onSetStartFlagTime(props) {
+      this.movie.sft = props.startFlagTime
+      this.$emit('set-startflagtime', {movie:this.movie})
     },
     onClickHideMovie() {
       this.$emit('hide-movie', {movie:this.movie})

@@ -15,6 +15,7 @@ import {
   faFastBackward, // larger jump/skip backwards
   faFastForward, //larger jump/skip forwards
   faFilter, // filter
+  faFlagCheckered, // checkered flag
   faHeart, // heart
   faHome, // home
   faMinusSquare, // minus sign in square
@@ -62,6 +63,7 @@ library.add(
   faFastBackward,
   faFastForward,
   faFilter,
+  faFlagCheckered,
   faHome,
   faHeart,
   farHeart,
