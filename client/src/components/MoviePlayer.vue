@@ -124,7 +124,7 @@
             @click.stop="onClickStartFlagButton"
           >
             <font-awesome-icon
-              :class="{activated:hasCustomStartFlagTime}"
+              :class="{activated:hasCustomStartFlagTime || state.startFlagClicked}"
               icon="flag-checkered"
             />
           </button>
@@ -344,6 +344,7 @@ export default {
         isPlaying: false,
         loadIssue: null,
         loadIssueMsg: "",
+        startFlagClicked: false,
       }
     }
   },
@@ -729,6 +730,7 @@ export default {
     onClickStartFlagButton() {
       const startFlagTime = this.videoEl.currentTime
       this.$emit('set-startflagtime', {startFlagTime: startFlagTime})
+      this.state.startFlagClicked = true
     },
     onKeydown(evt) {
       if (evt.isComposing || evt.keyCode === 229) {
