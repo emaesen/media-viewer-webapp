@@ -558,24 +558,41 @@ export default {
       const vW3 = this.videoEl.clientWidth / 3
       const eX = evt.offsetX
       const eY = evt.offsetY
-      // divide video in 9x9 grid and asign actions to different sections
-      if (vW3 <  eX && eX < 2*vW3 && vH3 < eY && eY < 2*vH3) {
-        // center
-        this.togglePlay()
-      }
+      // divide video in 3x3 grid and assign actions to 
+      // 9 different hotspot sections:
       if (eX < vW3) {
-        // left side
+        // left column
+        if (0 < eY && eY < vH3) {
+          // top
+          this.onClickSkipButton(-30)
+        }
         if (vH3 < eY && eY < 2*vH3) {
           // middle
-          this.onClickSkipButton(1)
+          this.onClickSkipButton(-10)
         }
         if (2*vH3 < eY && eY < 3*vH3) {
           // bottom
           this.onClickSkipButton(-1)
         }
       }
+      if (vW3 <  eX && eX < 2*vW3) {
+        // center column
+        if (0 < eY && eY < vH3) {
+          // top
+          this.onClickIncreaseSpeedButton()
+        }
+        if (vH3 < eY && eY < 2*vH3) {
+          // middle
+          this.resetSpeed()
+          this.togglePlay()
+        }
+        if (2*vH3 < eY && eY < 3*vH3) {
+          // bottom
+          this.onClickReduceSpeedButton()
+        }
+      }
       if (2*vW3 <  eX && eX < 3*vW3) {
-        // right side
+        // right column
         if (0 < eY && eY < vH3) {
           // top
           this.onClickSkipButton(30)
@@ -586,7 +603,7 @@ export default {
         }
         if (2*vH3 < eY && eY < 3*vH3) {
           // bottom
-          this.onClickSkipButton(-10)
+          this.onClickSkipButton(1)
         }
       }
       this.hideControls(3000)
