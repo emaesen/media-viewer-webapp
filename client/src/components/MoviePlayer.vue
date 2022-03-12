@@ -390,6 +390,7 @@ export default {
         loadIssue: null,
         loadIssueMsg: "",
         startFlagClicked: false,
+        startFlagTime: 0,
         showDeleteMarkerTarget: false,
       }
     }
@@ -418,7 +419,8 @@ export default {
   methods: {
     init() {
       this.videoEl = this.$refs && this.$refs[this.source.id+'-video']
-      this.supportsVideo = this.videoEl.canPlayType;
+      this.supportsVideo = this.videoEl.canPlayType
+      this.state.startFlagTime = this.source.startFlagTime
       if (this.supportsVideo) {
         // Hide the default controls
         this.videoEl.controls = false;
@@ -547,7 +549,7 @@ export default {
       this.state.canPlay = true
       this.state.loadIssue = null
       // advance startFlagTime seconds to show a video frame
-      this.videoEl.currentTime = this.source.startFlagTime
+      this.videoEl.currentTime = this.state.startFlagTime
       this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
       this.displayPlaybackMarkers() 
     },
@@ -572,15 +574,14 @@ export default {
     },
     onTimeupdateVideo(opts) {
       const fraction = this.videoEl.currentTime / this.videoEl.duration
-      if ( !opts.preventSetPlaybackDimensions && (this.player.pos.width === 0 || this.videoEl.currentTime <= this.source.startFlagTime + 1) ) this.setPlaybackDimensions()
+      if ( !opts.preventSetPlaybackDimensions && (this.player.pos.width === 0 || this.videoEl.currentTime <= this.state.startFlagTime + 1) ) this.setPlaybackDimensions()
       this.player.pos.current = (this.player.pos.width * fraction).toFixed(3)
       this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
       this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
     },
     onEndedVideo() {
       this.state.isPlaying = false
-      this.player.pos.current = 0
-      this.videoEl.currentTime = 0
+      this.videoEl.currentTime = this.state.startFlagTime
       this.resetSpeed()
       if (this.state.isFullWidth) this.toggleFullWidth()
       if (this.state.isFullscreen) this.toggleFullScreen()
@@ -834,8 +835,8 @@ export default {
       this.player.skipTimeText = null
     },
     onClickStartFlagButton() {
-      const startFlagTime = this.videoEl.currentTime
-      this.$emit('set-startflagtime', startFlagTime)
+      this.state.startFlagTime = this.videoEl.currentTime
+      this.$emit('set-startflagtime', this.state.startFlagTime)
       this.state.startFlagClicked = true
     },
     onClickMarkersCtrl() {
