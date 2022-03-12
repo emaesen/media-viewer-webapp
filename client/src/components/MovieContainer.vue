@@ -34,6 +34,7 @@
         @toggle-fullwidth="onToggleFullWidth"
         @set-startflagtime="onSetStartFlagTime"
         @set-markers="onSetMarkers"
+        @set-watchedat="onSetWatchedAt"
       />
       <div v-if="!embedPlayer">
         <button class="action button"
@@ -146,6 +147,10 @@ export default {
     onSetMarkers(markers) {
       this.movie.markers = markers
       this.updateMovie(this.movie, "markers")
+    },
+    onSetWatchedAt(watchedAt) {
+      this.movie.watchedAt = watchedAt
+      this.updateMovie(this.movie, "watchedAt")
     },
     onClickHideMovie() {
       this.$emit('hide-movie', {movie:this.movie})

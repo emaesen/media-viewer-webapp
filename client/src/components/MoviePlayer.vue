@@ -585,6 +585,15 @@ export default {
       this.resetSpeed()
       if (this.state.isFullWidth) this.toggleFullWidth()
       if (this.state.isFullscreen) this.toggleFullScreen()
+      this.setWatchedAt()
+    },
+    setWatchedAt() {
+      // update watchedAt after 10 seconds, because movie
+      // could be in "sort by date watched" mode and we allow
+      // some time to set a rating
+      setTimeout(() => {
+        this.$emit('set-watchedat', Date.now())
+      }, 10 * 1000)
     },
     showControls() {
       if (this.tmp.ctrlsDisplayTimer) {
