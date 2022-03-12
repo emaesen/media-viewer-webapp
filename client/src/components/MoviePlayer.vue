@@ -132,8 +132,6 @@
         <div class="mp-ctrls-markers">
           <button class="mp-ctrl-btn"
             @click.stop="onClickMarkersCtrl"
-            @drop.prevent="onDropMarkersCtrl"
-            @dragover.prevent="OnDragoverMarkersCtrl"
           >
             <font-awesome-icon
               icon="arrow-circle-down"
@@ -195,6 +193,7 @@
                 @click.stop="onClickMarker(markerTime)"
                 @mousedown.stop="onMousedownMarker"
                 @dragstart.stop="onDragstartMarker"
+                @dragend.stop="OnDragendMarker"
                 draggable="true"
                 :data-index="index"
               >
@@ -203,6 +202,16 @@
                 />
               </button>
             </span>
+          </div>
+
+          <div v-if="state.showDeleteMarkerTarget"
+            class="mp-target-deletemarker"
+            @drop.prevent="onDropDeleteMarkersTarget"
+            @dragover.prevent="OnDragoverDeleteMarkersTarget"
+          >
+             <font-awesome-icon 
+                icon="trash-alt"
+              />
           </div>
           
         </div>
@@ -381,7 +390,7 @@ export default {
         loadIssue: null,
         loadIssueMsg: "",
         startFlagClicked: false,
-        canSetOrDeleteMarkers: false,
+        showDeleteMarkerTarget: false,
       }
     }
   },
@@ -845,13 +854,17 @@ export default {
     onDragstartMarker(evt) {
       evt.dataTransfer.setData("text/plain", evt.target.dataset.index)
       evt.dataTransfer.effectAllowed = "move"
+      this.state.showDeleteMarkerTarget = true
     },
-    OnDragoverMarkersCtrl(evt) {
+    OnDragendMarker() {
+      this.state.showDeleteMarkerTarget = false
+    },
+    OnDragoverDeleteMarkersTarget(evt) {
       // this handler's reason of existence is to indicate a valid
       // drop target by calling the event's preventDefault method
       evt.dataTransfer.dropEffect = "move"
     },
-    onDropMarkersCtrl(evt) {
+    onDropDeleteMarkersTarget(evt) {
       const index = evt.dataTransfer.getData("text/plain")
       logMessage("remove marker ", (1*index+1))
       this.removePlaybackMarker(index)
@@ -1107,6 +1120,20 @@ export default {
   cursor: pointer;
   opacity: 0;
   transition: opacity 900ms;
+}
+.mp-target-deletemarker {
+  position: absolute;
+  display: inline-block;
+  left: 0;
+  top: -360%;
+  right: 0;
+  padding: .7em;
+  background-color: rgba(175, 40, 18, 0.5);
+  transition: all 300ms;
+  text-align: center;
+  svg {
+    color: rgb(255, 38, 0);
+  }
 }
 .mp-info-text-container {
   padding-top: .15em;
