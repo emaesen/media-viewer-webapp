@@ -249,7 +249,7 @@ export default {
       movieBasePath: "/media/movies/",
       isInit: true,
       paginationOptions: {
-        sortTypes: ["random", "rating", "date created", "date updated", "name", "duration"],
+        sortTypes: ["random", "rating", "date created", "date updated", "date watched", "name", "duration"],
         pageLimits: [4,6,8,12,16,20,24,30,36,60,100],
         ratings: ["0+","0","1","1+","2","2+","3","3+","4","4+","5", "5+", "6"],
         level1s: process.env.VUE_APP_LEVELS1.split(','),
@@ -469,6 +469,9 @@ export default {
           break;
         case "date updated":
           sort.updatedAt = sortInd
+          break;
+        case "date watched":
+          sort.watchedAt = sortInd
           break;
         case "name":
           sort.basename = sortInd
