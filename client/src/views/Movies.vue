@@ -166,9 +166,8 @@
         <MovieContainer
           :isActive="intSecObsv.activeIDs.includes(movie._id)"
           :movie="movie"
-          @edit-movie="editMovie"
           @toggle-fullwidth="onToggleFullWidth"
-          @set-startflagtime="onSetStartFlagTime"
+          @update-movie="onUpdateMovie"
           @hide-movie="hideMovie"
           @unhide-movie="unhideMovie"
           @remove-movie="removeMovie"
@@ -324,29 +323,10 @@ export default {
         this.$router.push("/login");
       }
     },
-    editMovie(props) {
-      logMessage("Edit movie ", props);
-      // save the modifictions
-      props.movie.rating = props.mod.rating;
-      props.movie.watchedAt = Date.now();
-      // prevent ui-specific properties from cluttering the DB
-      delete props.movie.ui
-      props.movie
-        .update()
-        .then(movie => {
-          logMessage("edit succesful", movie);
-          this.setFilterData()
-        })
-        .catch(err => {
-          this.handleError(err);
-        });
-    },
     hideMovie(props) {
       logMessage("Hide movie ", props);
       // save the modifictions
       props.movie.hidden = true;
-      // prevent ui-specific properties from cluttering the DB
-      delete props.movie.ui
       props.movie
         .update()
         .then(movie => {
@@ -361,8 +341,6 @@ export default {
       logMessage("Unhide movie ", props);
       // save the modifictions
       props.movie.hidden = false;
-      // prevent ui-specific properties from cluttering the DB
-      delete props.movie.ui
       props.movie
         .update()
         .then(movie => {
@@ -388,19 +366,20 @@ export default {
     onToggleFullWidth() {
       this.hasFullWidthMovie = !this.hasFullWidthMovie
     },
-    onSetStartFlagTime(props) {
-      console.log({props})
-      // prevent ui-specific properties from cluttering the DB
-      delete props.movie.ui
-      props.movie
+    updateMovie(movie, updateType) {
+      movie
         .update()
-        .then(movie => {
-          logMessage("startflagtime update succesful", movie);
+        .then(mv => {
+          logMessage("Movie " + updateType + " update succesful for ", mv.path);
           this.setFilterData()
         })
         .catch(err => {
+          logMessage("ERROR - Movie " + updateType + " update ERROR for ", movie.path);
           this.handleError(err);
         });
+    },
+    onUpdateMovie(props) {
+      this.updateMovie(props.movie, props.updateType)
     },
     setFilterData() {
       // get list of user-defined ratings and levels, and remove duplicates

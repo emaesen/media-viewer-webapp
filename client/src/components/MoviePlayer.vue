@@ -129,6 +129,17 @@
             />
           </button>
         </div>
+        <div class="mp-ctrls-markers">
+          <button class="mp-ctrl-btn"
+            @click.stop="onClickMarkersCtrl"
+            @drop.prevent="onDropMarkersCtrl"
+            @dragover.prevent="OnDragoverMarkersCtrl"
+          >
+            <font-awesome-icon
+              icon="arrow-circle-down"
+            />
+          </button>
+        </div>
       </div>
     </transition>
 
@@ -173,6 +184,27 @@
               :style="{'transform': 'translateX('+video.buffered+'%)'}"
             ></div>
           </div>
+
+          <div v-show="showMarkers">
+            <span v-for="(markerTime,index) in player.markers" :key="index">
+              <button
+                :id="source.id+'-playback-marker-'+index"
+                :ref="source.id+'-playback-marker-'+index"
+                class="mp-ctrl-btn mp-playback-marker"
+                :style="{'transform': 'translateX('+player.markersPos[index]+'px)','opacity' : player.markersOpacity}"
+                @click.stop="onClickMarker(markerTime)"
+                @mousedown.stop="onMousedownMarker"
+                @dragstart.stop="onDragstartMarker"
+                draggable="true"
+                :data-index="index"
+              >
+                <font-awesome-icon 
+                  icon="arrow-circle-down"
+                />
+              </button>
+            </span>
+          </div>
+          
         </div>
         <div class="mp-info-text-container">
           <span class="mp-info-text">
@@ -328,6 +360,10 @@ export default {
         },
         isAtMaxSpeed: false,
         isAtMinSpeed: false,
+        markers:[],
+        markerEls:[],
+        markersPos:[],
+        markersOpacity:0,
       },
       tmp: {
         ctrlsDisplayTimer: null,
@@ -345,6 +381,7 @@ export default {
         loadIssue: null,
         loadIssueMsg: "",
         startFlagClicked: false,
+        canSetOrDeleteMarkers: false,
       }
     }
   },
@@ -398,6 +435,8 @@ export default {
       this.player.playerEl.addEventListener('mouseup', this.onMouseupPlayer, false)
       this.setPlaybackDimensions()
       this.initVolume()
+      this.initPlaybackMarkers()
+      this.displayPlaybackMarkers()
     },
     initVolume() {
       const sliderEl = this.$refs && this.$refs[this.source.id+'-vol-slider']
@@ -438,7 +477,47 @@ export default {
       setTimeout(() => {
         this.setPlaybackDimensions()
         this.setVolumeDimensions()
+        this.displayPlaybackMarkers()
       }, 500)
+    },
+    initPlaybackMarker(marker) {
+      this.player.markers.push(marker)
+      const i = this.player.markers.length - 1
+      this.player.markersPos[i]=0.001
+      this.$nextTick(() => {
+        this.player.markerEls[i] = this.$refs && this.$refs[this.source.id+'-playback-marker-'+i][0]
+      })
+    },
+    removePlaybackMarker(index) {
+      this.player.markers.splice(index,1)
+      this.player.markersPos.splice(index,1)
+      this.player.markerEls.splice(index,1)
+
+    },
+    initPlaybackMarkers() {
+      this.player.markersOpacity = 0
+      if (this.source.markers && this.source.markers.length > 0) {
+        this.source.markers.forEach(marker => {
+          this.initPlaybackMarker(marker)
+        })
+      }
+    },
+    displayPlaybackMarkers() {
+      this.player.markersOpacity = 0
+      if (this.source.markers && this.source.markers.length > 0) {
+        this.$nextTick(() => {
+          this.source.markers.forEach((marker,i) => {
+            const markerWidth = this.player.markerEls[i].getBoundingClientRect().width
+            const fraction = (marker / this.videoEl.duration).toFixed(3)
+            // use splice to modify array so that vue will pick up the changes
+            this.player.markersPos.splice(i,1,(this.player.pos.width * fraction - markerWidth/2 + 3).toFixed(1))
+            if(this.showMarkers) {
+              this.player.markersOpacity = 1
+              logMessage("display playback marker", {i, marker, fraction, pos:this.player.markersPos[i] })
+            }
+          })
+        })
+      }
     },
     onStalledVideo() {
       this.state.loadIssue = "stalled"
@@ -461,6 +540,7 @@ export default {
       // advance startFlagTime seconds to show a video frame
       this.videoEl.currentTime = this.source.startFlagTime
       this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
+      this.displayPlaybackMarkers() 
     },
     onDurationchangeVideo() {
       if (this.player.timeRemainingText === '00:00') {
@@ -746,8 +826,39 @@ export default {
     },
     onClickStartFlagButton() {
       const startFlagTime = this.videoEl.currentTime
-      this.$emit('set-startflagtime', {startFlagTime: startFlagTime})
+      this.$emit('set-startflagtime', startFlagTime)
       this.state.startFlagClicked = true
+    },
+    onClickMarkersCtrl() {
+      const marker = Math.round(100 * this.videoEl.currentTime) / 100
+      logMessage("set marker at ", marker + " sec")
+      // initialize new marker
+      this.initPlaybackMarker(marker)
+      this.$emit('set-markers', this.player.markers)
+      // display new (and pre-existing) markers
+      this.displayPlaybackMarkers()
+    },
+    onMousedownMarker() {
+      // this handler's only reason of existence is to stop 
+      // event propagation in case a marker drag is initiated
+    },
+    onDragstartMarker(evt) {
+      evt.dataTransfer.setData("text/plain", evt.target.dataset.index)
+      evt.dataTransfer.effectAllowed = "move"
+    },
+    OnDragoverMarkersCtrl(evt) {
+      // this handler's reason of existence is to indicate a valid
+      // drop target by calling the event's preventDefault method
+      evt.dataTransfer.dropEffect = "move"
+    },
+    onDropMarkersCtrl(evt) {
+      const index = evt.dataTransfer.getData("text/plain")
+      logMessage("remove marker ", (1*index+1))
+      this.removePlaybackMarker(index)
+      this.$emit('set-markers', this.player.markers)
+    },
+    onClickMarker(markerTime) {
+      this.videoEl.currentTime = markerTime
     },
     onKeydown(evt) {
       if (evt.isComposing || evt.keyCode === 229) {
@@ -778,6 +889,9 @@ export default {
         if (evt.key==="=") {
           this.resetSpeed()
         }
+        if (evt.key==="m") {
+          this.onClickMarkersCtrl()
+        }
       }
       if (evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
         if (evt.key==="ArrowRight") {
@@ -802,7 +916,10 @@ export default {
     playbackRate() {
       // define this computed property just so we can watch it
       return this.video.playbackRate
-    }
+    },
+    showMarkers() {
+      return this.state.isFullscreen || this.state.isFullWidth
+    },
   },
   watch: {
     playbackRate(val) {
@@ -946,7 +1063,7 @@ export default {
   display: inline-block;
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  //overflow: hidden;
   margin: 0 .5em;
   transition: all .2s ease-in;
 }
@@ -981,7 +1098,16 @@ export default {
   cursor: pointer;
   transition: all 16ms;
 }
-
+.mp-playback-marker {
+  position: absolute;
+  display: inline-block;
+  left: 0;
+  top: -60%;
+  background-color: rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 900ms;
+}
 .mp-info-text-container {
   padding-top: .15em;
 }

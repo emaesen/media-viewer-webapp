@@ -16,7 +16,7 @@
       <div class="rating">
         <Rating
           :rating="movieRating"
-          @set-rating="setRating"
+          @set-rating="onSetRating"
         />
       </div>
       <div class="path info">
@@ -28,11 +28,12 @@
       <MoviePlayer 
         v-if="embedPlayer"
         class="movie" 
-        :source="{src:movieSrc, type:mimeType, id:movie._id, startFlagTime:startFlagTime}"
+        :source="{src:movieSrc, type:mimeType, id:movie._id, startFlagTime:startFlagTime, markers:movie.markers}"
         :hasCustomStartFlagTime="hasCustomStartFlagTime"
         :options="options"
         @toggle-fullwidth="onToggleFullWidth"
         @set-startflagtime="onSetStartFlagTime"
+        @set-markers="onSetMarkers"
       />
       <div v-if="!embedPlayer">
         <button class="action button"
@@ -124,14 +125,6 @@ export default {
     }
   },
   methods: {
-    setRating(i) {
-      this.$emit('edit-movie', {
-        movie: this.movie,
-        mod: {
-          rating: i
-        }
-      })
-    },
     onToggleFullWidth() {
       this.$emit('toggle-fullwidth')
       this.isFullWidth = !this.isFullWidth
@@ -139,9 +132,20 @@ export default {
         this.$el.scrollIntoView({behavior: "smooth"})
       }
     },
-    onSetStartFlagTime(props) {
-      this.movie.sft = props.startFlagTime
-      this.$emit('set-startflagtime', {movie:this.movie})
+    updateMovie(movie,updateType) {
+      this.$emit('update-movie', {movie,updateType})
+    },
+    onSetRating(i) {
+      this.movie.rating = i
+      this.updateMovie(this.movie, "rating")
+    },
+    onSetStartFlagTime(startFlagTime) {
+      this.movie.sft = startFlagTime
+      this.updateMovie(this.movie, "startflagtime")
+    },
+    onSetMarkers(markers) {
+      this.movie.markers = markers
+      this.updateMovie(this.movie, "markers")
     },
     onClickHideMovie() {
       this.$emit('hide-movie', {movie:this.movie})
