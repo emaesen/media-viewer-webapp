@@ -391,6 +391,10 @@ export default {
         loadIssueMsg: "",
         startFlagClicked: false,
         startFlagTime: 0,
+        startTime: 0,
+        resumeFractionThreshold: 0.95,
+        resumeTime: null,
+        canResume: false,
         showDeleteMarkerTarget: false,
       }
     }
@@ -400,6 +404,7 @@ export default {
     this.init()
   },
   beforeDestroy() {
+    this.setResumeTime()
     if (this.player.playerEl) {
       this.player.playerEl.removeEventListener('mousemove', this.onMousemovePlayer)
       this.player.playerEl.removeEventListener('mouseup', this.onMouseupPlayer)
@@ -421,6 +426,8 @@ export default {
       this.videoEl = this.$refs && this.$refs[this.source.id+'-video']
       this.supportsVideo = this.videoEl.canPlayType
       this.state.startFlagTime = this.source.startFlagTime
+      this.state.resumeTime = this.source.resumeTime
+      this.state.startTime = this.source.resumeTime || this.source.startFlagTime
       if (this.supportsVideo) {
         // Hide the default controls
         this.videoEl.controls = false;
@@ -548,9 +555,11 @@ export default {
       this.state.showCtrls = true
       this.state.canPlay = true
       this.state.loadIssue = null
-      // advance startFlagTime seconds to show a video frame
-      this.videoEl.currentTime = this.state.startFlagTime
+      // advance startTime seconds to show a video frame
+      logMessage("start video " + this.source.id + " at " + this.state.startTime + " seconds")
+      this.videoEl.currentTime = this.state.startTime
       this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
+      this.setPlaybackDimensions()
       this.displayPlaybackMarkers() 
     },
     onDurationchangeVideo() {
@@ -574,10 +583,17 @@ export default {
     },
     onTimeupdateVideo(opts) {
       const fraction = this.videoEl.currentTime / this.videoEl.duration
-      if ( !opts.preventSetPlaybackDimensions && (this.player.pos.width === 0 || this.videoEl.currentTime <= this.state.startFlagTime + 1) ) this.setPlaybackDimensions()
+      if ( !opts.preventSetPlaybackDimensions && (this.player.pos.width === 0 || this.videoEl.currentTime <= this.state.startTime + 1) ) this.setPlaybackDimensions()
       this.player.pos.current = (this.player.pos.width * fraction).toFixed(3)
       this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
       this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
+      if ( this.videoEl.currentTime > this.state.startTime + 10 
+           && fraction < this.state.resumeFractionThreshold) {
+         this.state.resumeTime = this.videoEl.currentTime
+         this.state.canResume = true
+      } else if (fraction >= this.state.resumeFractionThreshold) {
+        this.state.resumeTime = null
+      }
     },
     onEndedVideo() {
       this.state.isPlaying = false
@@ -585,6 +601,7 @@ export default {
       this.resetSpeed()
       if (this.state.isFullWidth) this.toggleFullWidth()
       if (this.state.isFullscreen) this.toggleFullScreen()
+      this.setResumeTime()
       this.setWatchedAt()
     },
     setWatchedAt() {
@@ -594,6 +611,11 @@ export default {
       setTimeout(() => {
         this.$emit('set-watchedat', Date.now())
       }, 10 * 1000)
+    },
+    setResumeTime() {
+      if (this.state.canResume) {
+        this.$emit('set-resumetime', this.state.resumeTime)
+      }
     },
     showControls() {
       if (this.tmp.ctrlsDisplayTimer) {

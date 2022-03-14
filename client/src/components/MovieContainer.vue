@@ -28,13 +28,21 @@
       <MoviePlayer 
         v-if="embedPlayer"
         class="movie" 
-        :source="{src:movieSrc, type:mimeType, id:movie._id, startFlagTime:startFlagTime, markers:movie.markers}"
+        :source="{
+          src:movieSrc, 
+          type:mimeType, 
+          id:movie._id, 
+          startFlagTime:startFlagTime, 
+          resumeTime:resumeTime, 
+          markers:movie.markers
+        }"
         :hasCustomStartFlagTime="hasCustomStartFlagTime"
         :options="options"
         @toggle-fullwidth="onToggleFullWidth"
         @set-startflagtime="onSetStartFlagTime"
         @set-markers="onSetMarkers"
         @set-watchedat="onSetWatchedAt"
+        @set-resumetime="onSetResumeTime"
       />
       <div v-if="!embedPlayer">
         <button class="action button"
@@ -121,6 +129,9 @@ export default {
     startFlagTime() {
       return this.movie.sft == 0 ? 0 : this.movie.sft || this.startFlagTimeDefault
     },
+    resumeTime() {
+      return this.movie.rt
+    },
     hasCustomStartFlagTime() {
       return this.movie.sft >= 0 && this.movie.sft !== this.startFlagTimeDefault
     }
@@ -151,6 +162,14 @@ export default {
     onSetWatchedAt(watchedAt) {
       this.movie.watchedAt = watchedAt
       this.updateMovie(this.movie, "watchedAt")
+    },
+    onSetResumeTime(resumeTime) {
+      if (resumeTime === this.startFlagTimeDefault) {
+        resumeTime = null
+      }
+      resumeTime = resumeTime ? (1*resumeTime).toFixed(2) : null
+      this.movie.rt = resumeTime
+      this.updateMovie(this.movie, "resume time")
     },
     onClickHideMovie() {
       this.$emit('hide-movie', {movie:this.movie})
