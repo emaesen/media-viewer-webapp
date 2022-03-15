@@ -195,7 +195,7 @@
             </button>
           </div>
 
-          <div v-show="showMarkers">
+          <div v-show="isInFullView">
             <span v-for="(markerTime,index) in player.markers" :key="index">
               <button
                 :id="source.id+'-playback-marker-'+index"
@@ -406,7 +406,7 @@ export default {
         loadIssueMsg: "",
         startFlagClicked: false,
         resumeFractionThreshold: 0.95,
-        canResume: false,
+        hasNewResumeTime: false,
         showDeleteMarkerTarget: false,
       }
     }
@@ -541,7 +541,7 @@ export default {
             const fraction = (marker / this.videoEl.duration).toFixed(3)
             // use splice to modify array so that vue will pick up the changes
             this.player.markersPos.splice(i,1,(this.player.pos.width * fraction - markerWidth/2 + 3).toFixed(1))
-            if(this.showMarkers) {
+            if(this.isInFullView) {
               this.player.markersOpacity = 1
               logMessage("display playback marker", {i, marker, fraction, pos:this.player.markersPos[i] })
             }
@@ -599,12 +599,14 @@ export default {
       this.player.pos.current = (this.player.pos.width * fraction).toFixed(3)
       this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
       this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
-      if ( this.videoEl.currentTime > this.player.startTime + 10 
-           && fraction < this.state.resumeFractionThreshold) {
-         this.player.resumeTime = this.videoEl.currentTime
-         this.state.canResume = true
-      } else if (fraction >= this.state.resumeFractionThreshold) {
-        this.player.resumeTime = null
+      if (this.isInFullView) {
+        if ( this.videoEl.currentTime > this.player.startTime + 10 
+            && fraction < this.state.resumeFractionThreshold) {
+          this.player.resumeTime = this.videoEl.currentTime
+          this.state.hasNewResumeTime = true
+        } else if (fraction >= this.state.resumeFractionThreshold) {
+          this.player.resumeTime = null
+        }
       }
     },
     onEndedVideo() {
@@ -625,8 +627,10 @@ export default {
       }, 10 * 1000)
     },
     setResumeTime() {
-      if (this.state.canResume) {
+      if (this.state.hasNewResumeTime) {
+        logMessage("set resume time to ", this.player.resumeTime)
         this.$emit('set-resumetime', this.player.resumeTime)
+        this.state.hasNewResumeTime = false
       }
     },
     showControls() {
@@ -771,6 +775,10 @@ export default {
       this.toggleFullWidth()
     },
     toggleFullWidth() {
+      if (this.state.isFullWidth) {
+        // exiting fullwidth mode
+        this.setResumeTime()
+      }
       this.$emit('toggle-fullwidth')
       this.state.isFullWidth = !this.state.isFullWidth
       this.setPlayerDimensions()
@@ -796,6 +804,7 @@ export default {
             console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
         });
       } else {
+        this.setResumeTime()
         document.exitFullscreen = document.exitFullscreen
           || document.mozCancelFullScreen
           || document.msExitFullscreen
@@ -977,9 +986,9 @@ export default {
       // define this computed property just so we can watch it
       return this.video.playbackRate
     },
-    showMarkers() {
-      return this.state.isFullscreen || this.state.isFullWidth
-    },
+    isInFullView() {
+      return this.state.isFullWidth || this.state.isFullscreen 
+    }
   },
   watch: {
     playbackRate(val) {
