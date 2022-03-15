@@ -1150,8 +1150,8 @@ export default {
   position: absolute;
   display: inline-block;
   left: 0;
-  top: -60%;
-  background-color: rgba(0, 0, 0, 0.18);
+  top: -70%;
+  background-color: rgba(0, 0, 0, 0.418);
   cursor: pointer;
   opacity: 0;
   transition: opacity 900ms;
