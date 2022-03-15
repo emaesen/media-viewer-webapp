@@ -601,7 +601,7 @@ export default {
       this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
       this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
       if (this.isInFullView) {
-        if ( this.videoEl.currentTime > this.player.startTime + 10 
+        if ( fraction > (1 - this.state.resumeFractionThreshold)
             && fraction < this.state.resumeFractionThreshold) {
           this.player.resumeTime = this.videoEl.currentTime
           this.state.hasNewResumeTime = true
