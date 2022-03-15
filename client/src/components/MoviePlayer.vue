@@ -124,7 +124,7 @@
             @click.stop="onClickStartFlagButton"
           >
             <font-awesome-icon
-              :class="{activated:hasCustomStartFlagTime || state.startFlagClicked}"
+              :class="{activated:state.hasCustomStartFlagTime}"
               icon="flag-checkered"
             />
           </button>
@@ -183,11 +183,11 @@
             ></div>
           </div>
 
-          <div v-show="player.startFlagTime">
+          <div v-show="isInFullView && state.hasCustomStartFlagTime">
             <button 
               class="mp-ctrl-btn mp-playback-marker"
-              :style="{'transform': 'translateX('+player.startFlagTime+'px)','opacity' : player.markersOpacity}"
-              @click.stop="onClickMarker(markerTime)"
+              :style="{'transform': 'translateX('+player.startFlagTime+'px)','opacity' : 1}"
+              @click.stop="onClickMarker(player.startFlagTime)"
             >
               <font-awesome-icon
                 icon="flag-checkered"
@@ -404,7 +404,7 @@ export default {
         isPlaying: false,
         loadIssue: null,
         loadIssueMsg: "",
-        startFlagClicked: false,
+        hasCustomStartFlagTime: false,
         resumeFractionThreshold: 0.95,
         hasNewResumeTime: false,
         showDeleteMarkerTarget: false,
@@ -440,6 +440,7 @@ export default {
       this.player.startFlagTime = this.source.startFlagTime
       this.player.resumeTime = this.source.resumeTime
       this.player.startTime = this.source.resumeTime || this.source.startFlagTime
+      this.state.hasCustomStartFlagTime = this.hasCustomStartFlagTime
       if (this.supportsVideo) {
         // Hide the default controls
         this.videoEl.controls = false;
@@ -889,7 +890,7 @@ export default {
     onClickStartFlagButton() {
       this.player.startFlagTime = this.videoEl.currentTime
       this.$emit('set-startflagtime', this.player.startFlagTime)
-      this.state.startFlagClicked = true
+      this.state.hasCustomStartFlagTime = true
     },
     onClickMarkersCtrl() {
       const marker = Math.round(100 * this.videoEl.currentTime) / 100
