@@ -141,7 +141,10 @@ export default {
       this.$emit('toggle-fullwidth')
       this.isFullWidth = !this.isFullWidth
       if (this.isFullWidth) {
-        this.$el.scrollIntoView({behavior: "smooth"})
+        // not sure why I had this, commenting out for now
+        // because it causes slight misalignment issue when
+        // exiting fullwidth mode
+        //this.$el.scrollIntoView({behavior: "smooth"})
       }
     },
     updateMovie(movie,updateType) {
