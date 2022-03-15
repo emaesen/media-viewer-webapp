@@ -937,6 +937,9 @@ export default {
         if (evt.key==="m") {
           this.onClickMarkersCtrl()
         }
+        if (evt.key==="s") {
+          this.onClickStartFlagButton()
+        }
       }
       if (evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
         if (evt.key==="ArrowRight") {
