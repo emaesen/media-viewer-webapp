@@ -534,9 +534,9 @@ export default {
     },
     displayPlaybackMarkers() {
       this.player.markersOpacity = 0
-      if (this.source.markers && this.source.markers.length > 0) {
+      if (this.player.markers && this.player.markers.length > 0) {
         this.$nextTick(() => {
-          this.source.markers.forEach((marker,i) => {
+          this.player.markers.forEach((marker,i) => {
             const markerWidth = this.player.markerEls[i].getBoundingClientRect().width
             const fraction = (marker / this.videoEl.duration).toFixed(3)
             // use splice to modify array so that vue will pick up the changes
