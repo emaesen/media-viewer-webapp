@@ -183,6 +183,18 @@
             ></div>
           </div>
 
+          <div v-show="state.startFlagTime">
+            <button 
+              class="mp-ctrl-btn mp-playback-marker"
+              :style="{'transform': 'translateX('+state.startFlagTime+'px)','opacity' : player.markersOpacity}"
+              @click.stop="onClickMarker(markerTime)"
+            >
+              <font-awesome-icon
+                icon="flag-checkered"
+              />
+            </button>
+          </div>
+
           <div v-show="showMarkers">
             <span v-for="(markerTime,index) in player.markers" :key="index">
               <button
