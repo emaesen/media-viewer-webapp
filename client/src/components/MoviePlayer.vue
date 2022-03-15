@@ -183,10 +183,10 @@
             ></div>
           </div>
 
-          <div v-show="state.startFlagTime">
+          <div v-show="player.startFlagTime">
             <button 
               class="mp-ctrl-btn mp-playback-marker"
-              :style="{'transform': 'translateX('+state.startFlagTime+'px)','opacity' : player.markersOpacity}"
+              :style="{'transform': 'translateX('+player.startFlagTime+'px)','opacity' : player.markersOpacity}"
               @click.stop="onClickMarker(markerTime)"
             >
               <font-awesome-icon
@@ -381,6 +381,9 @@ export default {
         },
         isAtMaxSpeed: false,
         isAtMinSpeed: false,
+        startFlagTime: 0,
+        startTime: 0,
+        resumeTime: null,
         markers:[],
         markerEls:[],
         markersPos:[],
@@ -402,10 +405,7 @@ export default {
         loadIssue: null,
         loadIssueMsg: "",
         startFlagClicked: false,
-        startFlagTime: 0,
-        startTime: 0,
         resumeFractionThreshold: 0.95,
-        resumeTime: null,
         canResume: false,
         showDeleteMarkerTarget: false,
       }
@@ -437,9 +437,9 @@ export default {
     init() {
       this.videoEl = this.$refs && this.$refs[this.source.id+'-video']
       this.supportsVideo = this.videoEl.canPlayType
-      this.state.startFlagTime = this.source.startFlagTime
-      this.state.resumeTime = this.source.resumeTime
-      this.state.startTime = this.source.resumeTime || this.source.startFlagTime
+      this.player.startFlagTime = this.source.startFlagTime
+      this.player.resumeTime = this.source.resumeTime
+      this.player.startTime = this.source.resumeTime || this.source.startFlagTime
       if (this.supportsVideo) {
         // Hide the default controls
         this.videoEl.controls = false;
@@ -568,8 +568,8 @@ export default {
       this.state.canPlay = true
       this.state.loadIssue = null
       // advance startTime seconds to show a video frame
-      logMessage("start video " + this.source.id + " at " + this.state.startTime + " seconds")
-      this.videoEl.currentTime = this.state.startTime
+      logMessage("start video " + this.source.id + " at " + this.player.startTime + " seconds")
+      this.videoEl.currentTime = this.player.startTime
       this.videoEl.removeEventListener('canplay', this.onCanplayVideo)
       this.setPlaybackDimensions()
       this.displayPlaybackMarkers() 
@@ -595,21 +595,21 @@ export default {
     },
     onTimeupdateVideo(opts) {
       const fraction = this.videoEl.currentTime / this.videoEl.duration
-      if ( !opts.preventSetPlaybackDimensions && (this.player.pos.width === 0 || this.videoEl.currentTime <= this.state.startTime + 1) ) this.setPlaybackDimensions()
+      if ( !opts.preventSetPlaybackDimensions && (this.player.pos.width === 0 || this.videoEl.currentTime <= this.player.startTime + 1) ) this.setPlaybackDimensions()
       this.player.pos.current = (this.player.pos.width * fraction).toFixed(3)
       this.player.timeRemainingText = timeParse(this.videoEl.duration - this.videoEl.currentTime)
       this.player.timeElapsedText = timeParse(this.videoEl.currentTime)
-      if ( this.videoEl.currentTime > this.state.startTime + 10 
+      if ( this.videoEl.currentTime > this.player.startTime + 10 
            && fraction < this.state.resumeFractionThreshold) {
-         this.state.resumeTime = this.videoEl.currentTime
+         this.player.resumeTime = this.videoEl.currentTime
          this.state.canResume = true
       } else if (fraction >= this.state.resumeFractionThreshold) {
-        this.state.resumeTime = null
+        this.player.resumeTime = null
       }
     },
     onEndedVideo() {
       this.state.isPlaying = false
-      this.videoEl.currentTime = this.state.startFlagTime
+      this.videoEl.currentTime = this.player.startFlagTime
       this.resetSpeed()
       if (this.state.isFullWidth) this.toggleFullWidth()
       if (this.state.isFullscreen) this.toggleFullScreen()
@@ -626,7 +626,7 @@ export default {
     },
     setResumeTime() {
       if (this.state.canResume) {
-        this.$emit('set-resumetime', this.state.resumeTime)
+        this.$emit('set-resumetime', this.player.resumeTime)
       }
     },
     showControls() {
@@ -878,8 +878,8 @@ export default {
       this.player.skipTimeText = null
     },
     onClickStartFlagButton() {
-      this.state.startFlagTime = this.videoEl.currentTime
-      this.$emit('set-startflagtime', this.state.startFlagTime)
+      this.player.startFlagTime = this.videoEl.currentTime
+      this.$emit('set-startflagtime', this.player.startFlagTime)
       this.state.startFlagClicked = true
     },
     onClickMarkersCtrl() {
