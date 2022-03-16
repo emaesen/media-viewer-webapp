@@ -186,8 +186,10 @@
 
           <div v-show="isInFullView && state.hasCustomStartFlagTime">
             <button 
+              :id="source.id+'-playback-startflag-marker'"
+              :ref="source.id+'-playback-startflag-marker'"
               class="mp-ctrl-btn mp-playback-marker"
-              :style="{'transform': 'translateX('+player.startFlagTime+'px)','opacity' : 1}"
+              :style="{'transform': 'translateX('+player.startFlagMarkerPos+'px)','opacity' : 1}"
               @click.stop="onClickMarker(player.startFlagTime)"
             >
               <font-awesome-icon
@@ -383,6 +385,8 @@ export default {
         isAtMaxSpeed: false,
         isAtMinSpeed: false,
         startFlagTime: 0,
+        startFlagMarkerPos: 0,
+        startFlagMarkerEl: null,
         startTime: 0,
         resumeTime: null,
         markers:[],
@@ -460,11 +464,14 @@ export default {
       const playerEl = this.$refs && this.$refs[this.source.id+'-player']
       const playbackSliderEl = this.$refs && this.$refs[this.source.id+'-playback-slider']
       const playbackHeadEl = this.$refs && this.$refs[this.source.id+'-playback-head']
+      const startFlagMarkerEl = this.$refs && this.$refs[this.source.id+'-playback-startflag-marker']
 
       this.player.domRect = playerEl.getBoundingClientRect()
       this.player.playerEl = playerEl
       this.player.playbackSliderEl = playbackSliderEl
       this.player.playbackHeadEl = playbackHeadEl
+      this.player.startFlagMarkerEl = startFlagMarkerEl
+
       this.player.playerEl.addEventListener('mousemove', this.onMousemovePlayer, false)
       this.player.playerEl.addEventListener('mouseup', this.onMouseupPlayer, false)
       this.setPlaybackDimensions()
@@ -540,6 +547,7 @@ export default {
       this.player.markersOpacity = 0
       if (this.player.markers && this.player.markers.length > 0) {
         this.$nextTick(() => {
+          this.positionStartFlagMarker()
           this.player.markers.forEach((marker,i) => {
             const markerWidth = this.player.markerEls[i].getBoundingClientRect().width
             const fraction = (marker / this.videoEl.duration).toFixed(3)
@@ -905,8 +913,19 @@ export default {
     onMouseleaveSkipButton() {
       this.player.skipTimeText = null
     },
+    positionStartFlagMarker() {
+      if (this.state.hasCustomStartFlagTime) {
+        const markerWidth = this.player.startFlagMarkerEl.getBoundingClientRect().width
+        const sft = this.player.startFlagTime
+        const fraction = (sft / this.videoEl.duration).toFixed(3)
+        this.player.startFlagMarkerPos = (this.player.pos.width * fraction - markerWidth/2 + 3).toFixed(1)
+      
+        logMessage("display startflag playback marker", {sft, fraction, pos:this.player.startFlagMarkerPos })
+      }
+    },
     onClickStartFlagButton() {
       this.player.startFlagTime = this.videoEl.currentTime
+      this.positionStartFlagMarker()
       this.$emit('set-startflagtime', this.player.startFlagTime)
       this.state.hasCustomStartFlagTime = true
       this.player.highlightFlagCtrl = true
