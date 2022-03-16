@@ -102,21 +102,21 @@ dl {
 dt { 
   margin-top: .5em;
   font-style: italic;
-  color: rgb(255, 190, 241);
+  color: rgb(229,222,244);
 }
 dd {
   margin-inline: 0 0;
   margin-bottom: .5em;
-  color: rgb(164, 193, 255);
+  color: rgb(255,254,245);
   font-weight: 700;
 }
 .map-ctrl {
   text-align: right;
 }
 .map {
-  background-color: rgb(43, 8, 8);
+  background-color: rgb(21,6,6);
   padding: .2em;
-  border: 3px solid rgb(68, 12, 12);
+  border: 3px solid rgb(78,32,83);
   border-radius: 10px;
   opacity: 1;
   transition: all 1s;
