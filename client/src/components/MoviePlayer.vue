@@ -124,7 +124,7 @@
             @click.stop="onClickStartFlagButton"
           >
             <font-awesome-icon
-              :class="{activated:state.hasCustomStartFlagTime}"
+              :class="{activated:player.highlightFlagCtrl}"
               icon="flag-checkered"
             />
           </button>
@@ -134,6 +134,7 @@
             @click.stop="onClickMarkersCtrl"
           >
             <font-awesome-icon
+              :class="{activated:player.highlightMarkerCtrl}"
               icon="arrow-circle-down"
             />
           </button>
@@ -388,6 +389,8 @@ export default {
         markerEls:[],
         markersPos:[],
         markersOpacity:0,
+        highlightFlagCtrl: false,
+        highlightMarkerCtrl: false,
       },
       tmp: {
         ctrlsDisplayTimer: null,
@@ -906,6 +909,10 @@ export default {
       this.player.startFlagTime = this.videoEl.currentTime
       this.$emit('set-startflagtime', this.player.startFlagTime)
       this.state.hasCustomStartFlagTime = true
+      this.player.highlightFlagCtrl = true
+      setTimeout(() => {
+        this.player.highlightFlagCtrl = false
+      },2700)
     },
     onClickMarkersCtrl() {
       const marker = Math.round(100 * this.videoEl.currentTime) / 100
@@ -915,6 +922,10 @@ export default {
       this.$emit('set-markers', this.player.markers)
       // display new (and pre-existing) markers
       this.displayPlaybackMarkers()
+      this.player.highlightMarkerCtrl = true
+      setTimeout(() => {
+        this.player.highlightMarkerCtrl = false
+      },2700)
     },
     onMousedownMarker() {
       // this handler's only reason of existence is to stop 
