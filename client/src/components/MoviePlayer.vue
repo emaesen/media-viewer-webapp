@@ -772,6 +772,22 @@ export default {
         this.videoEl.volume = val
       }
     },
+    onClickVolumeUpButton() {
+      let vol = this.videoEl.volume
+      vol = vol < .1 ? vol + .01 : 
+            vol < .2 ? vol + .05 : 
+                       vol + .1
+      vol = vol > 1 ? 1 : vol
+      this.setVolume(vol)
+    },
+    onClickVolumeDownButton() {
+      let vol = this.videoEl.volume
+      vol = vol < .1 ? vol - .01 : 
+            vol < .2 ? vol - .05 : 
+                       vol - .1
+      vol = vol < 0 ? 0 : vol
+      this.setVolume(vol)
+    },
     onClickFullWidthButton() {
       this.toggleFullWidth()
     },
@@ -946,6 +962,12 @@ export default {
         }
         if (evt.key==="ArrowLeft") {
           this.onClickSkipButton(-10)
+        }
+        if (evt.key==="ArrowUp") {
+          this.onClickVolumeUpButton()
+        }
+        if (evt.key==="ArrowDown") {
+          this.onClickVolumeDownButton()
         }
         if (evt.key==="-" || evt.key==="[") {
           this.onClickReduceSpeedButton()
