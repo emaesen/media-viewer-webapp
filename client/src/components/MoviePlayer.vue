@@ -184,13 +184,18 @@
             ></div>
           </div>
 
-          <div v-show="isInFullView && state.hasCustomStartFlagTime">
+          <div v-show="isInFullView">
             <button 
               :id="source.id+'-playback-startflag-marker'"
               :ref="source.id+'-playback-startflag-marker'"
               class="mp-ctrl-btn mp-playback-marker"
-              :style="{'transform': 'translateX('+player.startFlagMarkerPos+'px)','opacity' : 1}"
+              :style="{'transform': 'translateX('+player.startFlagMarkerPos+'px)','opacity' : (state.hasCustomStartFlagTime? 1 : 0)}"
               @click.stop="onClickMarker(player.startFlagTime)"
+              @mousedown.stop="onMousedownMarker"
+              @dragstart.stop="onDragstartMarker"
+              @dragend.stop="OnDragendMarker"
+              draggable="true"
+              data-index="flag"
             >
               <font-awesome-icon
                 icon="flag-checkered"
@@ -385,7 +390,7 @@ export default {
         isAtMaxSpeed: false,
         isAtMinSpeed: false,
         startFlagTime: 0,
-        startFlagMarkerPos: 0,
+        startFlagMarkerPos: -100,
         startFlagMarkerEl: null,
         startTime: 0,
         resumeTime: null,
@@ -545,9 +550,11 @@ export default {
     },
     displayPlaybackMarkers() {
       this.player.markersOpacity = 0
+      
+      this.positionStartFlagMarker()
+      
       if (this.player.markers && this.player.markers.length > 0) {
         this.$nextTick(() => {
-          this.positionStartFlagMarker()
           this.player.markers.forEach((marker,i) => {
             const markerWidth = this.player.markerEls[i].getBoundingClientRect().width
             const fraction = (marker / this.videoEl.duration).toFixed(3)
@@ -914,8 +921,10 @@ export default {
       this.player.skipTimeText = null
     },
     positionStartFlagMarker() {
+console.log({hasCustomStartFlagTime:this.state.hasCustomStartFlagTime})
       if (this.state.hasCustomStartFlagTime) {
         const markerWidth = this.player.startFlagMarkerEl.getBoundingClientRect().width
+console.log({markerWidth})
         const sft = this.player.startFlagTime
         const fraction = (sft / this.videoEl.duration).toFixed(3)
         this.player.startFlagMarkerPos = (this.player.pos.width * fraction - markerWidth/2 + 3).toFixed(1)
@@ -925,9 +934,9 @@ export default {
     },
     onClickStartFlagButton() {
       this.player.startFlagTime = this.videoEl.currentTime
-      this.positionStartFlagMarker()
       this.$emit('set-startflagtime', this.player.startFlagTime)
       this.state.hasCustomStartFlagTime = true
+      this.positionStartFlagMarker()
       this.player.highlightFlagCtrl = true
       setTimeout(() => {
         this.player.highlightFlagCtrl = false
@@ -965,9 +974,15 @@ export default {
     },
     onDropDeleteMarkersTarget(evt) {
       const index = evt.dataTransfer.getData("text/plain")
-      logMessage("remove marker ", (1*index+1))
-      this.removePlaybackMarker(index)
-      this.$emit('set-markers', this.player.markers)
+      if (index !== "flag") {
+        logMessage("remove marker ", (1*index+1))
+        this.removePlaybackMarker(index)
+        this.$emit('set-markers', this.player.markers)
+      } else {
+        logMessage("remove startflag marker ")
+        this.$emit('set-startflagtime', null)
+        this.state.hasCustomStartFlagTime = false
+      }
     },
     onClickMarker(markerTime) {
       this.videoEl.currentTime = markerTime

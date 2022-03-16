@@ -133,7 +133,7 @@ export default {
       return this.movie.rt
     },
     hasCustomStartFlagTime() {
-      return this.movie.sft >= 0 && this.movie.sft !== this.startFlagTimeDefault
+      return this.movie.sft !== null && this.movie.sft >= 0 && this.movie.sft !== this.startFlagTimeDefault
     }
   },
   methods: {
