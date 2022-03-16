@@ -721,7 +721,6 @@ export default {
         }
         if (vH3 < eY && eY < 2*vH3) {
           // middle
-          this.resetSpeed()
           this.togglePlay()
         }
         if (2*vH3 < eY && eY < 3*vH3) {
