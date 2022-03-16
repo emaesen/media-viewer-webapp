@@ -70,6 +70,11 @@ export default {
 </script>
 
 <style lang="less">
+*,
+:after,
+:before {
+  box-sizing:border-box;
+}
 body {
   background-color: #17161c;
   margin: 9px;
