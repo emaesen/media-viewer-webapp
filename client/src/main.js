@@ -19,6 +19,7 @@ import {
   faFlagCheckered, // checkered flag
   faHeart, // heart
   faHome, // home
+  faMap, // map
   faMinusSquare, // minus sign in square
   faPause, // pause
   faPlay, // start, play
@@ -67,6 +68,7 @@ library.add(
   faFilter,
   faFlagCheckered,
   faHome,
+  faMap,
   faHeart,
   farHeart,
   faMinusSquare,

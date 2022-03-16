@@ -4,6 +4,8 @@
       <font-awesome-icon icon="film"/>Movies
     </h1>
 
+    <MoviePlayerMap/>
+    
     <div class="controls filters convert-to-block-on-small-device">
 
       <div>
@@ -221,6 +223,7 @@
 
 <script>
 import MovieContainer from "@/components/MovieContainer";
+import MoviePlayerMap from "@/components/MoviePlayerMap";
 
 import activateOnIntersection from '@/mixins/activate-on-intersection.js';
 
@@ -237,6 +240,7 @@ export default {
   mixins: [activateOnIntersection],
   components: {
     MovieContainer,
+    MoviePlayerMap,
   },
   data() {
     return {
@@ -690,7 +694,7 @@ h2.movies {
   vertical-align: top;
 }
 .filters {
-  margin: 4em 0;
+  margin: 1em 0 4em;
 }
 
 #movies .controls {
