@@ -467,6 +467,9 @@ export default {
           break;
         case "rating":
           sort.rating = sortInd
+          // sort the items that have not yet been rated
+          // by their random number
+          sort.rnr = sortInd
           break;
         case "date created":
           sort.createdAt = sortInd
@@ -476,6 +479,9 @@ export default {
           break;
         case "date watched":
           sort.watchedAt = sortInd
+          // sort the items that have not yet been watched
+          // by their random number
+          sort.rnr = sortInd
           break;
         case "name":
           sort.basename = sortInd
