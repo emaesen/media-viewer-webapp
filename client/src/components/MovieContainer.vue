@@ -52,7 +52,8 @@
         </button>
       </div>
       <div class="meta info">
-        {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }}
+        {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }}<br>
+        {{ movieLastWatchedTime }} &nbsp; &nbsp; {{ movieRNR }}
       </div>
     </div>
   </div>
@@ -117,6 +118,13 @@ export default {
     },
     movieDuration() {
       return timeParse(this.movie.meta.durationInSec)
+    },
+    movieRNR() {
+      return this.movie.rnr
+    },
+    movieLastWatchedTime() {
+      const options = { dateStyle: "short", timeStyle: "short", hour12: false };
+      return this.movie.watchedAt ? new Date(this.movie.watchedAt).toLocaleString('en-US', options) : "---"
     },
     moviePath() {
       let levels =  this.movie.level1 
