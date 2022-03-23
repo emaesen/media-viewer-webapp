@@ -173,7 +173,7 @@ export default {
     onSetWatchedAt(watchedAt) {
       this.movie.watchedAt = watchedAt
       // also set a fresh random number
-      this.movie.rnr = Math.round(Math.random()*1e9)
+      this.movie.rnr = Math.round(Math.random()*1e4)
       this.updateMovie(this.movie, "watchedAt")
     },
     onSetResumeTime(resumeTime) {

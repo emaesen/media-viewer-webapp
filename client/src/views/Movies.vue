@@ -431,7 +431,7 @@ export default {
     },
     shuffle() {
       this.allMovies.forEach( movie => {
-        movie.rnr = Math.round(Math.random()*1e9)
+        movie.rnr = Math.round(Math.random()*1e4)
         movie.update()
       })
     },
