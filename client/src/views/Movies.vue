@@ -55,9 +55,14 @@
           </span>
           <span v-if="paginationState.sortType==='date watched'" class="side-button">
             ⇝
-            <button @click="clearWatchedAt" class="action button side-button">
-              clear
-              <font-awesome-icon icon="eraser" class="flush-right"/>
+            <button @click="paginationState.showClearButton = !paginationState.showClearButton" class="action button side-button">
+              {{ paginationState.showClearButton? 'disable' : 'enable' }} clear button
+              <font-awesome-icon icon="eye-slash" class="flush-right"/>
+            </button>
+
+            <button v-show="paginationState.showClearButton" @click="clearWatchedAt" class="action button side-button clear-all">
+              clear ALL date-watched data
+              <font-awesome-icon icon="eraser" class="flush-right clear-all"/>
             </button>
           </span>
         </div>
@@ -277,6 +282,7 @@ export default {
         level2: "",
         showQueryControls: false,
         showHideButtons: false,
+        showClearButton: false,
       },
       queryHidden: false,
       filterQuery: {
@@ -444,9 +450,12 @@ export default {
     },
     clearWatchedAt() {
       this.allMovies.forEach( movie => {
-        movie.watchedAt = null
-        movie.update()
+        if (movie.watchedAt) {
+          movie.watchedAt = null
+          movie.update()
+        }
       })
+      this.paginationState.showClearButton = false
     },
     toggleSort() {
       this.paginationState.sortAsc = !this.paginationState.sortAsc
@@ -732,6 +741,13 @@ span.side-button{
 }
 .action.button.side-button {
   margin-left:1em;
+}
+.clear-all {
+  color: rgba(190, 28, 0, 0.89);
+  }
+.clear-all:hover,
+.clear-all:hover svg {
+  color: rgb(253, 38, 0);
 }
 .grid {
   position: relative;
