@@ -921,10 +921,9 @@ export default {
       this.player.skipTimeText = null
     },
     positionStartFlagMarker() {
-console.log({hasCustomStartFlagTime:this.state.hasCustomStartFlagTime})
       if (this.state.hasCustomStartFlagTime) {
         const markerWidth = this.player.startFlagMarkerEl.getBoundingClientRect().width
-console.log({markerWidth})
+
         const sft = this.player.startFlagTime
         const fraction = (sft / this.videoEl.duration).toFixed(3)
         this.player.startFlagMarkerPos = (this.player.pos.width * fraction - markerWidth/2 + 3).toFixed(1)
