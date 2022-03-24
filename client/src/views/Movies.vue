@@ -302,6 +302,7 @@ export default {
     };
   },
   created() {
+    logMessage("Movies created - find all movies")
     // Find all movies from server.
     this.findMovies({query: {}})
       .then(this.setFilterData)
@@ -383,25 +384,27 @@ export default {
     onToggleFullWidth() {
       this.hasFullWidthMovie = !this.hasFullWidthMovie
     },
-    updateMovie(movie, updateType) {
-      movie
+    updateMovie(payload) {
+      logMessage("Movies updateMovie", {payload})
+      payload.movie[payload.prop] = payload.val
+      payload.movie
         .update()
         .then(mv => {
-          logMessage("Movie " + updateType + " update succesful for ", mv.path);
+          logMessage("Movie " + payload.prop + " update succesful for ", mv.path);
           this.setFilterData()
         })
         .catch(err => {
-          logMessage("ERROR - Movie " + updateType + " update ERROR for ", movie.path);
+          logMessage("ERROR - Movie " + payload.prop + " update ERROR for ", payload.movie.path);
           this.handleError(err);
         });
     },
-    onUpdateMovie(props) {
-      this.updateMovie(props.movie, props.updateType)
+    onUpdateMovie(payload) {
+      this.updateMovie(payload)
     },
     setFilterData() {
       // get list of user-defined ratings and levels, and remove duplicates
       const movies = this.allMoviesforQuery
-      logMessage("allMoviesforQuery", movies)
+      logMessage("Movies setFilterData", {movies})
       this.ratings = movies
         .map(m => m.rating)
         .filter((c, i, s) => c!=="" && s.indexOf(c) === i)
@@ -443,12 +446,14 @@ export default {
       this.paginationState.nr = 1 * this.paginationState.nr
     },
     shuffle() {
+      logMessage("Movies shuffle")
       this.allMovies.forEach( movie => {
         movie.rnr = Math.round(Math.random()*1e4)
         movie.update()
       })
     },
     clearWatchedAt() {
+      logMessage("Movies clearWatchedAt")
       this.allMovies.forEach( movie => {
         if (movie.watchedAt) {
           movie.watchedAt = null
@@ -528,9 +533,11 @@ export default {
       return fq
     },
     movies() {
+      logMessage("Movies movies")
       return this.moviesAmended
     },
     allMovies() {
+      logMessage("Movies allMovies")
       // all movies irrespective of query and pagination settings
       return this.user
         ? this.findMoviesInStore({
@@ -539,8 +546,9 @@ export default {
         : []
     },
     allMoviesforQuery() {
+      logMessage("Movies allMoviesforQuery")
       // all movies by query irrespective of pagination settings
-      let query = this.query
+      let query = { ...this.query}  // shallow clone (bug fix)
       query.$limit=5000
       query.$skip=0
       return this.user
@@ -550,6 +558,7 @@ export default {
         : []
     },
     moviesQueryResult() {
+      logMessage("Movies moviesQueryResult", {query:this.query})
       return this.user
         ? this.findMoviesInStore({
             query: this.query
@@ -560,6 +569,7 @@ export default {
       return this.moviesQueryResult.total
     },
     moviesAmended() {
+      logMessage("Movies moviesAmended")
       //logMessage("this.moviesQueryResult", this.moviesQueryResult)
       return this.moviesQueryResult.data
           /* there's a problem with the feathersjs store implementation where

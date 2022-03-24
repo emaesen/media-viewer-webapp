@@ -155,34 +155,27 @@ export default {
         //this.$el.scrollIntoView({behavior: "smooth"})
       }
     },
-    updateMovie(movie,updateType) {
-      this.$emit('update-movie', {movie,updateType})
+    updateMovie(payload) {
+      this.$emit('update-movie', payload)
     },
     onSetRating(i) {
-      this.movie.rating = i
-      this.updateMovie(this.movie, "rating")
+      this.updateMovie({movie:this.movie, prop:"rating", val:i})
     },
-    onSetStartFlagTime(startFlagTime) {
-      this.movie.sft = startFlagTime
-      this.updateMovie(this.movie, "startflagtime")
+    onSetStartFlagTime(sft) {
+      this.updateMovie({movie:this.movie, prop: "sft", val: sft})
     },
     onSetMarkers(markers) {
-      this.movie.markers = markers
-      this.updateMovie(this.movie, "markers")
+      this.updateMovie({movie:this.movie, prop:"markers", val:markers})
     },
     onSetWatchedAt(watchedAt) {
-      this.movie.watchedAt = watchedAt
-      // also set a fresh random number
-      this.movie.rnr = Math.round(Math.random()*1e4)
-      this.updateMovie(this.movie, "watchedAt")
+      this.updateMovie({movie:this.movie, prop:"watchedAt", val:watchedAt})
     },
-    onSetResumeTime(resumeTime) {
-      if (resumeTime === this.startFlagTimeDefault) {
-        resumeTime = null
+    onSetResumeTime(rt) {
+      if (rt === this.startFlagTimeDefault) {
+        rt = null
       }
-      resumeTime = resumeTime ? (1*resumeTime).toFixed(2) : null
-      this.movie.rt = resumeTime
-      this.updateMovie(this.movie, "resume time")
+      rt = rt ? (1*rt).toFixed(2) : null
+      this.updateMovie({movie:this.movie, prop:"rt", value:rt})
     },
     onClickHideMovie() {
       this.$emit('hide-movie', {movie:this.movie})
