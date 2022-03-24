@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { logMessage } from '@/utils/logger.js'
 import {
   debounce
 } from "@/utils/helper.js"
@@ -48,7 +49,7 @@ export default {
     },
     setRating(i) {
       this.displayRating = i
-      console.log('apply request to set rating to ' + i)
+      logMessage('received request to set rating to ' + i)
       this.$emit('set-rating', i)
       this.changedRating = null
     },
