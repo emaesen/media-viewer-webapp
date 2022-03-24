@@ -53,6 +53,13 @@
               <font-awesome-icon icon="random" class="flush-right"/>
             </button>
           </span>
+          <span v-if="paginationState.sortType==='date watched'" class="side-button">
+            ⇝
+            <button @click="clearWatchedAt" class="action button side-button">
+              clear
+              <font-awesome-icon icon="eraser" class="flush-right"/>
+            </button>
+          </span>
         </div>
 
         <div class="filter-group">
@@ -432,6 +439,12 @@ export default {
     shuffle() {
       this.allMovies.forEach( movie => {
         movie.rnr = Math.round(Math.random()*1e4)
+        movie.update()
+      })
+    },
+    clearWatchedAt() {
+      this.allMovies.forEach( movie => {
+        movie.watchedAt = null
         movie.update()
       })
     },

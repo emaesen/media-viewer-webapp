@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   // these use default "fas" prefix
   faArrowCircleDown, // arrow circle down
+  faEraser, // eraser
   faEye, // show
   faEyeSlash, // hide
   faCheck, // check
@@ -56,6 +57,7 @@ import store from "./store";
 
 library.add(
   faArrowCircleDown,
+  faEraser,
   faEye,
   faEyeSlash,
   faCheck,
