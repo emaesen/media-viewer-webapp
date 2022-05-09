@@ -3,6 +3,7 @@
     :id="source.id+'-player'"
     :ref="source.id+'-player'"
     class="mp-video-player"
+    :class="{fullview:isInFullView}"
     @mouseenter="onMouseenterVideo"
     @mouseleave="onMouseleaveVideo"
     @click.stop="onClickMovie"
@@ -34,7 +35,7 @@
 
     <transition name="fade-down">
       <div class="mp-ctrls-topleft"
-        v-show="state.showCtrls && state.showSecondaryCtrls && state.isPlaying"
+        v-show="state.showCtrls && state.showSecondaryCtrls && isInFullView"
       >
         <div class="mp-ctrls-speed">
           <button class="mp-ctrl-btn"
@@ -116,8 +117,7 @@
 
     <transition name="fade-down">
       <div class="mp-ctrls-topright"
-        v-show="state.showCtrls && state.showSecondaryCtrls && (state.
-        isFullWidth || state.isFullscreen)"
+        v-show="state.showCtrls && state.showSecondaryCtrls && isInFullView"
       >
         <div class="mp-ctrls-flags">
           <button class="mp-ctrl-btn"
@@ -146,8 +146,12 @@
     <transition name="fade-up">
       <div class="mp-ctrls-bottom"
         v-show="state.showCtrls"
+        :class="{minimal:!state.showPlaybackSlider}"
+    
+        @mouseenter="showPlaybackSlider"
+        @mouseleave="hidePlaybackSlider"
       >
-        <button class="mp-ctrl-btn"
+        <button class="mp-ctrl-btn mp-ctrls-el"
           @click.stop="onClickPlayButton"
         >
           <font-awesome-icon
@@ -159,7 +163,7 @@
             icon="pause"
           />
         </button>
-        <div class="mp-info-text-container">
+        <div class="mp-info-text-container mp-ctrls-el">
           <span class="mp-info-text">
             {{player.timeElapsedText}}
           </span>
@@ -167,7 +171,8 @@
         <div
           :id="source.id+'-playback-slider'"
           :ref="source.id+'-playback-slider'" 
-          class="mp-ctrl-playback-slider"
+          class="mp-ctrl-playback-slider mp-ctrls-el"
+          :class="{outofview:!state.showPlaybackSlider}"
           @click.stop="onClickPlaybackSlider"
           @mousedown.stop="onMousedownPlaybackSlider"
         >
@@ -235,12 +240,12 @@
           </div>
           
         </div>
-        <div class="mp-info-text-container">
+        <div class="mp-info-text-container mp-ctrls-el">
           <span class="mp-info-text">
             {{player.timeRemainingText}}
           </span>
         </div>
-        <div class="mp-ctrl-volume">
+        <div class="mp-ctrl-volume mp-ctrls-el">
           <button
             class="mp-ctrl-btn"
             @click.stop="onClickVolumeButton"
@@ -276,7 +281,7 @@
           </div>
         </div>
         <button
-          class="mp-ctrl-btn"
+          class="mp-ctrl-btn mp-ctrls-el"
           v-if="!state.isFullscreen"
           @click.stop="onClickFullWidthButton"
         >
@@ -290,7 +295,7 @@
           />
         </button>
         <button
-          class="mp-ctrl-btn"
+          class="mp-ctrl-btn mp-ctrls-el"
           v-if="!state.isFullWidth"
           @click.stop="onClickFullscreenButton"
         >
@@ -409,6 +414,7 @@ export default {
         canPlay: false,
         showCtrls: false,
         showSecondaryCtrls: true,
+        showPlaybackSlider: true,
         vol: 0.5,
         currentTime: 0,
         isFullWidth: false,
@@ -667,6 +673,16 @@ export default {
         if (this.state.isPlaying) this.state.showCtrls = false
         this.tmp.ctrlsDisplayTimer = null
       }, delay)
+    },
+    showPlaybackSlider() {
+      if (this.isInFullView) {
+        this.state.showPlaybackSlider=true
+      }
+    },
+    hidePlaybackSlider() {
+      if (this.isInFullView) {
+        this.state.showPlaybackSlider=false
+      }
     },
     onMouseenterVideo() {
       if (this.state.canPlay) {
@@ -937,8 +953,10 @@ export default {
       this.state.hasCustomStartFlagTime = true
       this.positionStartFlagMarker()
       this.player.highlightFlagCtrl = true
+      this.state.showPlaybackSlider=true
       setTimeout(() => {
         this.player.highlightFlagCtrl = false
+        this.state.showPlaybackSlider=false
       },2700)
     },
     onClickMarkersCtrl() {
@@ -950,8 +968,10 @@ export default {
       // display new (and pre-existing) markers
       this.displayPlaybackMarkers()
       this.player.highlightMarkerCtrl = true
+      this.state.showPlaybackSlider=true
       setTimeout(() => {
         this.player.highlightMarkerCtrl = false
+        this.state.showPlaybackSlider=false
       },2700)
     },
     onMousedownMarker() {
@@ -1073,6 +1093,14 @@ export default {
   font-size: 14px;
 }
 
+.mp-video-player.fullview {
+  position: initial;
+  .mp-video {
+    position: relative;
+    top:-15px;
+  }
+}
+
 .mp-video {
   width: 100%;
   height: 100%;
@@ -1098,10 +1126,17 @@ export default {
   display: flex;
   left: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.54);
   height: 2em;
   width: 100%;
   z-index: 3;
+  background-color: rgba(0, 0, 0, 0.54);
+}
+
+.mp-ctrls-bottom.minimal {
+  background-color: transparent;
+}
+.mp-ctrls-bottom.minimal .mp-ctrls-el {
+  background-color: rgba(0, 0, 0, 0.54);
 }
 .mp-ctrls-topleft,
 .mp-ctrls-topright {
@@ -1194,6 +1229,7 @@ export default {
   display: flex;
 }
 .mp-ctrl-playback-slider {
+  top:0;
   position: relative;
   display: inline-block;
   height: 100%;
@@ -1202,6 +1238,11 @@ export default {
   margin: 0 .5em;
   transition: all .2s ease-in;
 }
+.mp-ctrl-playback-slider.outofview {
+  top:3.6em;
+  opacity: 0.3;
+}
+
 .mp-playback-rail {
   position: absolute;
   top: 50%;

@@ -213,16 +213,34 @@ export default {
   z-index: 9999;
   max-height: 100vh;
   max-width: 100vw;
-  margin: -7px;
-  padding: 7px;
+  margin: 0;
+  padding: 0;
   .sub-container {
     flex-grow: 1;
     max-height: 100vh;
+    margin:0;
   }
-  .rating,
   .info {
+    margin:0;
     display: none;
     height: 0;
+  }
+  .rating,
+  .title.info {
+    display: block;
+    height: auto;
+    position: absolute;
+    top: 0px;
+    left: 130px;
+    background-color: rgba(0, 0, 0, 0.54);
+    z-index: 5;
+    padding: 0 .5em;
+    color:rgb(178, 157, 228);
+  }
+  .rating {
+    left: auto;
+    right: 70px;
+    min-width: 145px;
   }
 }
 .actions {
