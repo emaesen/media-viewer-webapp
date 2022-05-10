@@ -57,7 +57,7 @@
             ⇝
             <button @click="paginationState.showClearButton = !paginationState.showClearButton" class="action button side-button">
               {{ paginationState.showClearButton? 'disable' : 'enable' }} clear button
-              <font-awesome-icon icon="eye-slash" class="flush-right"/>
+              <font-awesome-icon icon="eraser" class="flush-right"/>
             </button>
 
             <button v-show="paginationState.showClearButton" @click="clearWatchedAt" class="action button side-button clear-all">
