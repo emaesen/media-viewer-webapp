@@ -953,10 +953,10 @@ export default {
       this.state.hasCustomStartFlagTime = true
       this.positionStartFlagMarker()
       this.player.highlightFlagCtrl = true
-      this.state.showPlaybackSlider=true
+      this.showPlaybackSlider()
       setTimeout(() => {
         this.player.highlightFlagCtrl = false
-        this.state.showPlaybackSlider=false
+        this.hidePlaybackSlider()
       },2700)
     },
     onClickMarkersCtrl() {
@@ -968,10 +968,10 @@ export default {
       // display new (and pre-existing) markers
       this.displayPlaybackMarkers()
       this.player.highlightMarkerCtrl = true
-      this.state.showPlaybackSlider=true
+      this.showPlaybackSlider()
       setTimeout(() => {
         this.player.highlightMarkerCtrl = false
-        this.state.showPlaybackSlider=false
+        this.hidePlaybackSlider()
       },2700)
     },
     onMousedownMarker() {
@@ -1080,6 +1080,11 @@ export default {
     playbackRate(val) {
       const pbr = val
       this.player.playbackRateText = (pbr >=1 ? pbr : '1/' + 1/pbr)  + ' x'
+    },
+    isInFullView(val) {
+      if (!val) {
+        this.state.showPlaybackSlider=true
+      }
     }
   },
 }
