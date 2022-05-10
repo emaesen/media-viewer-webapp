@@ -38,7 +38,7 @@ function parseMovieFile(entry, fd) {
   if (splitPath[1]) entry.level2 = splitPath[1]
   if (splitPath[2]) entry.level3 = splitPath[2]
   // random number
-  entry.rnr = Math.round(Math.random()*1e4)
+  entry.rnr = Math.round(Math.random()/Math.max(Math.random(), 0.01)*1e5)
   // remove what we don't need
   delete entry.dirent
   delete entry.fullPath

@@ -448,7 +448,7 @@ export default {
     shuffle() {
       logMessage("Movies shuffle")
       this.allMovies.forEach( movie => {
-        movie.rnr = Math.round(Math.random()*1e4)
+        movie.rnr = Math.round(Math.random()/Math.max(Math.random(), 0.01)*1e5)
         movie.update()
       })
     },
