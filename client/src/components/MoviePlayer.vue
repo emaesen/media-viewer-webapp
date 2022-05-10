@@ -128,6 +128,9 @@
               icon="flag-checkered"
             />
           </button>
+          <span class="btn-info">
+            {{ player.startFlagTime.toFixed(2) }}
+          </span>
         </div>
         <div class="mp-ctrls-markers">
           <button class="mp-ctrl-btn"
@@ -138,6 +141,9 @@
               icon="arrow-circle-down"
             />
           </button>
+          <span class="btn-info">
+            {{ player.markers.length }}
+          </span>
         </div>
       </div>
     </transition>
@@ -1310,6 +1316,12 @@ export default {
   color: #cec0a1;
   line-height: 2em;
   font-size: .8em;
+}
+
+.btn-info {
+  vertical-align: middle;
+  line-height: 2em;
+  opacity: .7;
 }
 
 ::media-controls {
