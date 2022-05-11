@@ -1037,10 +1037,11 @@ export default {
     gotoPreviousMarker() {
       if (this.player.markers && this.player.markers.length > 0) {
         const curTime = this.videoEl.currentTime
+        const markerMargin = 1
         let isMarkerFound = false
         let previousMarker = 0
         this.player.markers.forEach((marker) => {
-          if (marker < curTime && marker > previousMarker) {
+          if (marker < curTime - markerMargin && marker > previousMarker) {
             previousMarker = marker
             isMarkerFound = true
           }
