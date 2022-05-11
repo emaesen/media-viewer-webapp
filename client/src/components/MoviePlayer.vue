@@ -694,7 +694,7 @@ export default {
       this.showPlaybackSlider()
       setTimeout(() => {
         this.hidePlaybackSlider()
-      },2700)
+      },4500)
     },
     onMouseenterVideo() {
       if (this.state.canPlay) {
