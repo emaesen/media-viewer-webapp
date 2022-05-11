@@ -1012,6 +1012,40 @@ export default {
     onClickMarker(markerTime) {
       this.videoEl.currentTime = markerTime
     },
+    gotoNextMarker() {
+      if (this.player.markers && this.player.markers.length > 0) {
+        const curTime = this.videoEl.currentTime
+        let isMarkerFound = false
+        let nextMarker = 999999999
+        this.player.markers.forEach((marker) => {
+          if (marker > curTime && marker < nextMarker) {
+            nextMarker = marker
+            isMarkerFound = true
+          }
+        })
+        if ( isMarkerFound ) {
+          logMessage("goto next marker", "from " + curTime + " to " + nextMarker + " sec")
+          this.videoEl.currentTime = nextMarker
+        }
+      }
+    },
+    gotoPreviousMarker() {
+      if (this.player.markers && this.player.markers.length > 0) {
+        const curTime = this.videoEl.currentTime
+        let isMarkerFound = false
+        let previousMarker = 0
+        this.player.markers.forEach((marker) => {
+          if (marker < curTime && marker > previousMarker) {
+            previousMarker = marker
+            isMarkerFound = true
+          }
+        })
+        if ( isMarkerFound ) {
+          logMessage("goto previous marker", "from " + curTime + " to " + previousMarker + " sec")
+          this.videoEl.currentTime = previousMarker
+        }
+      }
+    },
     onKeydown(evt) {
       if (evt.isComposing || evt.keyCode === 229) {
         return
@@ -1049,6 +1083,12 @@ export default {
         }
         if (evt.key==="m") {
           this.onClickMarkersCtrl()
+        }
+        if (evt.key==="n") {
+          this.gotoNextMarker()
+        }
+        if (evt.key==="p") {
+          this.gotoPreviousMarker()
         }
         if (evt.key==="s") {
           this.onClickStartFlagButton()
