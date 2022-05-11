@@ -690,6 +690,12 @@ export default {
         this.state.showPlaybackSlider=false
       }
     },
+    blinkPlaybackSlider() {
+      this.showPlaybackSlider()
+      setTimeout(() => {
+        this.hidePlaybackSlider()
+      },2700)
+    },
     onMouseenterVideo() {
       if (this.state.canPlay) {
         this.showControls()
@@ -959,10 +965,9 @@ export default {
       this.state.hasCustomStartFlagTime = true
       this.positionStartFlagMarker()
       this.player.highlightFlagCtrl = true
-      this.showPlaybackSlider()
+      this.blinkPlaybackSlider()
       setTimeout(() => {
         this.player.highlightFlagCtrl = false
-        this.hidePlaybackSlider()
       },2700)
     },
     onClickMarkersCtrl() {
@@ -974,10 +979,9 @@ export default {
       // display new (and pre-existing) markers
       this.displayPlaybackMarkers()
       this.player.highlightMarkerCtrl = true
-      this.showPlaybackSlider()
+      this.blinkPlaybackSlider()
       setTimeout(() => {
         this.player.highlightMarkerCtrl = false
-        this.hidePlaybackSlider()
       },2700)
     },
     onMousedownMarker() {
@@ -1026,6 +1030,7 @@ export default {
         if ( isMarkerFound ) {
           logMessage("goto next marker", "from " + curTime + " to " + nextMarker + " sec")
           this.videoEl.currentTime = nextMarker
+          this.blinkPlaybackSlider()
         }
       }
     },
@@ -1043,6 +1048,7 @@ export default {
         if ( isMarkerFound ) {
           logMessage("goto previous marker", "from " + curTime + " to " + previousMarker + " sec")
           this.videoEl.currentTime = previousMarker
+          this.blinkPlaybackSlider()
         }
       }
     },
