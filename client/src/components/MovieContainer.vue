@@ -22,6 +22,12 @@
       <div class="path info">
         {{ moviePath }}
       </div>
+      <div v-if="movieMarkers" class="markers info">
+        {{ movieMarkers }}
+        <font-awesome-icon
+          icon="arrow-circle-down"
+        />
+      </div>
       <div class="title info">
         {{ movieTitle }}
       </div>
@@ -109,6 +115,10 @@ export default {
     },
     movieTitle() {
       return this.movie.basename.replace(".mp4","").replace(/[-_]/g, " ")
+    },
+    movieMarkers() {
+      let nrMarkers = this.movie.markers && this.movie.markers.length > 0 ? this.movie.markers.length : 0
+      return nrMarkers
     },
     movieSize() {
       return Math.round(this.movie.meta.sizeInMB) + " MB"
@@ -270,12 +280,21 @@ export default {
   margin: 0 0 0 1em
 }
 .path,
-.title {
+.title,
+.markers {
   margin: 10px 0 10px 0;
 }
 .path {
   text-align: right;
 }
+.markers {
+  float: right;
+  margin: 0;
+  svg {
+    opacity: .5;
+  }
+}
+
 .movie {
   width: 100%;
   max-height: 100vh;
