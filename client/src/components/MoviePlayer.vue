@@ -421,6 +421,7 @@ export default {
         showCtrls: false,
         showSecondaryCtrls: true,
         showPlaybackSlider: true,
+        forceShowPlaybackSlider: false,
         vol: 0.5,
         currentTime: 0,
         isFullWidth: false,
@@ -686,7 +687,7 @@ export default {
       }
     },
     hidePlaybackSlider() {
-      if (this.isInFullView) {
+      if (this.isInFullView && !this.state.forceShowPlaybackSlider) {
         this.state.showPlaybackSlider=false
       }
     },
@@ -1137,6 +1138,13 @@ export default {
     isInFullView(val) {
       if (!val) {
         this.state.showPlaybackSlider=true
+      } else {
+        this.state.forceShowPlaybackSlider=true
+        this.state.showPlaybackSlider=true
+        setTimeout(() => {
+          this.state.forceShowPlaybackSlider=false
+          this.hidePlaybackSlider()
+        },6300)
       }
     }
   },
