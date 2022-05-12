@@ -1137,8 +1137,11 @@ export default {
     },
     isInFullView(val) {
       if (!val) {
+        // leave full view
+        this.state.showCtrls = true
         this.state.showPlaybackSlider=true
       } else {
+        // enter full view
         this.state.forceShowPlaybackSlider=true
         this.state.showPlaybackSlider=true
         setTimeout(() => {
