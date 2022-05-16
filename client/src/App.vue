@@ -83,6 +83,7 @@ body,
 input,
 textarea,
 select,
+option,
 button {
   color: #e9e4f2;
   font-family: Helvetica, Arial, sans-serif;
@@ -220,8 +221,7 @@ input::placeholder {
   font-style: italic;
 }
 input:focus,
-textarea:focus,
-select:focus {
+textarea:focus {
   outline-color: #888;
   outline-width: 1px;
   color: #050505;
@@ -481,6 +481,7 @@ label.no_results_when_clicked {
   input,
   textarea,
   select,
+  option,
   button {
     font-size: 12px;
   }

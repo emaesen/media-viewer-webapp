@@ -216,13 +216,13 @@
             </label>
           </div>
           <div class="filter" v-if="showPageNrInput">
-            <input class="input-page-number" type="number"
-              min="1"
-              :max="nrOfPages"
-              :step="Math.floor(nrOfPages / 10)"
+            <select 
+              class="select-page-number action button"
               v-model="paginationState.nr"
               @change="ensurePaginationStateNrIsNumber"
-            />
+            >
+              <option v-for="val in nrOfPages" :key="val" :value="val">{{val}}</option>
+            </select>
           </div>
         </div>
       </div>
@@ -821,6 +821,11 @@ input[type="number"].input-page-number {
   margin-left: 2em;
   width: 2.7em;
   padding: 5px
+}
+select.select-page-number.action.button {
+  width: auto;
+  margin-left: 30px;
+  padding: 3px 3px 4px;
 }
 .controls.pagination {
   position: fixed;
