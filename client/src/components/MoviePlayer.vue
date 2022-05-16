@@ -1375,7 +1375,10 @@ export default {
   line-height: 2em;
   font-size: .8em;
 }
-
+.fullview .mp-ctrls-bottom .mp-info-text {
+  font-size: 2.7vh;
+  line-height: 4vh;
+}
 .btn-info {
   vertical-align: middle;
   line-height: 2em;
