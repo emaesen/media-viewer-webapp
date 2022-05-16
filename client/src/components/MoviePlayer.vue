@@ -1055,6 +1055,7 @@ export default {
       }
     },
     onKeydown(evt) {
+      logMessage("key down ", evt.key + " (" + evt.keyCode + ")" + (evt.ctrlKey?" ctrl":"") + (evt.altKey?" alt":"") + (evt.shiftKey?" shift":""))
       if (evt.isComposing || evt.keyCode === 229) {
         return
       }
