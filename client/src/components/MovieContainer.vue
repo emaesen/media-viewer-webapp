@@ -241,7 +241,7 @@ export default {
     height: auto;
     position: absolute;
     top: 0px;
-    left: 130px;
+    left: 140px;
     background-color: rgba(0, 0, 0, 0.54);
     z-index: 5;
     padding: 0 .5em;
@@ -249,7 +249,7 @@ export default {
   }
   .rating {
     left: auto;
-    right: 70px;
+    right: 80px;
     min-width: 145px;
   }
 }
