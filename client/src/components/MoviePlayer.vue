@@ -1,8 +1,8 @@
 <template>
-  <div
+  <button
     :id="source.id+'-player'"
     :ref="source.id+'-player'"
-    class="mp-video-player"
+    class="mp-video-player inactive"
     :class="{fullview:isInFullView}"
     @mouseenter="onMouseenterVideo"
     @mouseleave="onMouseleaveVideo"
@@ -316,7 +316,7 @@
         </button>
       </div>
     </transition>
-  </div>
+  </button>
 </template>
 
 <script>
@@ -1171,6 +1171,15 @@ export default {
   }
 }
 
+button.mp-video-player {
+  cursor: default;
+  color: rgb(233,220,242);
+  font-size: 14px;
+  border-radius: 0;
+  margin:0;
+  padding:0;
+  text-align: left;
+}
 .mp-video {
   width: 100%;
   height: 100%;
@@ -1373,8 +1382,7 @@ export default {
 }
 .mp-info-text {
   color: #cec0a1;
-  line-height: 2em;
-  font-size: .8em;
+  line-height: 1.6em;
 }
 .fullview .mp-ctrls-bottom .mp-info-text {
   font-size: 2.7vh;
