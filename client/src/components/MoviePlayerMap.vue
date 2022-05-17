@@ -63,6 +63,10 @@
           <dd>key: “s”</dd>
           <dt>set marker</dt>
           <dd>key: “m”</dd>
+          <dt>go to next marker</dt>
+          <dd>key: “n”</dd>
+          <dt>go to previous marker</dt>
+          <dd>key: “p”</dd>
           <dt>reset speed</dt>
           <dd>key: “=”</dd>
           <dt>volume up</dt>
