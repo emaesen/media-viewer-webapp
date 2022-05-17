@@ -1384,9 +1384,11 @@ button.mp-video-player {
   color: #cec0a1;
   line-height: 1.6em;
 }
+
 .fullview .mp-ctrls-bottom .mp-info-text {
-  font-size: 2.7vh;
-  line-height: 4vh;
+  font-size: calc(1.2vh + 1.5vw);
+  line-height: calc(.4vh + .5vw);
+  vertical-align: bottom;
 }
 .btn-info {
   vertical-align: middle;

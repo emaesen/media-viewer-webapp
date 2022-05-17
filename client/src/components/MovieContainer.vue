@@ -300,6 +300,9 @@ export default {
   max-height: 100vh;
   border: 1px solid rgb(108, 108, 108);
 }
+.fullview.movie {
+  border: none;
+}
 .meta.info {
   font-size: 80%;
   text-align: center;
