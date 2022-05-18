@@ -569,12 +569,12 @@ export default {
       return this.moviesQueryResult.total
     },
     totalSizeOfMovies() {
-      const initialValue = 0
-      const sumMB = this.allMoviesforQuery.reduce(
-        (previousValue, currentValue) => previousValue + currentValue.meta.sizeInMB * 1,
-        initialValue
+      const initialSizeInMB = 0
+      const totalSizeInMB = this.allMoviesforQuery.reduce(
+        (runningSumSizeInMB, currentMovie) => runningSumSizeInMB + currentMovie.meta.sizeInMB * 1,
+        initialSizeInMB
       )
-      return sumMB < 1000 ? Math.round(sumMB*10)/10 + " MB" : Math.round(sumMB/10)/100 + " GB"
+      return totalSizeInMB < 1000 ? Math.round(totalSizeInMB*10)/10 + " MB" : Math.round(totalSizeInMB/10)/100 + " GB"
     },
     moviesAmended() {
       logMessage("Movies moviesAmended")
