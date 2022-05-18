@@ -574,7 +574,7 @@ export default {
         (previousValue, currentValue) => previousValue + currentValue.meta.sizeInMB * 1,
         initialValue
       )
-      return sumMB < 1000 ? sumMB + " MB" : Math.round(sumMB/10)/100 + " GB"
+      return sumMB < 1000 ? Math.round(sumMB*10)/10 + " MB" : Math.round(sumMB/10)/100 + " GB"
     },
     moviesAmended() {
       logMessage("Movies moviesAmended")
