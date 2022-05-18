@@ -570,7 +570,7 @@ export default {
     },
     totalSizeOfMovies() {
       const initialValue = 0
-      const sumMB = this.moviesQueryResult.data.reduce(
+      const sumMB = this.allMoviesforQuery.reduce(
         (previousValue, currentValue) => previousValue + currentValue.meta.sizeInMB * 1,
         initialValue
       )
