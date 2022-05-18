@@ -10,7 +10,7 @@
 
       <div>
         <span class="pagination-info">
-          Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies)</span>
+          Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies - {{ totalSizeOfMovies }})</span>
         </span>
 
         <button @click="paginationState.showQueryControls = !paginationState.showQueryControls" class="action button">
@@ -567,6 +567,14 @@ export default {
     },
     totalNrOfMovies() {
       return this.moviesQueryResult.total
+    },
+    totalSizeOfMovies() {
+      const initialValue = 0
+      const sumMB = this.moviesQueryResult.data.reduce(
+        (previousValue, currentValue) => previousValue + currentValue.meta.sizeInMB * 1,
+        initialValue
+      )
+      return sumMB < 1000 ? sumMB + " MB" : Math.round(sumMB/10)/100 + " GB"
     },
     moviesAmended() {
       logMessage("Movies moviesAmended")
