@@ -149,6 +149,15 @@
     </transition>
 
 
+    <transition name="fade-down">
+      <div class="mp-msg"
+        v-show="state.showMsg"
+      >
+        {{ movieMessage }}
+      </div>
+    </transition>
+
+
     <transition name="fade-up">
       <div class="mp-ctrls-bottom"
         v-show="state.showCtrls"
@@ -414,13 +423,16 @@ export default {
       },
       tmp: {
         ctrlsDisplayTimer: null,
-        isFullscreenSupported: null
+        isFullscreenSupported: null,
+        endingCntDwn: -1,
+        cntDwnIntv: null,
       },
       state: {
         canPlay: false,
         showCtrls: false,
         showSecondaryCtrls: true,
         showPlaybackSlider: true,
+        showMsg: false,
         forceShowPlaybackSlider: false,
         vol: 0.5,
         currentTime: 0,
@@ -651,12 +663,21 @@ export default {
       this.setWatchedAt()
     },
     setWatchedAt() {
-      // update watchedAt after 10 seconds, because movie
+      const delay = 10
+      // update watchedAt after delay seconds, because movie
       // could be in "sort by date watched" mode and we allow
       // some time to set a rating
+      if (delay>3) {
+        this.state.showMsg = true
+        this.tmp.endingCntDwn = delay
+        this.tmp.cntDwnIntv = setInterval(()=>this.tmp.endingCntDwn--, 1000)
+      }
       setTimeout(() => {
         this.$emit('set-watchedat', Date.now())
-      }, 10 * 1000)
+        this.state.showMsg = false
+        clearInterval(this.tmp.cntDwnIntv)
+        this.tmp.cntDwnIntv = null
+      }, delay * 1000)
     },
     setResumeTime() {
       if (this.state.hasNewResumeTime) {
@@ -1129,7 +1150,10 @@ export default {
     },
     isInFullView() {
       return this.state.isFullWidth || this.state.isFullscreen 
-    }
+    },
+    movieMessage() {
+      return this.tmp.endingCntDwn >= 0 ? "ending in " + this.tmp.endingCntDwn + "s": ""
+    },
   },
   watch: {
     playbackRate(val) {
@@ -1246,6 +1270,21 @@ button.mp-video-player {
     height: 1.25em;
   }
 }
+
+.mp-msg {
+  position: absolute;
+  left: 25%;
+  width: 50%;
+  top: 40%;
+  vertical-align: middle;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.54);
+  z-index: 3;
+  padding: .2em;
+  border-radius: 9px;
+  min-width: 10em;
+}
+
 .mp-info-icon,
 .mp-ctrl-btn {
   position: relative;
