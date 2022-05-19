@@ -2,7 +2,7 @@
   <div :class="['movie-container', {'full-width': isFullWidth}]">
 
     <div class="sub-container">
-      <div class="actions">
+      <div class="actions" v-if="!isFullWidth">
         <div class="hide" v-if="showHideButton && !movie.hidden">
           <font-awesome-icon icon="eye-slash" @click="onClickHideMovie"/>
         </div>
