@@ -333,6 +333,7 @@ button:not(.inactive):hover,
 .noresults {
   color: #ffa04c;
   font-style: italic;
+  min-height: 25vw;
 }
 .info {
   color: #e9e4f272;
