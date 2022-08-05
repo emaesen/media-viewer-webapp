@@ -12,7 +12,7 @@
     <video
       :id="source.id+'-video'"
       :ref="source.id+'-video'"
-      :class="['mp-video', {'hide-cursor': !state.showCtrls}]"
+      :class="['mp-video', {'grid-media':!isInFullView}, {'hide-cursor': !state.showCtrls}]"
       :preload="options.preload"
       controls
     >
@@ -1191,7 +1191,7 @@ export default {
   position: initial;
   .mp-video {
     position: relative;
-    top:-15px;
+    max-height: 99vh;
   }
 }
 
@@ -1208,7 +1208,6 @@ button.mp-video-player {
   width: 100%;
   height: 100%;
   vertical-align: bottom;
-  max-height: 100vh;
 }
 
 .mp-issue-msg,

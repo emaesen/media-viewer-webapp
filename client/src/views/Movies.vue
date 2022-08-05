@@ -852,31 +852,49 @@ select.select-page-number.action.button {
 @media all and (max-width: 400px) {
   .grid .grid-cell {
     width: 100%;
+    .grid-media {
+      max-height: 75vw;
+    }
   }
 }
 @media all and (min-width: 400px) {
   .grid .grid-cell {
     width: 50%;
+    .grid-media {
+      max-height: 38vw;
+    }
   }
 }
 @media all and (min-width: 800px) {
   .grid .grid-cell {
     width: 33.333%;
+    .grid-media {
+      max-height: 25vw;
+    }
   }
 }
 @media all and (min-width: 1200px) {
   .grid .grid-cell {
     width: 25%;
+    .grid-media {
+      max-height: 19vw;
+    }
   }
 }
 @media all and (min-width: 1600px) {
   .grid .grid-cell {
     width: 20%;
+    .grid-media {
+      max-height: 15vw;
+    }
   }
 }
 @media all and (min-width: 2000px) {
   .grid .grid-cell {
     width: 16.666%;
+    .grid-media {
+      max-height: 13vw;
+    }
   }
 }
 
