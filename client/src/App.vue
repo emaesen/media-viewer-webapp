@@ -335,6 +335,9 @@ button:not(.inactive):hover,
   font-style: italic;
   min-height: 25vw;
 }
+.button.loading {
+  min-height: 0;
+}
 .info {
   color: #e9e4f272;
 }
