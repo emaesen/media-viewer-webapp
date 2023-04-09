@@ -40,9 +40,17 @@ $ npm install
 $ cd [path/to/media-viewer-webapp]
 $ cd client/public
 $ mkdir media
-# create a symlink from the movies folder on your media drive to the public movies folder
+# create a symlink from the movies folder on your media drive to the client/public/movies folder
 $ cd media
 $ ln -s [path/to/movies-folder-or-drive] movies
+```
+
+You may organize your movies in a folder structure with two levels:
+```
+movies/[level1-A]/[level2-A]/[movie1]
+movies/[level1-A]/[level2-A]/[movie2]
+movies/[level1-B]/[level2-B]/[movie3]
+movies/[level1-B]/[level2-B]/[movie4]
 ```
 
 ### Setup test users (optional)
@@ -103,9 +111,9 @@ $ cd client/public
 $ npm run dev
 ```
 
-You can view the client app at <http://localhost:7777/> (local) or at a LAN address (LAN network) - the build output will show the LAN IP address to use.
+You can view the client app at <http://localhost:7776/> (local) or at a LAN address (LAN network) - the build output will show the LAN IP address to use.
 
-For LAN access you may need to change your (Linux) firewall settings to allow incoming requests on ports 7777 and 3333.
+For LAN access you may need to change your (Linux) firewall settings to allow incoming requests on ports 7776 and 3333.
 
 ## "Production" Usage
 
@@ -154,7 +162,7 @@ In order to be able to reload the movies page in proper SPA fashion, a proxy nee
 
 This proxy requires your local IP to be hardcoded.
 
-Assuming the local IP is '192.168.0.2', the existing script
+Assuming the local IP is `192.168.0.2`, the existing script
 
 ```json
 "serve:prod": "npx http-server ./dist -p 7777"
