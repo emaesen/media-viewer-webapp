@@ -33,7 +33,12 @@ movies/[level1-B]/[level2-B]/[movie3]
 movies/[level1-B]/[level2-B]/[movie4]
 ```
 
-The folder levels are detected on import of the movie meta-data (see below)
+The folder levels are detected on import of the movie meta-data (see below).
+
+Movies can be viewed either in three different modes:
+- inline within the movie list
+- in maximum browser-width mode
+- in full-screen mode
 
 ## Linux Setup
 
@@ -229,3 +234,18 @@ Below are some screenshots of the movie viewer with a few sample movies.
 ### Screenshot - Legend of movie player hot spots and hot keys
 
 ![screenshot mediaviewer controls](screenshot-movieviewer-controls.jpg)
+
+### Screenshot - Movie player and its controls
+
+- top left corner: 
+  - speed controls
+  - forward/backward controls
+- top right corner:
+  - set start screen flag
+  - set marker(s)
+-bottom:
+  - display running and remaining time
+  - audio volume control
+  - button to enter/exit fullscreen mode
+
+![screenshot mediaviewer movie player](screenshot-movieviewer-movieplayer.jpg)
