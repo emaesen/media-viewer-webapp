@@ -2,6 +2,39 @@
 
 This is a project to be run locally on a laptop or LAN network as a local media (movie) server with a webapp interface.
 
+This is intended to be a movie viewer as well as an audio player, but current implementation only has the movie viewer.
+
+Features of the movie viewer:
+- sort by:
+  - random
+  - rating
+  - date created
+  - date updated
+  - date watched
+  - name
+  - duration
+- sort direction:
+  - ascending
+  - descending
+- items per page:
+  - 4, 6, 8, 12, 16, 20, 24, 30, 26, 60 or 100
+- rating:
+  - all, no, 1, 1+, 2, 2+, 3, 3+, 4, 4+, 5, 5+ or 6 stars
+- level1:
+  - all, or one of the available detected level1 folders
+- level2:
+  - all, or one of the available detected level2 folders
+
+Movies are suggested and expected to be organized in a folder structure with two levels:
+```
+movies/[level1-A]/[level2-A]/[movie1]
+movies/[level1-A]/[level2-A]/[movie2]
+movies/[level1-B]/[level2-B]/[movie3]
+movies/[level1-B]/[level2-B]/[movie4]
+```
+
+The folder levels are detected on import of the movie meta-data (see below)
+
 ## Linux Setup
 
 ### Install nodejs
@@ -45,14 +78,6 @@ $ cd media
 $ ln -s [path/to/movies-folder-or-drive] movies
 ```
 
-You may organize your movies in a folder structure with two levels:
-```
-movies/[level1-A]/[level2-A]/[movie1]
-movies/[level1-A]/[level2-A]/[movie2]
-movies/[level1-B]/[level2-B]/[movie3]
-movies/[level1-B]/[level2-B]/[movie4]
-```
-
 ### Setup test users (optional)
 
 ```bash
@@ -70,7 +95,7 @@ Register a user through the webapp (see "Development Usage" below how to start s
 
 ### Set OWNER_ID
 
-Inspect the users.db file and note the "_id" value (a 16-character string) for the registered user and export this as OWNER_ID
+Inspect the `server/data-setup/users.db` file and note the "_id" value (a 16-character string) for the registered user and export this as OWNER_ID
 
 ```bash
 # set environment value for OWNER_ID
@@ -83,7 +108,9 @@ $ export OWNER_ID=[value-from-user.db]
 # cd to media-viewer-webapp repo directory
 $ cd [path/to/media-viewer-webapp]
 $ cd server
-# get media asset metadata and initialize the movies DB for OWNER_ID
+# scan the movie folder, 
+# get media asset metadata
+# and initialize the movies DB for OWNER_ID
 $ node init.js
 ```
 
@@ -175,3 +202,30 @@ should be replaced by
 ```
 
 (obviously this means that your PC/laptop needs to be setup with a static IP address)
+
+For LAN access you may need to change your (Linux) firewall settings to allow incoming requests on ports 7777 and 3333.
+
+## Screenshots
+
+Below are some screenshots of the movie viewer with a few sample movies.
+
+### Screenshot - All movies, sorted by date watched
+
+![screenshot mediaviewer](screenshot-mediaviewer.jpg)
+
+
+### Screenshot - All movies with selected rating range
+
+![screenshot mediaviewer rating selected](screenshot-movieviewer-rating-selected.jpg)
+
+### Screenshot - All movies in selected sub-level
+
+![screenshot mediaviewer level selected](screenshot-movieviewer-level-selected.jpg)
+
+### Screenshot - All unrated movies in selected sub-level
+
+![screenshot mediaviewer level and rating selected](screenshot-movieviewer-level-rating-selected.jpg)
+
+### Screenshot - Legend of movie player hot spots and hot keys
+
+![screenshot mediaviewer controls](screenshot-movieviewer-controls.jpg)
