@@ -8,6 +8,7 @@
     @mouseleave="onMouseleaveVideo"
     @click.stop="onClickMovie"
     @keydown="onKeydown"
+    @fullscreenchange="onFullscreenChange"
   >
     <video
       :id="source.id+'-video'"
@@ -899,6 +900,18 @@ export default {
         })
       }
     },
+    onFullscreenChange(evt) {
+      if (this.state.onFullscreenChange) {
+        logMessage("onFullscreenChange EXIT")
+        this.setResumeTime()
+        this.state.isFullscreen = false
+        this.setPlayerDimensions()
+        this.state.onFullscreenChange = false
+      } else {
+        logMessage("onFullscreenChange ENTRY")
+        this.state.onFullscreenChange = true
+      }
+    },
     onMousemovePlayer(e) {
       if (this.volume.hasMousedown) {
         this.volumeSlideMove(e)
@@ -1135,6 +1148,16 @@ export default {
       if (!evt.ctrlKey && !evt.altKey && evt.shiftKey) {
         if (evt.key==="+") {
           this.onClickIncreaseSpeedButton()
+        }
+      }
+      if (evt.key=="Escape") {
+        if (this.state.isFullWidth) {
+          this.toggleFullWidth() 
+        }
+        if (this.state.isFullscreen) {
+          this.setResumeTime()
+          this.state.isFullscreen = false
+          this.setPlayerDimensions()
         }
       }
       if (evt.key!=="Escape") {
