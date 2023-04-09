@@ -178,7 +178,9 @@ export default {
       this.updateMovie({movie:this.movie, prop:"markers", val:markers})
     },
     onSetWatchedAt(watchedAt) {
+      const rnr = Math.round(Math.random()/Math.max(Math.random(), 0.01)*1e5)
       this.updateMovie({movie:this.movie, prop:"watchedAt", val:watchedAt})
+      this.updateMovie({movie:this.movie, prop:"rnr", val:rnr})
     },
     onSetResumeTime(rt) {
       if (rt === this.startFlagTimeDefault) {
