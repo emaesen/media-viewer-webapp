@@ -274,7 +274,7 @@ export default {
       paginationState: {
         sortType: "random",
         sortAsc: true,
-        limit: 9,
+        limit: 20,
         skip: 0,
         nr: 1,
         rating: "0+",
