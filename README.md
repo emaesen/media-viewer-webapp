@@ -241,11 +241,16 @@ Below are some screenshots of the movie viewer with a few sample movies.
   - speed controls
   - forward/backward controls
 - top right corner:
+  - set rating
   - set start screen flag
   - set marker(s)
--bottom:
+- bottom:
   - display running and remaining time
+  - display play-head and video buffer
+  - allow marker removal (drag marker up)
   - audio volume control
   - button to enter/exit fullscreen mode
+
+Video controls will move out of sight when movie is not in focus (when mouse is moved outside the viewing area).
 
 ![screenshot mediaviewer movie player](screenshot-movieviewer-movieplayer.jpg)
