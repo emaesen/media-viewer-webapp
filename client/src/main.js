@@ -12,6 +12,7 @@ import {
   faCheck, // check
   faCompress, // compress - box corners
   faCompressArrowsAlt, // compress - arrows
+  faEquals, // equals
   faExpand, // expand - box corners
   faExpandArrowsAlt, // expand - arrows
   faFastBackward, // larger jump/skip backwards
@@ -63,6 +64,7 @@ library.add(
   faCheck,
   faCompress,
   faCompressArrowsAlt,
+  faEquals,
   faExpand,
   faExpandArrowsAlt,
   faFastBackward,

@@ -14,7 +14,9 @@
         </span>
 
         <button @click="paginationState.showQueryControls = !paginationState.showQueryControls" class="action button">
-          {{ paginationState.showQueryControls? 'hide' : 'show' }} query filters
+          <span class="action-text">
+            {{ paginationState.showQueryControls? 'hide' : 'show' }}
+          </span> query filters
           <font-awesome-icon icon="filter" class="flush-right"/>
         </button>
 
@@ -46,6 +48,15 @@
               </label>
             </div>
           </div>
+          <span v-if="paginationState.sortType==='duration' || paginationState.sortType==='name'" class="side-button">
+            ⇝
+            <button @click="paginationState.showEqualsOnly = !paginationState.showEqualsOnly" class="action button side-button">
+              <span class="action-text">
+                {{ paginationState.showEqualsOnly? 'disable' : 'enable' }}
+              </span> show equals only
+              <font-awesome-icon icon="equals" class="flush-right"/>
+            </button>
+          </span>
           <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
             <button @click="shuffle" class="action button side-button">
@@ -56,7 +67,9 @@
           <span v-if="paginationState.sortType==='date watched'" class="side-button">
             ⇝
             <button @click="paginationState.showClearButton = !paginationState.showClearButton" class="action button side-button">
-              {{ paginationState.showClearButton? 'disable' : 'enable' }} clear button
+              <span class="action-text">
+                {{ paginationState.showClearButton? 'disable' : 'enable' }}
+              </span> clear button
               <font-awesome-icon icon="eraser" class="flush-right"/>
             </button>
 
@@ -151,7 +164,9 @@
           <span class="side-button">
             ⇝
             <button @click="paginationState.showHideButtons = !paginationState.showHideButtons" class="action button side-button">
-              {{ paginationState.showHideButtons? 'disable' : 'enable' }} hide buttons
+              <span class="action-text">
+                {{ paginationState.showHideButtons? 'disable' : 'enable' }}
+              </span> hide buttons
               <font-awesome-icon icon="eye-slash" class="flush-right"/>
             </button>
           </span>
@@ -283,6 +298,7 @@ export default {
         showQueryControls: false,
         showHideButtons: false,
         showClearButton: false,
+        showEqualsOnly: false,
       },
       queryHidden: false,
       filterQuery: {
@@ -579,7 +595,34 @@ export default {
     moviesAmended() {
       logMessage("Movies moviesAmended")
       //logMessage("this.moviesQueryResult", this.moviesQueryResult)
-      return this.moviesQueryResult.data
+      let data = this.moviesQueryResult.data
+      /* take paginationState.showEqualsOnly into account */
+      let filteredData = []
+      if (this.paginationState.showEqualsOnly && (this.paginationState.sortType==='duration' || this.paginationState.sortType==='name')) {
+        logMessage("filtering movies with equal " + this.paginationState.sortType + " only")
+        data.forEach((m,i) => {
+          if (this.paginationState.sortType==='duration') {
+            if(i>0 && m.metaDurationInSec === data[i-1].metaDurationInSec) {
+              if(i===1) {
+                filteredData.push(data[0])
+              }
+              filteredData.push(m)
+            }
+          } else {
+            if(i>0 && m.basename === data[i-1].basename) {
+              if(i===1) {
+                filteredData.push(data[0])
+              }
+              filteredData.push(m)
+            }
+          }
+          
+        })
+      } else {
+        filteredData = data
+      }
+
+      return filteredData
           /* there's a problem with the feathersjs store implementation where
             sometimes all results are returned instead of the page-set,
             thus the below filter to limit the array size to the page limit
@@ -753,6 +796,11 @@ h2.movies {
   font-weight: 400;
   color: #948972;
   margin-left: 0.2em;
+}
+span.action-text {
+  color: #ddc594;
+  font-style: italic;
+  font-variant: small-caps;
 }
 span.side-button{
   margin-left:2em;
