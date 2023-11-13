@@ -53,7 +53,7 @@
             <button @click="paginationState.showEqualsOnly = !paginationState.showEqualsOnly" class="action button side-button">
               <span class="action-text">
                 {{ paginationState.showEqualsOnly? 'disable' : 'enable' }}
-              </span> show equals only
+              </span> show ALL equals only
               <font-awesome-icon icon="equals" class="flush-right"/>
             </button>
           </span>
@@ -281,7 +281,7 @@ export default {
       isInit: true,
       paginationOptions: {
         sortTypes: ["random", "rating", "date created", "date updated", "date watched", "name", "duration"],
-        pageLimits: [4,6,8,12,16,20,24,30,36,60,100],
+        pageLimits: [4,6,8,12,16,20,24,30,36,60,100,9999],
         ratings: ["0+","0","1","1+","2","2+","3","3+","4","4+","5", "5+", "6"],
         level1s: process.env.VUE_APP_LEVELS1.split(','),
         level2s: process.env.VUE_APP_LEVELS2.split(','),
@@ -698,6 +698,14 @@ export default {
     pageLevel2() {
       // define computed item of nested property so we can watch it easier below
       return this.paginationState.level2
+    },
+    pageEqualsOnly() {
+      // define computed item of nested property so we can watch it easier below
+      return this.paginationState.showEqualsOnly
+    },
+    pageSortType() {
+      // define computed item of nested property so we can watch it easier below
+      return this.paginationState.sortType
     }
   },
   watch: {
@@ -745,6 +753,25 @@ export default {
         this.filterQuery.level2 = ""
       }
       this.resetPage()
+    },
+    pageEqualsOnly(newVal, oldVal) {
+      logMessage("page EqualsOnly changed from " + oldVal + " to " + newVal)
+      if (newVal) {
+        this.paginationState.limit_actual = this.paginationState.limit
+        this.paginationState.skip_actual = this.paginationState.skip
+        this.paginationState.limit = 9999
+        this.paginationState.skip = 0
+      } else {
+        this.paginationState.limit = this.paginationState.limit_actual
+        this.paginationState.skip = this.paginationState.skip_actual
+      }
+      this.resetPage()
+    },
+    pageSortType() {
+      if (this.paginationState.showEqualsOnly) {
+        logMessage("reset EqualsOnly flag")
+        this.paginationState.showEqualsOnly = false
+      }
     },
     paginationState: {
       deep: true,
