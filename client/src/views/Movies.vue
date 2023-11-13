@@ -60,7 +60,7 @@
           <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
             <button @click="shuffle" class="action button side-button">
-              shuffle
+              <span class="action-text">shuffle ALL </span>
               <font-awesome-icon icon="random" class="flush-right"/>
             </button>
           </span>
@@ -74,7 +74,7 @@
             </button>
 
             <button v-show="paginationState.showClearButton" @click="clearWatchedAt" class="action button side-button clear-all">
-              clear ALL date-watched data
+              <span class="action-text">clear</span> ALL date-watched data
               <font-awesome-icon icon="eraser" class="flush-right clear-all"/>
             </button>
           </span>
@@ -801,6 +801,9 @@ span.side-button{
 }
 .action.button.side-button {
   margin-left:1em;
+}
+.clear-all span.action-text {
+  color: #fd6767;
 }
 .clear-all {
   color: rgba(190, 28, 0, 0.89);
