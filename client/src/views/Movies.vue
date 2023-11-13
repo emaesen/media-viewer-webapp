@@ -596,27 +596,21 @@ export default {
       logMessage("Movies moviesAmended")
       //logMessage("this.moviesQueryResult", this.moviesQueryResult)
       let data = this.moviesQueryResult.data
+
       /* take paginationState.showEqualsOnly into account */
       let filteredData = []
+      let lastPushedIndex = -1
       if (this.paginationState.showEqualsOnly && (this.paginationState.sortType==='duration' || this.paginationState.sortType==='name')) {
         logMessage("filtering movies with equal " + this.paginationState.sortType + " only")
+        let propNameToTest = this.paginationState.sortType==='duration'? "metaDurationInSec" : "basename"
         data.forEach((m,i) => {
-          if (this.paginationState.sortType==='duration') {
-            if(i>0 && m.metaDurationInSec === data[i-1].metaDurationInSec) {
-              if(i===1) {
-                filteredData.push(data[0])
-              }
-              filteredData.push(m)
+          if(i>0 && m[propNameToTest] === data[i-1][propNameToTest]) {
+            if (i-1 !== lastPushedIndex) {
+              filteredData.push(data[i-1])
             }
-          } else {
-            if(i>0 && m.basename === data[i-1].basename) {
-              if(i===1) {
-                filteredData.push(data[0])
-              }
-              filteredData.push(m)
-            }
+            filteredData.push(m)
+            lastPushedIndex = i
           }
-          
         })
       } else {
         filteredData = data
