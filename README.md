@@ -119,6 +119,16 @@ $ cd server
 $ node init.js
 ```
 
+### Set the ENV variables
+
+```bash
+# cd to media-viewer-webapp repo directory
+$ cd [path/to/media-viewer-webapp]
+$ cd client
+# set environment variables (build time and levels names)
+$ npm run set:env
+```
+
 ## Development Usage
 
 **In Git Bash window #1 - run server**:
@@ -138,7 +148,7 @@ You should see a generic Feathers page at <http://localhost:3333/>.
 ```bash
 # cd to media-viewer-webapp repo directory
 $ cd [path/to/media-viewer-webapp]
-$ cd client/public
+$ cd client
 # start the server (hot-reload enabled)
 $ npm run dev
 ```
@@ -160,7 +170,7 @@ Instead of `npm run dev` you should run in "production" mode and build the clien
 ```bash
 # in the command window for the client
 $ cd [path/to/media-viewer-webapp]
-$ client
+$ cd client
 # build the webapp, available later to serve from the build directory
 $ npm run build
 ```
