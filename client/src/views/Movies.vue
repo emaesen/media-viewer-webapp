@@ -25,7 +25,7 @@
         </span>
       </div>
 
-      <div v-if="paginationState.showQueryControls">
+      <div v-if="paginationState.showQueryControls" :class="{fadedcontrols:loading}">
         <div class="filter-group">
           <span class="filter-type">Sort by:</span>
           <div class="filter-set">
@@ -808,7 +808,12 @@ h2.movies {
 .filters {
   margin: 1em 0 4em;
 }
-
+.fadedcontrols svg,
+.fadedcontrols .action-text,
+.fadedcontrols .action,
+.fadedcontrols {
+  color: #545454!important;
+}
 #movies .controls {
   cursor: pointer;
   display: inline-block;
