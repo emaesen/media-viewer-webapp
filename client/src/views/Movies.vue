@@ -25,7 +25,7 @@
         </span>
       </div>
 
-      <div v-if="paginationState.showQueryControls" :class="{fadedcontrols:loading}">
+      <div v-if="paginationState.showQueryControls" :class="{fadedcontrols:fadeControls}">
         <div class="filter-group">
           <span class="filter-type">Sort by:</span>
           <div class="filter-set">
@@ -56,7 +56,7 @@
               </span> show ALL equals only
               <font-awesome-icon icon="equals" class="flush-right"/>
             </button>
-            <span class="info" v-if="nrOfEquals"> ({{ nrOfEquals }})</span>
+            <span class="info" v-if="nrOfEquals!==-1"> ({{ nrOfEquals }})</span>
           </span>
           <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
@@ -301,6 +301,8 @@ export default {
         showClearButton: false,
         showEqualsOnly: false,
       },
+      fadeControls: false,
+      nrOfEquals: -1,
       startFrameTimeForEquals: 9,
       queryHidden: false,
       filterQuery: {
@@ -456,6 +458,8 @@ export default {
       this.paginationState.level2 = ""
     },
     resetPage() {
+      logMessage("in resetPage")
+      this.fadeControls = true
       this.paginationState.skip = 0
       this.paginationState.nr = 1
       this.setFilterData()
@@ -554,7 +558,11 @@ export default {
     },
     movies() {
       logMessage("Movies movies")
-      return this.moviesAmended
+      let movies = this.moviesAmended
+      this.$nextTick(() => {
+        this.fadeControls = false
+      })
+      return movies
     },
     allMovies() {
       logMessage("Movies allMovies")
@@ -621,7 +629,7 @@ export default {
         })
         this.nrOfEquals = filteredData.length
       } else {
-        delete this.nrOfEquals
+        this.nrOfEquals = -1
         filteredData = data
       }
       logMessage("Movies moviesAmended", {filteredData})
@@ -757,6 +765,7 @@ export default {
         logMessage("page Limit changed from " + oldVal + " to " + newVal)
         this.paginationState.nr = 1 + Math.floor((this.paginationState.nr - 1)*(oldVal/newVal))
         this.paginationState.skip = (this.paginationState.nr - 1) * newVal
+        this.fadeControls = true
       }
     },
     pageRating(newVal, oldVal) {
@@ -828,6 +837,7 @@ export default {
         logMessage("reset EqualsOnly flag")
         this.paginationState.showEqualsOnly = false
       }
+      this.resetPage()
     },
     paginationState: {
       deep: true,
