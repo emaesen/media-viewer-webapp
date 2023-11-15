@@ -61,7 +61,7 @@
           <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
             <button @click="shuffle" class="action button side-button">
-              <span class="action-text">shuffle ALL </span>
+              <span class="action-text">shuffle </span> ALL
               <font-awesome-icon icon="random" class="flush-right"/>
             </button>
           </span>
@@ -149,6 +149,55 @@
           </div>
         </div>
 
+        <div class="filter-group">
+          <span class="filter-type">Duration:</span>
+          <span
+            class="action button cntr clear"
+            :class="{checked: !(paginationState.duration.min || paginationState.duration.max) }"
+            @click="clearDurationRange"
+          >all</span>
+          ➔
+          <div class="filter-set">
+            <label for="duration-min1" class="text-label">From</label>
+            <select id="duration-min1"
+              class="select-duration-limit action button"
+              v-model="durationRange.min[0]"
+            >
+              <option v-for="val in paginationOptions.durationHours" :key="val" :value="val">{{val}} h</option>
+            </select>
+            <span class="hr-min-separator">:</span>
+            <select id="duration-min2"
+              class="select-duration-limit action button"
+              v-model="durationRange.min[1]"
+            >
+              <option v-for="val in paginationOptions.durationMinutes" :key="val" :value="val">{{val}} m</option>
+            </select>
+
+
+            <label for="duration-max1" class="text-label">To</label>
+            <select id="duration-max1"
+              class="select-duration-limit action button"
+              v-model="durationRange.max[0]"
+            >
+              <option v-for="val in paginationOptions.durationHours" :key="val" :value="val">{{val}} h</option>
+            </select>
+            <span class="hr-min-separator">:</span>
+            <select id="duration-max2"
+              class="select-duration-limit action button"
+              v-model="durationRange.max[1]"
+            >
+              <option v-for="val in paginationOptions.durationMinutes" :key="val" :value="val">{{val}} m</option>
+            </select>
+
+            <span> </span>
+            <button @click="setDurationRange" 
+              v-if="validDurationRange"
+              class="action button side-button"
+            >
+              <span class="action-text">apply</span> limits
+            </button>
+          </div>
+        </div>
 
         <div class="filter-group">
           <span class="filter-type">View hidden items:</span>
@@ -284,8 +333,14 @@ export default {
         sortTypes: ["random", "rating", "date created", "date updated", "date watched", "name", "duration"],
         pageLimits: [4,6,8,12,16,20,24,30,36,60,100,9999],
         ratings: ["0+","0","1","1+","2","2+","3","3+","4","4+","5", "5+", "6"],
+        durationHours: [0,1,2,3,4,5],
+        durationMinutes: [0,5,10,15,20,25,30,35,40,45,50,55],
         level1s: process.env.VUE_APP_LEVELS1.split(','),
         level2s: process.env.VUE_APP_LEVELS2.split(','),
+      },
+      durationRange: {
+        min:[null,null],
+        max:[null,null],
       },
       paginationState: {
         sortType: "random",
@@ -296,6 +351,10 @@ export default {
         rating: "0+",
         level1: "",
         level2: "",
+        duration: {
+          min:null,
+          max:null,
+        },
         showQueryControls: false,
         showHideButtons: false,
         showClearButton: false,
@@ -314,6 +373,7 @@ export default {
         hidden: {
           $ne: true
         },
+        metaDurationInSec: {}
       },
       intSecObsv: {
         activeIDs: [],
@@ -340,7 +400,7 @@ export default {
       // backwards compatibility test:
       // ignore stored state if it contains a pageLimits property
       //console.log("p.showQueryControls = " + p.showQueryControls)
-      if (!p.pageLimits && p.showQueryControls !== undefined) {
+      if (!p.pageLimits && p.showQueryControls !== undefined && p.duration !== undefined) {
         // new version - use
         this.paginationState = p
         logMessage("Using stored pagination state ", p);
@@ -457,6 +517,32 @@ export default {
     clearLevel2Query() {
       this.paginationState.level2 = ""
     },
+    clearDurationRange() {
+      this.durationRange.min = [null,null]
+      this.durationRange.max = [null,null]
+      this.paginationState.duration.min = null
+      this.paginationState.duration.max = null
+    },
+    setDurationRange() {
+      logMessage("set durationrange", {durationRange: this.durationRange})
+      let minSecs = this.convertHrsMinsToSecs(this.durationRange.min[0], this.durationRange.min[1])
+      let maxSecs = this.convertHrsMinsToSecs(this.durationRange.max[0], this.durationRange.max[1])
+      logMessage("set durationrange", {durationRange: this.durationRange, minSecs, maxSecs})
+      if (maxSecs > minSecs || (minSecs > 0 && maxSecs === 0)) {
+        if (maxSecs === 0) {
+          maxSecs === null
+        }
+        this.paginationState.duration = {
+          min: minSecs,
+          max: maxSecs,
+        }
+      } else {
+        this.paginationState.duration = {
+          min: null,
+          max: null,
+        }
+      }
+    },
     resetPage() {
       logMessage("in resetPage")
       this.fadeControls = true
@@ -486,6 +572,9 @@ export default {
     },
     toggleSort() {
       this.paginationState.sortAsc = !this.paginationState.sortAsc
+    },
+    convertHrsMinsToSecs(hrs,mins) {
+      return 60 * (60 * hrs + 1 * mins)
     },
   },
   computed: {
@@ -748,7 +837,23 @@ export default {
     pageSortType() {
       // define computed item of nested property so we can watch it easier below
       return this.paginationState.sortType
-    }
+    },
+    pageDurationRange() {
+      // define computed item of nested property so we can watch it easier below
+      return {min:this.paginationState.duration.min, max:this.paginationState.duration.max}
+    },
+    validDurationRange() {
+      let hasValidInput = false
+      let min = this.durationRange.min
+      let max = this.durationRange.max
+      let minSecs = this.convertHrsMinsToSecs(min[0],min[1])
+      let maxSecs = this.convertHrsMinsToSecs(max[0],max[1])
+      let hasInput = !(min[0]===null && min[1]===null && max[0]===null && max[1]===null)
+      if (hasInput) {
+        hasValidInput = maxSecs >= minSecs || maxSecs === 0
+      }
+      return hasValidInput;
+    },
   },
   watch: {
     pageNr(newVal, oldVal) {
@@ -797,6 +902,29 @@ export default {
       }
       this.resetPage()
     },
+    pageDurationRange(newVal, oldVal) {
+      logMessage("page duration range changed from ", oldVal, " to ", newVal)
+      let hasMinVal = newVal.min !== null && newVal.min !== "" && newVal.min !== 0
+      let hasMaxVal = newVal.max !== null && newVal.max !== "" && newVal.max !== 0
+      if (hasMinVal && hasMaxVal) {
+        this.filterQuery.metaDurationInSec = {
+          $gte: 1*newVal.min,
+          $lte: 1*newVal.max
+        }
+      } else if (hasMinVal) {
+        this.filterQuery.metaDurationInSec = {
+          $gte: 1*newVal.min
+        }
+      } else if (hasMaxVal) {
+        this.filterQuery.metaDurationInSec = {
+          $lte: 1*newVal.max
+        }
+      } else {
+        this.filterQuery.metaDurationInSec = {}
+      }
+      logMessage("pageDurationRange", {metaDurationInSec: this.filterQuery.metaDurationInSec})
+      this.resetPage()
+    },
     pageEqualsOnly(newVal, oldVal) {
       logMessage("page EqualsOnly changed from " + oldVal + " to " + newVal)
       if (newVal) {
@@ -842,7 +970,7 @@ export default {
     paginationState: {
       deep: true,
       handler: function(newVal) {
-        logMessage("paginationState changed to ", newVal)
+        logMessage("persist new paginationState", newVal)
         persistPaginationState(newVal)
       }
     },
@@ -901,6 +1029,16 @@ span.side-button{
 }
 .action.button.side-button {
   margin-left:1em;
+}
+.text-label {
+  color: #e9e4f2;
+  font-weight: 400;
+  margin: 0 .3em 0 1em;
+  font-style: italic;
+}
+.hr-min-separator {
+  font-weight: 600;
+  margin: 0 .3em;
 }
 .clear-all span.action-text {
   color: #fd6767;
