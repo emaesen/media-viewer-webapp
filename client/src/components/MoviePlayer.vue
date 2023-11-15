@@ -991,7 +991,7 @@ export default {
         const fraction = (sft / this.videoEl.duration).toFixed(3)
         this.player.startFlagMarkerPos = (this.player.pos.width * fraction - markerWidth/2 + 3).toFixed(1)
       
-        logMessage("display startflag playback marker", {sft, fraction, pos:this.player.startFlagMarkerPos })
+        logMessage("display startflag playback marker", {sft, fraction, pos:this.player.startFlagMarkerPos, duration:this.videoEl.duration })
       }
     },
     onClickStartFlagButton() {
