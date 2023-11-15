@@ -56,6 +56,7 @@
               </span> show ALL equals only
               <font-awesome-icon icon="equals" class="flush-right"/>
             </button>
+            <span class="info" v-if="nrOfEquals"> ({{ nrOfEquals }})</span>
           </span>
           <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
@@ -300,6 +301,7 @@ export default {
         showClearButton: false,
         showEqualsOnly: false,
       },
+      startFrameTimeForEquals: 9,
       queryHidden: false,
       filterQuery: {
         rating: {
@@ -335,7 +337,7 @@ export default {
       let p = retrievePaginationState(this.paginationState)
       // backwards compatibility test:
       // ignore stored state if it contains a pageLimits property
-      console.log("p.showQueryControls = " + p.showQueryControls)
+      //console.log("p.showQueryControls = " + p.showQueryControls)
       if (!p.pageLimits && p.showQueryControls !== undefined) {
         // new version - use
         this.paginationState = p
@@ -594,15 +596,18 @@ export default {
       )
       return totalSizeInMB < 1000 ? Math.round(totalSizeInMB*10)/10 + " MB" : Math.round(totalSizeInMB/10)/100 + " GB"
     },
+    isEqualsOnly() {
+      return this.paginationState.showEqualsOnly && (this.paginationState.sortType==='duration' || this.paginationState.sortType==='name')
+    },
     moviesAmended() {
-      logMessage("Movies moviesAmended")
-      //logMessage("this.moviesQueryResult", this.moviesQueryResult)
+      //logMessage("Movies moviesAmended")
+      logMessage("Movies moviesAmended", {moviesQueryResult: this.moviesQueryResult})
       let data = this.moviesQueryResult.data
 
       /* take paginationState.showEqualsOnly into account */
       let filteredData = []
       let lastPushedIndex = -1
-      if (this.paginationState.showEqualsOnly && (this.paginationState.sortType==='duration' || this.paginationState.sortType==='name')) {
+      if (this.isEqualsOnly) {
         logMessage("filtering movies with equal " + this.paginationState.sortType + " only")
         let propNameToTest = this.paginationState.sortType==='duration'? "metaDurationInSec" : "basename"
         data.forEach((m,i) => {
@@ -614,10 +619,12 @@ export default {
             lastPushedIndex = i
           }
         })
+        this.nrOfEquals = filteredData.length
       } else {
+        delete this.nrOfEquals
         filteredData = data
       }
-
+      logMessage("Movies moviesAmended", {filteredData})
       return filteredData
           /* there's a problem with the feathersjs store implementation where
             sometimes all results are returned instead of the page-set,
@@ -630,6 +637,33 @@ export default {
             }
             m.rating = m.rating ? 1*m.rating : 0
             m.level2 = m.level2 || "-"
+
+            if (this.isEqualsOnly) {
+              logMessage("isEqualsOnly", {m_sft:m.sft})
+              if (m._sft_orig === undefined) {
+                // prevent double assignment
+                if (m.sft !== undefined) {
+                  m._sft_orig = 1*m.sft
+                } else {
+                  m._sft_orig = null
+                }
+                m.sft = 1*this.startFrameTimeForEquals
+                logMessage("setting sft to " + 1*m.sft + "  orig=" + 1*m._sft_orig)
+              }
+            } else {
+              logMessage("NOT isEqualsOnly", {m_sft_orig:m._sft_orig})
+              if(m._sft_orig !== undefined) {
+                if (m._sft_orig===null) {
+                  delete m.sft
+                } else {
+                  m.sft = 1*m._sft_orig
+                  
+                logMessage("re-setting sft to " + 1*m.sft)
+                }
+                delete m._sft_orig
+              }
+            }
+
             //logMessage({m})
             return m
           })
@@ -757,13 +791,35 @@ export default {
     pageEqualsOnly(newVal, oldVal) {
       logMessage("page EqualsOnly changed from " + oldVal + " to " + newVal)
       if (newVal) {
-        this.paginationState.limit_actual = this.paginationState.limit
-        this.paginationState.skip_actual = this.paginationState.skip
-        this.paginationState.limit = 9999
+        this.tmpPaginationState = {
+          limit: 1*this.paginationState.limit,
+          skip: 1*this.paginationState.skip
+        }
+        // employ a trick to reset all movies so that the temporary
+        // start frame time can take effect
+        this.paginationState.limit = 1
         this.paginationState.skip = 0
+        this.movies
+        this.$nextTick(() => {
+          // temporarily show all duplicates on one page
+          this.paginationState.limit = 9999
+          this.paginationState.skip = 0
+          this.resetPage()
+        })
       } else {
-        this.paginationState.limit = this.paginationState.limit_actual
-        this.paginationState.skip = this.paginationState.skip_actual
+        // employ a trick to reset all movies so that the temporary
+        // start frame time can be made undone effectively
+        this.paginationState.limit = 1
+        this.paginationState.skip = 0
+        this.movies
+        this.$nextTick(() => {
+          // reset to normal
+          if (this.tmpPaginationState) {
+            this.paginationState.limit = 1*this.tmpPaginationState.limit
+            this.paginationState.skip = 1*this.tmpPaginationState.skip
+          }
+          this.resetPage()
+        })
       }
       this.resetPage()
     },
