@@ -56,7 +56,6 @@
               </span> show ALL equals only
               <font-awesome-icon icon="equals" class="flush-right"/>
             </button>
-            <span class="info" v-if="paginationState.showEqualsOnly"> ({{ nrOfEquals }})</span>
           </span>
           <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
@@ -693,10 +692,6 @@ export default {
     },
     isEqualsOnly() {
       return this.paginationState.showEqualsOnly && (this.paginationState.sortType==='duration' || this.paginationState.sortType==='name')
-    },
-    nrOfEquals() {
-      logMessage("Determine nr of equals")
-      return this.moviesAmended.length
     },
     moviesAmended() {
       //logMessage("Movies moviesAmended")
