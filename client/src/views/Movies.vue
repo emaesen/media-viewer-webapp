@@ -835,7 +835,7 @@ export default {
     },
     pageDurationRange() {
       // define computed item of nested property so we can watch it easier below
-      return {min:this.paginationState.duration.min, max:this.paginationState.duration.max}
+      return this.paginationState.duration.min + "-" + this.paginationState.duration.max
     },
     validDurationRange() {
       let hasValidInput = false
@@ -898,20 +898,24 @@ export default {
     },
     pageDurationRange(newVal, oldVal) {
       logMessage("page duration range changed from ", oldVal, " to ", newVal)
-      let hasMinVal = newVal.min !== null && newVal.min !== "" && newVal.min !== 0
-      let hasMaxVal = newVal.max !== null && newVal.max !== "" && newVal.max !== 0
+      let newValArr = newVal.split("-")
+      let newMin = newValArr[0]
+      let newMax = newValArr[1]
+      logMessage("page duration range changed from ", oldVal, " to ", newVal, {newMin,newMax})
+      let hasMinVal = newMin !== "null" && newMin !== "" && newMin !== 0
+      let hasMaxVal = newMax !== "null" && newMax !== "" && newMax !== 0
       if (hasMinVal && hasMaxVal) {
         this.filterQuery.metaDurationInSec = {
-          $gte: 1*newVal.min,
-          $lte: 1*newVal.max
+          $gte: 1*newMin,
+          $lte: 1*newMax
         }
       } else if (hasMinVal) {
         this.filterQuery.metaDurationInSec = {
-          $gte: 1*newVal.min
+          $gte: 1*newMin
         }
       } else if (hasMaxVal) {
         this.filterQuery.metaDurationInSec = {
-          $lte: 1*newVal.max
+          $lte: 1*newMax
         }
       } else {
         this.filterQuery.metaDurationInSec = {}
