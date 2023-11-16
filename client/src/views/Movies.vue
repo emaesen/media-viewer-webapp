@@ -280,7 +280,7 @@
             </label>
           </div>
           <div class="filter" v-if="showPageNrInput">
-            <select 
+            <select id="page-nr"
               class="select-page-number action button"
               v-model="paginationState.nr"
               @change="ensurePaginationStateNrIsNumber"
