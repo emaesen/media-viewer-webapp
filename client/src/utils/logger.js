@@ -1,6 +1,6 @@
 
 const doLog = process.env.NODE_ENV==="development" || 
-              process.env.VUE_APP_LOG==="always";
+              process.env.VUE_APP_LOG==="debug";
 
 function padZeros(n, td) {
   var ns = n.toString(),
