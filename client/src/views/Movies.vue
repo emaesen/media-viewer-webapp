@@ -56,7 +56,7 @@
               </span> show ALL equals only
               <font-awesome-icon icon="equals" class="flush-right"/>
             </button>
-            <span class="info" v-if="nrOfEquals!==-1"> ({{ nrOfEquals }})</span>
+            <span class="info" v-if="paginationState.showEqualsOnly"> ({{ nrOfEquals }})</span>
           </span>
           <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
@@ -361,7 +361,6 @@ export default {
         showEqualsOnly: false,
       },
       fadeControls: false,
-      nrOfEquals: -1,
       startFrameTimeForEquals: 9,
       queryHidden: false,
       filterQuery: {
@@ -549,6 +548,9 @@ export default {
       this.paginationState.skip = 0
       this.paginationState.nr = 1
       this.setFilterData()
+      this.$nextTick(() => {
+        this.fadeControls = false
+      })
     },
     ensurePaginationStateNrIsNumber() {
       this.paginationState.nr = 1 * this.paginationState.nr
@@ -647,11 +649,7 @@ export default {
     },
     movies() {
       logMessage("Movies movies")
-      let movies = this.moviesAmended
-      this.$nextTick(() => {
-        this.fadeControls = false
-      })
-      return movies
+      return this.moviesAmended
     },
     allMovies() {
       logMessage("Movies allMovies")
@@ -696,6 +694,10 @@ export default {
     isEqualsOnly() {
       return this.paginationState.showEqualsOnly && (this.paginationState.sortType==='duration' || this.paginationState.sortType==='name')
     },
+    nrOfEquals() {
+      logMessage("Determine nr of equals")
+      return this.moviesAmended.length
+    },
     moviesAmended() {
       //logMessage("Movies moviesAmended")
       logMessage("Movies moviesAmended", {moviesQueryResult: this.moviesQueryResult})
@@ -716,9 +718,7 @@ export default {
             lastPushedIndex = i
           }
         })
-        this.nrOfEquals = filteredData.length
       } else {
-        this.nrOfEquals = -1
         filteredData = data
       }
       logMessage("Movies moviesAmended", {filteredData})
@@ -870,7 +870,6 @@ export default {
         logMessage("page Limit changed from " + oldVal + " to " + newVal)
         this.paginationState.nr = 1 + Math.floor((this.paginationState.nr - 1)*(oldVal/newVal))
         this.paginationState.skip = (this.paginationState.nr - 1) * newVal
-        this.fadeControls = true
       }
     },
     pageRating(newVal, oldVal) {
@@ -965,7 +964,6 @@ export default {
         logMessage("reset EqualsOnly flag")
         this.paginationState.showEqualsOnly = false
       }
-      this.resetPage()
     },
     paginationState: {
       deep: true,
