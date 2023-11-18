@@ -10,7 +10,7 @@
 
       <div>
         <span class="pagination-info">
-          Page {{ pageNr }} of {{ nrOfPages }} <span class="info">({{ totalNrOfMovies }} movies - {{ totalSizeOfMovies }})</span>
+          Page {{ pageNr }} of {{ nrOfPages }} <span class="info" v-if="!paginationState.showEqualsOnly">({{ totalNrOfMovies }} movies - {{ totalSizeOfMovies }})</span>
         </span>
 
         <button @click="paginationState.showQueryControls = !paginationState.showQueryControls" class="action button">
@@ -25,7 +25,7 @@
         </span>
       </div>
 
-      <div v-if="paginationState.showQueryControls" :class="{fadedcontrols:fadeControls}">
+      <div v-if="paginationState.showQueryControls" :class="{fadedcontrols:loading}">
         <div class="filter-group">
           <span class="filter-type">Sort by:</span>
           <div class="filter-set">
@@ -359,7 +359,6 @@ export default {
         showClearButton: false,
         showEqualsOnly: false,
       },
-      fadeControls: false,
       startFrameTimeForEquals: 9,
       queryHidden: false,
       filterQuery: {
@@ -543,13 +542,9 @@ export default {
     },
     resetPage() {
       logMessage("in resetPage")
-      this.fadeControls = true
       this.paginationState.skip = 0
       this.paginationState.nr = 1
       this.setFilterData()
-      this.$nextTick(() => {
-        this.fadeControls = false
-      })
     },
     ensurePaginationStateNrIsNumber() {
       this.paginationState.nr = 1 * this.paginationState.nr
