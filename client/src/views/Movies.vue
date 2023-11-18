@@ -1016,11 +1016,6 @@ h2.movies {
   color: #948972;
   margin-left: 0.2em;
 }
-span.action-text {
-  color: #ddc594;
-  font-style: italic;
-  font-variant: small-caps;
-}
 span.side-button{
   margin-left:2em;
 }

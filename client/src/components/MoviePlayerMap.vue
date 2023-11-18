@@ -6,7 +6,7 @@
         class="action button"
         @click="showMap=!showMap"
       >
-        {{ showMap ? "close" : "open" }} <font-awesome-icon icon="map" class="flush-right"/>
+        <span class="action-text">{{ showMap ? "close" : "open" }}</span> shortcuts <font-awesome-icon icon="map" class="flush-right"/>
       </button>
     </div>
 
@@ -15,7 +15,7 @@
       v-show="showMap" 
       class="map"
     >
-        
+      <h2>Hot spots on the video screen</h2>
       <div class="hot-spots">
         <dl class="cell">
           <dt>go back 30 seconds</dt>
@@ -57,6 +57,7 @@
         </dl>
       </div>
 
+      <h2>Hot keys</h2>
       <div class="hot-keys">
         <dl>
           <dt>set start-flag time (preview frame)</dt>

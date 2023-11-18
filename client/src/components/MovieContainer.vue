@@ -286,6 +286,9 @@ export default {
 .markers {
   margin: 10px 0 10px 0;
 }
+.title {
+  color: #90d9f590;
+}
 .path {
   text-align: right;
 }

@@ -12,7 +12,7 @@
           {{ userName }}
         </span>
         <button @click="logout" class="action button">
-          <font-awesome-icon icon="sign-out-alt"/>Logout
+          <font-awesome-icon icon="sign-out-alt"/><span class="action-text">logout</span>
         </button>
       </div>
     </div>
@@ -98,13 +98,13 @@ h6 {
   font-family: monospace;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #fffef5;
+  color: #90d9f5;
 }
 h1 {
-  margin-top: 2.5em;
+  margin: 2.5em 0 1em;
 }
 h2 {
-  margin: 0 0 0.5em 0.2em;
+  margin: 1em 0 0.5em;
 }
 #app {
   position: relative;
@@ -121,7 +121,7 @@ h2 {
   background-color: #000;
   font-family: monospace;
   text-align: center;
-  color: #fffef5;
+  color: #90d9f5;
 }
 #header {
   top: 0;
@@ -328,6 +328,11 @@ button:not(.inactive):hover,
 }
 .actionable:not(.inactive):hover {
   background-color: #1f0303;
+}
+span.action-text {
+  color: #ddc594;
+  font-style: italic;
+  font-variant: small-caps;
 }
 .loading,
 .noresults {
