@@ -25,7 +25,7 @@
         </span>
       </div>
 
-      <div v-if="paginationState.showQueryControls" :class="{fadedcontrols:loading}">
+      <div v-if="paginationState.showQueryControls" :class="{fadedcontrols:fadeControls}">
         <div class="filter-group">
           <span class="filter-type">Sort by:</span>
           <div class="filter-set">
@@ -359,6 +359,7 @@ export default {
         showClearButton: false,
         showEqualsOnly: false,
       },
+      isChanging: false,
       startFrameTimeForEquals: 9,
       queryHidden: false,
       filterQuery: {
@@ -582,6 +583,10 @@ export default {
     ...mapGetters("movies", { findMoviesInStore: "find" }),
     resultsFound() {
       return !this.loading && this.movies && this.movies[0];
+    },
+    fadeControls() {
+      logMessage("fadeControls ", this.loading || this.isChanging)
+      return this.loading || this.isChanging
     },
     query() {
       // it is not necessary to define ownerId in the query:
@@ -962,8 +967,12 @@ export default {
     paginationState: {
       deep: true,
       handler: function(newVal) {
+        this.isChanging = true
         logMessage("persist new paginationState", newVal)
         persistPaginationState(newVal)
+        setTimeout(() => {
+          this.isChanging = false
+        },500)
       }
     },
     queryHidden(newVal) {
