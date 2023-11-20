@@ -50,10 +50,10 @@
           </div>
           <span v-if="paginationState.sortType==='duration' || paginationState.sortType==='name'" class="side-button">
             ⇝
-            <button @click="paginationState.showEqualsOnly = !paginationState.showEqualsOnly" class="action button side-button">
+            <button @click="toggleShowEqualsOnly" class="action button side-button">
               <span class="action-text">
                 {{ paginationState.showEqualsOnly? 'disable' : 'enable' }}
-              </span> show ALL equals only
+              </span> show ALL equal {{paginationState.sortType}} only
               <font-awesome-icon icon="equals" class="flush-right"/>
             </button>
           </span>
@@ -555,6 +555,12 @@ export default {
       this.allMovies.forEach( movie => {
         movie.rnr = Math.round(Math.random()/Math.max(Math.random(), 0.01)*1e5)
         movie.update()
+      })
+    },
+    toggleShowEqualsOnly() {
+      this.isChanging = true
+      this.$nextTick(() => {
+        this.paginationState.showEqualsOnly = !this.paginationState.showEqualsOnly
       })
     },
     clearWatchedAt() {
