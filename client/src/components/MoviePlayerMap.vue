@@ -6,7 +6,7 @@
         class="action button"
         @click="showMap=!showMap"
       >
-        <span class="action-text">{{ showMap ? "close" : "open" }}</span> shortcuts <font-awesome-icon icon="map" class="flush-right"/>
+        <span class="action-text">{{ showMap ? "hide" : "show" }}</span> shortcuts <font-awesome-icon icon="map" class="flush-right"/>
       </button>
     </div>
 
