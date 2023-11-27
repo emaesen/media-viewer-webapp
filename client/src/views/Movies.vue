@@ -360,7 +360,7 @@ export default {
         showEqualsOnly: false,
       },
       isChanging: false,
-      startFrameTimeForEquals: 9,
+      startFrameTimeForEquals: 99,
       queryHidden: false,
       filterQuery: {
         rating: {
@@ -745,7 +745,13 @@ export default {
                 } else {
                   m._sft_orig = null
                 }
-                m.sft = 1*this.startFrameTimeForEquals
+                console.log({m})
+                if (m.metaDurationInSec > 2* this.startFrameTimeForEquals) {
+                  m.sft = 1*this.startFrameTimeForEquals
+                } else {
+                  m.sft = Math.ceil(m.metaDurationInSec / 2)
+                }
+                
                 logMessage("setting sft to " + 1*m.sft + "  orig=" + 1*m._sft_orig)
               }
             } else {
