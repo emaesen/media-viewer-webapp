@@ -61,6 +61,9 @@
         {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }}<br>
         {{ movieLastWatchedTime }} &nbsp; &nbsp; {{ movieRNR }}
       </div>
+      <div v-if="movie.hidden" class="cmd-rm info">
+        rm -i {{movie.path}}
+      </div>
     </div>
   </div>
 </template>
@@ -312,5 +315,11 @@ export default {
   font-size: 80%;
   text-align: center;
   margin-top: 1em;
+}
+.cmd-rm {
+  text-align: center;
+  margin-top: 1em;
+  font-size:50%;
+  color: #f90;
 }
 </style>

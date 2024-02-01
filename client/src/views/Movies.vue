@@ -255,7 +255,19 @@
       </div>
     </transition-group>
 
-    
+    <div class="cmd-list-rm" v-if="queryHidden && resultsFound">
+      # to delete all hidden movies using the command line:<br>
+      # cd to media folder
+      <div
+        v-for="movie in allMoviesforQuery"
+        :key="movie._id"
+        :id="movie._id"
+      >
+        rm -i {{movie.path}}<br>
+      </div>
+    </div>
+
+
     <div v-if="showPaginationControls" class="controls pagination convert-to-block-on-small-device">
       <div class="filter-group">
         <span class="filter-type">Page Nr:</span>
@@ -1099,6 +1111,12 @@ span.side-button{
 .grid .movies-list-cell {
   border: 1px dashed #454545;
   margin: -1px;
+}
+.cmd-list-rm {
+  border: 1px solid #f90;
+  color: #f90;
+  padding: 1em;
+  margin-bottom:9em;
 }
 .screen {
   position: absolute;
