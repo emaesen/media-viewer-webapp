@@ -63,22 +63,28 @@ async function getVideoAssets() {
     readdirp(folder, settings)
       .on('data', (entry) => {
         nr_success += nr_success
-        console.log('success', entry.path.replace(/\\/g, '/'));
+        console.log('success ' + nr_success, entry.path.replace(/\\/g, '/'));
       })
-      .on('warn', error => {
+      .on('warn', (error) => {
         nr_warn += nr_warn
-        console.error('warning', error)
+        console.error('warning ' + nr_warn, error)
       })
-      .on('error', error => {
+      .on('error', (error) => {
         nr_error += nr_error
-        console.error('error', error)
+        console.error('fatal error ' + nr_error, error)
       })
       .on('end', () => {
         console.log('done')
         console.log(nr_success + " succes")
         console.log(nr_warn + " warnings")
         console.log(nr_error + " errors")
-      });
+      })
+      .on('close', () => {
+        console.log('stream closed')
+      })
+    console.log(nr_success + " succes")
+    console.log(nr_warn + " warnings")
+    console.log(nr_error + " errors")
     // END TEST
 
 
