@@ -57,13 +57,28 @@ async function getVideoAssets() {
 
 
     // STARTTEST
+    let nr_success = 0
+    let nr_warn = 0
+    let nr_error = 0
     readdirp(folder, settings)
       .on('data', (entry) => {
+        nr_success += nr_success
         console.log('success', entry.path.replace(/\\/g, '/'));
       })
-      .on('warn', error => console.error('warning', error))
-      .on('error', error => console.error('error', error))
-      .on('end', () => console.log('done'));
+      .on('warn', error => {
+        nr_warn += nr_warn
+        console.error('warning', error)
+      })
+      .on('error', error => {
+        nr_error += nr_error
+        console.error('error', error)
+      })
+      .on('end', () => {
+        console.log('done')
+        console.log(nr_success + " succes")
+        console.log(nr_warn + " warnings")
+        console.log(nr_error + " errors")
+      });
     // END TEST
 
 
