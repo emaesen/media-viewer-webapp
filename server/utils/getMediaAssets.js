@@ -57,7 +57,7 @@ async function getVideoAssets() {
     // Node.js V9.0.0 implementation:
 
     allFiles = await readdirp.promise(folder, settings)
-    //console.log('getMediaAssets movies readdirp:', allFiles)
+    console.log('getMediaAssets movies readdirp:', allFiles)
     allFiles = allFiles
       .filter(entry => {
           entry.path = entry.path.replace(/\\/g, '/')
