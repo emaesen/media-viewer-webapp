@@ -62,15 +62,15 @@ async function getVideoAssets() {
     let nr_error = 0
     readdirp(folder, settings)
       .on('data', (entry) => {
-        nr_success += nr_success
+        nr_success = 1 + nr_success
         console.log('success ' + nr_success, entry.path.replace(/\\/g, '/'));
       })
       .on('warn', (error) => {
-        nr_warn += nr_warn
+        nr_warn = 1 + nr_warn
         console.error('warning ' + nr_warn, error)
       })
       .on('error', (error) => {
-        nr_error += nr_error
+        nr_error = 1 + nr_error
         console.error('fatal error ' + nr_error, error)
       })
       .on('end', () => {
