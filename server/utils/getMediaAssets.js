@@ -70,6 +70,7 @@ async function getVideoAssets() {
       .map( entry => {
         try {
           const file = entry.fullPath
+          console.log('getMediaAssets opening file:', file)
           const fd = fs.openSync(file, 'r')
           entry = parseMovieFile(entry, fd)
           fs.closeSync(fd)
