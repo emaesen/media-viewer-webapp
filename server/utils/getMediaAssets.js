@@ -54,6 +54,19 @@ async function getVideoAssets() {
   if (folder) {
     console.log('getMediaAssets folder:', folder)
     console.log('getMediaAssets settings:', settings)
+
+
+    // STARTTEST
+    readdirp(folder, settings)
+      .on('data', (entry) => {
+        console.log('success', entry.path.replace(/\\/g, '/'));
+      })
+      .on('warn', error => console.error('warning', error))
+      .on('error', error => console.error('error', error))
+      .on('end', () => console.log('done'));
+    // END TEST
+
+
     // Iterate recursively through a folder
     // Node.js V9.0.0 implementation:
 
