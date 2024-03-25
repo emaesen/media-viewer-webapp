@@ -57,6 +57,7 @@ async function getVideoAssets() {
 
 
     // START TEST
+    /*
     let nr_success = 0
     let nr_warn = 0
     try {
@@ -86,6 +87,7 @@ async function getVideoAssets() {
     } catch (err) {
       console.log('readdirp Error caught:', err)
     }
+    */
     // END TEST
 
 
