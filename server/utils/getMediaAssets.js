@@ -91,9 +91,12 @@ async function getVideoAssets() {
 
     // Iterate recursively through a folder
     // Node.js V9.0.0 implementation:
-
-    allFiles = await readdirp.promise(folder, settings)
-    //console.log('getMediaAssets movies readdirp:', allFiles)
+    try {
+      allFiles = await readdirp.promise(folder, settings)
+    } catch (err) {
+      console.error('readdirp.promise Error caught:', err)
+    }
+    console.log('getMediaAssets movies readdirp:', allFiles)
     allFiles = allFiles
       .filter(entry => {
           entry.path = entry.path.replace(/\\/g, '/')
