@@ -10,10 +10,11 @@ const VideoLib = require('node-video-lib')
 const folder = "../client/public/media/movies"
 const settings = {
   fileFilter: ['*.mp4'],
-  depth: 5,
+  depth: 2,
   type: 'files',
   alwaysStat: false,
-  lstat: false
+  lstat: false,
+  highWaterMark: 8192
 };
 const nodeVersion = process.version
 console.log("INFO: nodeVersion = ", nodeVersion)
@@ -93,12 +94,9 @@ async function getVideoAssets() {
 
     // Iterate recursively through a folder
     // Node.js V9.0.0 implementation:
-    try {
-      allFiles = await readdirp.promise(folder, settings).catch(err => console.log('readdirp.promise error:', err))
-    } catch (err) {
-      console.log('readdirp.promise error caught:', err)
-    }
-    console.log('getMediaAssets movies readdirp:', allFiles)
+    allFiles = await readdirp.promise(folder, settings).catch(err => console.log('getMediaAssets readdirp.promise error:', err))
+
+    //console.log('getMediaAssets movies readdirp:', allFiles)
     allFiles = allFiles
       .filter(entry => {
           entry.path = entry.path.replace(/\\/g, '/')
