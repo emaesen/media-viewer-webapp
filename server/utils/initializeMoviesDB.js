@@ -21,7 +21,7 @@ async function createMovies() {
   console.log({user})
 
   const movies = await getVideoAssets()
-  //console.log(movies)
+  console.log(movies.length + " movies to be added to DB")
 
   movies.forEach(movie => {
     createMovie(movie, user)

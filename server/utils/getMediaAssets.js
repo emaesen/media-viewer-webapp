@@ -56,35 +56,36 @@ async function getVideoAssets() {
     console.log('getMediaAssets settings:', settings)
 
 
-    // STARTTEST
+    // START TEST
     let nr_success = 0
     let nr_warn = 0
-    let nr_error = 0
-    readdirp(folder, settings)
-      .on('data', (entry) => {
-        nr_success = 1 + nr_success
-        console.log('success ' + nr_success, entry.path.replace(/\\/g, '/'));
-      })
-      .on('warn', (error) => {
-        nr_warn = 1 + nr_warn
-        console.error('warning ' + nr_warn, error)
-      })
-      .on('error', (error) => {
-        nr_error = 1 + nr_error
-        console.error('fatal error ' + nr_error, error)
-      })
-      .on('end', () => {
-        console.log('done')
-        console.log(nr_success + " succes")
-        console.log(nr_warn + " warnings")
-        console.log(nr_error + " errors")
-      })
-      .on('close', () => {
-        console.log('stream closed')
-      })
-    console.log(nr_success + " succes")
-    console.log(nr_warn + " warnings")
-    console.log(nr_error + " errors")
+    try {
+      readdirp(folder, settings)
+        .on('data', (entry) => {
+          nr_success = 1 + nr_success
+          let path =  entry.path.replace(/\\/g, '/')
+          console.log('readdirp success ' + nr_success, path);
+        })
+        .on('warn', (error) => {
+          nr_warn = 1 + nr_warn
+          console.log('readdirp warning ' + nr_warn, error)
+        })
+        .on('error', (error) => {
+          console.log('readdirp fatal error ', error)
+        })
+        .on('end', () => {
+          console.log('readdirp done')
+          console.log(nr_success + " succes")
+          console.log(nr_warn + " warnings")
+          console.log(nr_error + " errors")
+        })
+        .on('close', () => {
+          console.log('readdirp stream closed')
+        })
+
+    } catch (err) {
+      console.error('readdirp Error caught:', err)
+    }
     // END TEST
 
 
