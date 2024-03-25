@@ -84,7 +84,7 @@ async function getVideoAssets() {
         })
 
     } catch (err) {
-      console.error('readdirp Error caught:', err)
+      console.log('readdirp Error caught:', err)
     }
     // END TEST
 
@@ -92,9 +92,9 @@ async function getVideoAssets() {
     // Iterate recursively through a folder
     // Node.js V9.0.0 implementation:
     try {
-      allFiles = await readdirp.promise(folder, settings)
+      allFiles = await readdirp.promise(folder, settings).catch(err => console.log('readdirp.promise error:', err))
     } catch (err) {
-      console.error('readdirp.promise Error caught:', err)
+      console.log('readdirp.promise error caught:', err)
     }
     console.log('getMediaAssets movies readdirp:', allFiles)
     allFiles = allFiles
