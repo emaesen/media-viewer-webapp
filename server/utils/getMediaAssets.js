@@ -53,43 +53,9 @@ async function getVideoAssets() {
   //console.log("getMediaAssets Info: movies in DB: ", moviePathsInDB)
 
   if (folder) {
-    console.log('getMediaAssets folder:', folder)
-    console.log('getMediaAssets settings:', settings)
-
-
-    // START TEST
-    /*
-    let nr_success = 0
-    let nr_warn = 0
-    try {
-      readdirp(folder, settings)
-        .on('data', (entry) => {
-          nr_success = 1 + nr_success
-          let path =  entry.path.replace(/\\/g, '/')
-          console.log('readdirp success ' + nr_success, path);
-        })
-        .on('warn', (error) => {
-          nr_warn = 1 + nr_warn
-          console.log('readdirp warning ' + nr_warn, error)
-        })
-        .on('error', (error) => {
-          console.log('readdirp fatal error ', error)
-        })
-        .on('end', () => {
-          console.log('readdirp done')
-          console.log(nr_success + " succes")
-          console.log(nr_warn + " warnings")
-          console.log(nr_error + " errors")
-        })
-        .on('close', () => {
-          console.log('readdirp stream closed')
-        })
-
-    } catch (err) {
-      console.log('readdirp Error caught:', err)
-    }
-    */
-    // END TEST
+    console.log('getMediaAssets Info: media folder:', folder)
+    console.log('getMediaAssets Info: settings:', settings)
+    console.log('getMediaAssets Info: maximum number of media files to be read:', settings.highWaterMark)
 
 
     // Iterate recursively through a folder
