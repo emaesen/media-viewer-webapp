@@ -192,6 +192,7 @@
             <button @click="setDurationRange" 
               v-if="validDurationRange"
               class="action button side-button"
+              :class="{fadedcontrols:!hasNewDurationLimits}"
             >
               <span class="action-text">apply</span> limits
             </button>
@@ -371,6 +372,7 @@ export default {
         showClearButton: false,
         showEqualsOnly: false,
       },
+      hasNewDurationLimits: false,
       isChanging: false,
       startFrameTimeForEquals: 99,
       queryHidden: false,
@@ -552,6 +554,7 @@ export default {
           max: null,
         }
       }
+      this.hasNewDurationLimits = false
     },
     resetPage() {
       logMessage("in resetPage")
@@ -857,6 +860,10 @@ export default {
       // define computed item of nested property so we can watch it easier below
       return this.paginationState.sortType
     },
+    selectedDurationRange() {
+      // define computed item of nested property so we can watch it easier below
+      return this.durationRange.min[0] + "~" + this.durationRange.min[1] + "~" + this.durationRange.max[0] + "~"+ this.durationRange.max[1]
+    },
     pageDurationRange() {
       // define computed item of nested property so we can watch it easier below
       return this.paginationState.duration.min + "-" + this.paginationState.duration.max
@@ -869,7 +876,7 @@ export default {
       let maxSecs = this.convertHrsMinsToSecs(max[0],max[1])
       let hasInput = !(min[0]===null && min[1]===null && max[0]===null && max[1]===null)
       if (hasInput) {
-        hasValidInput = maxSecs >= minSecs || maxSecs === 0
+        hasValidInput = maxSecs > minSecs
       }
       return hasValidInput;
     },
@@ -919,6 +926,70 @@ export default {
         this.filterQuery.level2 = ""
       }
       this.resetPage()
+    },
+    selectedDurationRange(newVal,oldVal){
+      logMessage("page duration range selection changed from ", oldVal, " to ", newVal)
+      let timeDeltaM = this.paginationOptions.durationMinutes[1]
+      let maxM = this.paginationOptions.durationMinutes[this.paginationOptions.durationMinutes.length - 1]
+      let maxH = this.paginationOptions.durationHours[this.paginationOptions.durationHours.length - 1]
+
+      let oldValArr = oldVal.split("~")
+      let oldMinH = 1*oldValArr[0]
+      let oldMinM = 1*oldValArr[1]
+      let oldMaxH = 1*oldValArr[2]
+      let oldMaxM = 1*oldValArr[3]
+      let newValArr = newVal.split("~")
+      let newMinH = 1*newValArr[0]
+      let newMinM = 1*newValArr[1]
+      let newMaxH = 1*newValArr[2]
+      let newMaxM = 1*newValArr[3]
+
+      if ( !(isNaN(newMinH) && isNaN(newMinM) && isNaN(newMaxH) && isNaN(newMaxM)) ) {
+        this.hasNewDurationLimits = true
+        oldMinH = isNaN(oldMinH)? 0 : oldMinH
+        oldMaxH = isNaN(oldMaxH)? 0 : oldMaxH
+        oldMinM = isNaN(oldMinM)? 0 : oldMinM
+        oldMaxM = isNaN(oldMaxM)? 0 : oldMaxM
+        newMinH = isNaN(newMinH)? 0 : newMinH
+        newMaxH = isNaN(newMaxH)? 0 : newMaxH
+        newMinM = isNaN(newMinM)? 0 : newMinM
+        newMaxM = isNaN(newMaxM)? 0 : newMaxM
+        if (oldMaxM - oldMinM > timeDeltaM) {
+          timeDeltaM = oldMaxM - oldMinM
+        } else if (oldMaxM - oldMinM < 0) {
+          timeDeltaM = 60 + oldMaxM - oldMinM
+        }
+        logMessage("timeDeltaM", timeDeltaM)
+        if (newMinH !== oldMinH) {
+          newMaxH = oldMaxH + (newMinH - oldMinH)
+        }
+        if (newMinM !== oldMinM) {
+          if (newMinM < 60 - timeDeltaM) {
+            newMaxM = newMinM + timeDeltaM
+          } else {
+            newMaxM = newMinM - 60 + timeDeltaM
+            if (newMaxM < oldMaxM) {
+              newMaxH = oldMaxH + 1
+            }
+          }
+          if (newMinM < oldMinM && newMaxM > oldMaxM) {
+            newMaxH = oldMaxH - 1
+          }
+        }
+        if (newMaxH > maxH) {
+          newMaxH = maxH
+          newMaxM = maxM
+        }
+        if (60*newMaxH + newMaxM < 60*newMinH + newMinM) {
+          newMaxH = newMinH
+          newMaxM = newMinM
+        }
+        
+        this.durationRange = {
+          min: [newMinH, newMinM],
+          max: [newMaxH, newMaxM]
+        }
+      }
     },
     pageDurationRange(newVal, oldVal) {
       logMessage("page duration range changed from ", oldVal, " to ", newVal)
