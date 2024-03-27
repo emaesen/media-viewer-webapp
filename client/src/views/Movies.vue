@@ -764,7 +764,7 @@ export default {
                 } else {
                   m._sft_orig = null
                 }
-                console.log({m})
+                //console.log({m})
                 if (m.metaDurationInSec > 2* this.startFrameTimeForEquals) {
                   m.sft = 1*this.startFrameTimeForEquals
                 } else {
