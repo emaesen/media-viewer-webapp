@@ -157,6 +157,10 @@
           >all</span>
           ➔
           <div class="filter-set">
+            <span
+              class="check clear"
+              :class="{checked: (paginationState.duration.min || paginationState.duration.max),fadedcontrols:hasNewDurationLimits }"
+            ></span>
             <label for="duration-min1" class="text-label">From</label>
             <select id="duration-min1"
               class="select-duration-limit action button"

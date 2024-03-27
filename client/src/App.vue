@@ -368,6 +368,11 @@ input[type="checkbox"] {
   width: 1em;
 }
 
+span.check {
+  margin-left: 0.5em;
+  margin-right: -.7em;
+  font-weight:bold;
+}
 span.clear::before,
 input[type="radio"] + label:not(.nocheck)::before,
 input[type="checkbox"] + label:not(.nocheck)::before {
@@ -380,6 +385,9 @@ input[type="checkbox"]:checked + label:not(.nocheck)::before {
   content: "✓ ";
   color: #29dc58;
   opacity: 1;
+}
+span.clear.checked.fadedcontrols::before {
+  opacity: .5;
 }
 .action.button.clear {
   margin-left: 0.9em;
