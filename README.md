@@ -24,6 +24,10 @@ Features of the movie viewer:
   - all, or one of the available detected level1 folders
 - level2:
   - all, or one of the available detected level2 folders
+- duration
+  - all, or selected range in increments of 5 minutes
+- View hidden items
+  - no/yes view all movies that are marked for deletion and hidden from main browse functionality
 
 Movies are suggested and expected to be organized in a folder structure with two levels:
 ```
@@ -33,12 +37,16 @@ movies/[level1-B]/[level2-B]/[movie3]
 movies/[level1-B]/[level2-B]/[movie4]
 ```
 
+The maximum number of movies supported is 8192.
+
 The folder levels are detected on import of the movie meta-data (see below).
 
 Movies can be viewed either in three different modes:
 - inline within the movie list
 - in maximum browser-width mode
 - in full-screen mode
+
+Movies can be marked as "hidden". While viewing the "hidden" items they can be deleted from the DB. The webpage displays a list of delete commands that can be copied to a batch file to easily remove the deleted movies from the file system as well.
 
 ## Linux Setup
 
