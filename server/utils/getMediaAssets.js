@@ -51,6 +51,7 @@ function parseMovieFile(entry, fd) {
 async function getVideoAssets() {
   const moviePathsInDB = await getMovies()
   //console.log("getMediaAssets Info: movies in DB: ", moviePathsInDB)
+  let moviePathsInDBButNotInFilesystem = [].concat(moviePathsInDB)
 
   if (folder) {
     console.log('getMediaAssets Info: media folder:', folder)
@@ -69,6 +70,8 @@ async function getVideoAssets() {
           const isAlreadyInDB = moviePathsInDB.indexOf(entry.path)>=0
           if (isAlreadyInDB) {
             console.log("getMediaAssets Info: is already in DB:", entry.path)
+            
+            moviePathsInDBButNotInFilesystem.splice(moviePathsInDBButNotInFilesystem.indexOf(entry.path),1)
           }
           return !isAlreadyInDB
       })
@@ -85,7 +88,8 @@ async function getVideoAssets() {
         return entry
       })
    
-    //console.log('getMediaAssets movies:', allFiles)
+    //console.log('getMediaAssets Info: movies:', allFiles)
+    console.log('getMediaAssets Info: movies in DB but NOT in filesystem: ', moviePathsInDBButNotInFilesystem)
     return allFiles
   } else {
     console.error("getMediaAssets Error: No video assets folder defined. Please export VIDEOS_FOLDER")

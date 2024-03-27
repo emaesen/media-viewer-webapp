@@ -27,7 +27,7 @@ module.exports = {
         as: 'ownerId'
       }),
       async function(context) {
-        console.log("in movies `before-create` hook", context.data)
+        console.log("in movies `before-create` hook", context.data.path)
         return context
       }
     ],
