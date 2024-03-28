@@ -53,7 +53,7 @@
             <button @click="toggleShowEqualsOnly" class="action button side-button">
               <span class="action-text">
                 {{ paginationState.showEqualsOnly? 'disable' : 'enable' }}
-              </span> show ALL equal {{paginationState.sortType}} only
+              </span> show equal {{paginationState.sortType}} only
               <font-awesome-icon icon="equals" class="flush-right"/>
             </button>
           </span>
@@ -232,6 +232,14 @@
 
     <div v-if="loading" class="loading">loading...</div>
     <div v-if="!resultsFound" class="noresults">{{ noResultsText }}</div>
+    
+    <button @click="MarkMoviesTestedForEqual" 
+      v-if="resultsFound && paginationState.showEqualsOnly"
+      class="action button"
+    >
+      <span class="action-text">mark</span> tested for equal
+    </button>
+
     <transition-group
       v-if="!loading && movies && movies[0]"
       tag="div"
@@ -345,6 +353,10 @@ export default {
       hasFullWidthMovie: false,
       movieBasePath: "/media/movies/",
       isInit: true,
+      eqProps: {
+        "duration": "eqd",
+        "name": "eqn"
+      },
       paginationOptions: {
         sortTypes: ["random", "rating", "date created", "date updated", "date watched", "name", "duration"],
         pageLimits: [4,6,8,12,16,20,24,30,36,60,100,9999],
@@ -496,6 +508,14 @@ export default {
     },
     onUpdateMovie(payload) {
       this.updateMovie(payload)
+    },
+    MarkMoviesTestedForEqual() {
+      let movies = this.moviesAmended
+      let eqPropName = this.eqProps[this.paginationState.sortType]
+      logMessage("Movies tested for equal " + this.paginationState.sortType, movies)
+      movies.forEach((m) => {
+        this.updateMovie({movie:m, prop:eqPropName, val:1})
+      })
     },
     setFilterData() {
       // get list of user-defined ratings and levels, and remove duplicates
@@ -726,11 +746,15 @@ export default {
       /* take paginationState.showEqualsOnly into account */
       let filteredData = []
       let lastPushedIndex = -1
+
       if (this.isEqualsOnly) {
         logMessage("filtering movies with equal " + this.paginationState.sortType + " only")
         let propNameToTest = this.paginationState.sortType==='duration'? "metaDurationInSec" : "basename"
+        let eqPropName = this.eqProps[this.paginationState.sortType]
+        logMessage("eqPropName", eqPropName)
+        /*
         data.forEach((m,i) => {
-          if(i>0 && m[propNameToTest] === data[i-1][propNameToTest]) {
+          if(i>0 && m[propNameToTest] === data[i-1][propNameToTest] && m[eqPropName]!==1) {
             if (i-1 !== lastPushedIndex) {
               filteredData.push(data[i-1])
             }
@@ -738,6 +762,44 @@ export default {
             lastPushedIndex = i
           }
         })
+        */
+        let searchEquals = true
+        let equalsFound = false
+        let untestedFound = false
+        let i = 1
+        let iMax = data.length
+        while(i<iMax && searchEquals) {
+          let curM = data[i]
+          let prevM = data[i-1]
+          if(curM[propNameToTest] === prevM[propNameToTest]) {
+            if (i-1 !== lastPushedIndex) {
+              filteredData.push(prevM)
+              console.log("PUSH", prevM)
+              if (prevM[eqPropName]!==1) {untestedFound = true}
+            }
+            filteredData.push(curM)
+            console.log("PUSH", curM)
+            if (curM[eqPropName]!==1) {untestedFound = true}
+            lastPushedIndex = i
+            equalsFound = true
+          } else if(equalsFound) {
+            console.log("EQUALS FOUND")
+            if (untestedFound) {
+              console.log("SOME EQUALS NOT YET TESTED")
+              //stop search
+              searchEquals = false
+            } else {
+              console.log("EQUALS ALREADY TESTED")
+              //resume new search
+              filteredData = []
+            }
+          }
+          if (!untestedFound) {
+            filteredData = []
+          }
+          i++
+          console.log("I", i)
+        }
       } else {
         filteredData = data
       }
