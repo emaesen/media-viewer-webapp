@@ -237,14 +237,15 @@
       v-if="resultsFound && paginationState.showEqualsOnly"
       class="action button"
     >
-      <span class="action-text">mark</span> tested for equal
+      <span class="action-text">mark</span> reviewed for duplication
     </button>
 
     <transition-group
       v-if="!loading && movies && movies[0]"
       tag="div"
       name="movies-list"
-      class="grid"
+      class="grid movies-list"
+      :class="{'review-equals':paginationState.showEqualsOnly}"
     >
       <div
         v-for="movie in movies"
@@ -1208,6 +1209,9 @@ span.side-button{
   flex-wrap: wrap;
   align-items: stretch;
   margin: 0 -0.2rem 5rem;
+}
+.grid.review-equals {
+  margin-bottom: 360px;
 }
 .grid .cell-content {
   margin: 5px;
