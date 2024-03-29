@@ -774,22 +774,17 @@ export default {
           if(curM[propNameToTest] === prevM[propNameToTest]) {
             if (i-1 !== lastPushedIndex) {
               filteredData.push(prevM)
-              console.log("PUSH", prevM)
               if (prevM[eqPropName]!==1) {untestedFound = true}
             }
             filteredData.push(curM)
-            console.log("PUSH", curM)
             if (curM[eqPropName]!==1) {untestedFound = true}
             lastPushedIndex = i
             equalsFound = true
           } else if(equalsFound) {
-            console.log("EQUALS FOUND")
             if (untestedFound) {
-              console.log("SOME EQUALS NOT YET TESTED")
               //stop search
               searchEquals = false
             } else {
-              console.log("EQUALS ALREADY TESTED")
               //resume new search
               filteredData = []
             }
@@ -798,7 +793,6 @@ export default {
             filteredData = []
           }
           i++
-          console.log("I", i)
         }
       } else {
         filteredData = data
