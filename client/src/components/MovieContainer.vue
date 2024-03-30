@@ -59,7 +59,7 @@
       </div>
       <div class="meta info">
         {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }}<br>
-        {{ movieLastWatchedTime }} &nbsp; &nbsp; {{ movieRNR }}
+        {{ movieLastWatchedTime }} &nbsp; {{ movieRNR }} &nbsp; {{ eqFlags }}
       </div>
       <div v-if="movie.hidden" class="cmd-rm info">
         rm -i {{movie.path}}
@@ -152,6 +152,9 @@ export default {
     },
     resumeTime() {
       return this.movie.rt
+    },
+    eqFlags() {
+      return "d"+(this.movie.eqd || 0) + "-n" + (this.movie.eqn || 0)
     },
     hasCustomStartFlagTime() {
       return this.movie.sft !== null && this.movie.sft >= 0 && this.movie.sft !== this.startFlagTimeDefault
