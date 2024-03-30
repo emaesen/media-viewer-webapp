@@ -4,7 +4,7 @@ This is a project to be run locally on a laptop or LAN network as a local media 
 
 This is intended to be a movie viewer as well as an audio player, but current implementation only has the movie viewer.
 
-Features of the movie viewer:
+Query features of the movie viewer:
 - sort by:
   - random
   - rating
@@ -29,6 +29,12 @@ Features of the movie viewer:
 - View hidden items
   - no/yes view all movies that are marked for deletion and hidden from main browse functionality
 
+Additional features:
+- check for duplicates
+  - by duration or by name
+- show video previews automatically or manually
+- generates a list of `rm` console statements to delete files from the file system: the files that were marked as hidden.
+
 Movies are suggested and expected to be organized in a folder structure with two levels:
 ```
 movies/[level1-A]/[level2-A]/[movie1]
@@ -41,12 +47,16 @@ The maximum number of movies supported is 8192.
 
 The folder levels are detected on import of the movie meta-data (see below).
 
-Movies can be viewed either in three different modes:
+Movies can be viewed in three different modes:
 - inline within the movie list
 - in maximum browser-width mode
 - in full-screen mode
 
 Movies can be marked as "hidden". While viewing the "hidden" items they can be deleted from the DB. The webpage displays a list of delete commands that can be copied to a batch file to easily remove the deleted movies from the file system as well.
+
+## Code comments
+
+The application is written in vue.js which is very easy to maintain and update. The code organization however is not to my usual standard: there are a few large files which ideally should be split into smaller components.
 
 ## Linux Setup
 
