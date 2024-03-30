@@ -211,12 +211,12 @@ export default {
     },
   },
   watch: {
-    isActive(newVal,oldVal) {
+    isActive(newVal) {
       this.embedPlayer = newVal && this.autoEmbedPlayer
       logMessage("embedPlayer", this.embedPlayer, this.movie.basename)
     },
-    autoEmbedPlayer(newVal,oldVal) {
-      this.embedPlayer = this.isActive && this.autoEmbedPlayer
+    autoEmbedPlayer(newVal) {
+      this.embedPlayer = this.isActive && newVal
     }
   }
 }
