@@ -71,6 +71,7 @@
 <script>
 import Rating from "@/components/Rating";
 import MoviePlayer from "@/components/MoviePlayer";
+import { logMessage } from '@/utils/logger.js'
 
 const pad = (val) => {
   val = Math.floor(val)
@@ -90,7 +91,7 @@ const timeParse = (sec) => {
 
 export default {
   name:"MovieContainer",
-  props: ['movie', 'isActive', 'showHideButton'],
+  props: ['movie', 'isActive', 'showHideButton', 'autoEmbedPlayer'],
   components: {
     Rating,
     MoviePlayer
@@ -107,7 +108,7 @@ export default {
     }
   },
   mounted() {
-    this.embedPlayer = this.isActive
+    this.embedPlayer = this.isActive && this.autoEmbedPlayer
   },
   computed: {
     movieSrc() {
@@ -211,9 +212,11 @@ export default {
   },
   watch: {
     isActive(newVal,oldVal) {
-      if(newVal || oldVal) {
-        this.embedPlayer = true
-      }
+      this.embedPlayer = newVal && this.autoEmbedPlayer
+      logMessage("embedPlayer", this.embedPlayer, this.movie.basename)
+    },
+    autoEmbedPlayer(newVal,oldVal) {
+      this.embedPlayer = this.isActive && this.autoEmbedPlayer
     }
   }
 }
@@ -297,7 +300,7 @@ export default {
   margin: 10px 0 10px 0;
 }
 .title {
-  color: #90d9f590;
+  color: #90d9f5;
 }
 .path {
   text-align: right;

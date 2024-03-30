@@ -406,7 +406,7 @@ label.no_change_when_clicked,
 label.no_results_when_clicked {
   opacity: .45;
 }
-.filter-set {
+.filter-set, .ctrl-set {
   display: inline-block;
 }
 .filters {
@@ -418,7 +418,7 @@ label.no_results_when_clicked {
 .none {
   color: #948972;
 }
-.filter-type {
+.filter-type, .ctrl-type {
   display: inline-block;
   min-width: 3.5em;
 }

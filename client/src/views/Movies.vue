@@ -228,6 +228,19 @@
 
 
       </div>
+
+      <div class="ctrl-group">
+        <span class="ctrl-type">Show video previews:</span>
+        <div class="ctrl-set">
+          <div class="filter" v-for="showPreviews in [true,false]" :key="showPreviews">
+            <input type="radio" :id="'showPreviews-' + showPreviews" :value="showPreviews" v-model="autoEmbedPlayer" >
+            <label :for="'showPreviews-' + showPreviews" class="action button">
+              {{ showPreviews? 'automatic' : 'manual' }}
+            </label>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <div v-if="loading" class="loading">loading...</div>
@@ -257,6 +270,7 @@
       >
         <MovieContainer
           :isActive="intSecObsv.activeIDs.includes(movie._id)"
+          :autoEmbedPlayer="autoEmbedPlayer"
           :movie="movie"
           @toggle-fullwidth="onToggleFullWidth"
           @update-movie="onUpdateMovie"
@@ -407,7 +421,9 @@ export default {
       intSecObsv: {
         activeIDs: [],
       },
-      minMovieCellHeight: 300,
+      autoEmbedPlayer: true,
+      minMovieCellHeight: 0,
+      minMovieCellHeightDefault: 300,
     };
   },
   created() {
@@ -1140,7 +1156,10 @@ export default {
         }
       }
       this.resetPage()
-    }
+    },
+    autoEmbedPlayer(newVal,oldVal) {
+      this.minMovieCellHeight = newVal? this.minMovieCellHeightDefault : 0
+    },
   }
 };
 </script>
