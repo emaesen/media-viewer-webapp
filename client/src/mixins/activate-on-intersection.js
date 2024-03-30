@@ -22,7 +22,7 @@ export default {
     return {
       intsecObserverBehavior: {
         // keep observing to de-activate when out-of-view 
-        observeOnlyOnce: true,
+        observeOnlyOnce: false,
       },
       // the component that implements this observer is expected to set:
       // intSecObsv: {
