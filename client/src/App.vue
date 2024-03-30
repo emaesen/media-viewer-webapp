@@ -412,7 +412,7 @@ label.no_results_when_clicked {
 .filters {
   padding: 5px;
 }
-.filter {
+.filter, .ctrl {
   display: inline-block;
 }
 .none {

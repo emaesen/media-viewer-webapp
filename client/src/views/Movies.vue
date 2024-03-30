@@ -10,22 +10,26 @@
 
       <div>
         <span class="pagination-info">
-          Page {{ pageNr }} of {{ nrOfPages }} <span class="info" v-if="!paginationState.showEqualsOnly">({{ totalNrOfMovies }} movies - {{ totalSizeOfMovies }})</span>
+          Page {{ pageNr }} of {{ nrOfPages }} <span class="info" v-if="!showEqualsOnly">({{ totalNrOfMovies }} movies - {{ totalSizeOfMovies }})</span>
         </span>
 
-        <button @click="paginationState.showQueryControls = !paginationState.showQueryControls" class="action button">
+        <button v-show="!showEqualsOnly" @click="paginationState.showQueryControls = !paginationState.showQueryControls" class="action button">
           <span class="action-text">
             {{ paginationState.showQueryControls? 'hide' : 'show' }}
           </span> query filters
           <font-awesome-icon icon="filter" class="flush-right"/>
         </button>
 
-        <span class="info" v-if="!paginationState.showQueryControls">
+        <span class="info" v-if="!paginationState.showQueryControls && !showEqualsOnly">
           &nbsp;⇝ {{ paginationState.rating }} &nbsp; {{ paginationState.level1 || 'all' }} / {{ paginationState.level2 || 'all' }}
         </span>
       </div>
 
-      <div v-if="paginationState.showQueryControls" :class="{fadedcontrols:fadeControls}">
+      <transition name="slidefade">
+      <div v-show="paginationState.showQueryControls" 
+        class="query-filters"
+        :class="{fadedcontrols:fadeControls}"
+      >
         <div class="filter-group">
           <span class="filter-type">Sort by:</span>
           <div class="filter-set">
@@ -48,15 +52,7 @@
               </label>
             </div>
           </div>
-          <span v-if="paginationState.sortType==='duration' || paginationState.sortType==='name'" class="side-button">
-            ⇝
-            <button @click="toggleShowEqualsOnly" class="action button side-button">
-              <span class="action-text">
-                {{ paginationState.showEqualsOnly? 'disable' : 'enable' }}
-              </span> show equal {{paginationState.sortType}} only
-              <font-awesome-icon icon="equals" class="flush-right"/>
-            </button>
-          </span>
+
           <span v-if="paginationState.sortType==='random'" class="side-button">
             ⇝
             <button @click="shuffle" class="action button side-button">
@@ -228,8 +224,29 @@
 
 
       </div>
+      </transition>
+
 
       <div class="ctrl-group">
+        <span class="ctrl-type">Check for duplicates:</span>
+        <span
+          class="action button cntr clear"
+          :class="{checked: !duplicationCheckSelection}"
+          @click="clearDuplicationCheckSelection"
+        >off</span>
+        <div class="ctrl-set">
+          <div class="ctrl" v-for="dCOpt in duplicationCheckOptions" :key="'qr-'+dCOpt">
+            <input type="radio" :id="'qdCOpt-' + dCOpt" :value="dCOpt" v-model="duplicationCheckSelection" >
+            <label :for="'qdCOpt-' + dCOpt" class="action button">
+              by {{ dCOpt }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+
+      <transition name="slidefade">
+      <div v-show="!showEqualsOnly" class="ctrl-group">
         <span class="ctrl-type">Show video previews:</span>
         <div class="ctrl-set">
           <div class="filter" v-for="showPreviews in [true,false]" :key="showPreviews">
@@ -240,6 +257,7 @@
           </div>
         </div>
       </div>
+      </transition>
 
     </div>
 
@@ -247,10 +265,10 @@
     <div v-if="!resultsFound" class="noresults">{{ noResultsText }}</div>
     
     <button @click="MarkMoviesTestedForEqual" 
-      v-if="resultsFound && paginationState.showEqualsOnly"
+      v-if="resultsFound && showEqualsOnly"
       class="action button"
     >
-      <span class="action-text">mark</span> reviewed for duplication
+      <span class="action-text">mark</span> reviewed for {{ this.duplicationCheckSelection }} duplication
     </button>
 
     <transition-group
@@ -258,7 +276,7 @@
       tag="div"
       name="movies-list"
       class="grid movies-list"
-      :class="{'review-equals':paginationState.showEqualsOnly}"
+      :class="{'review-equals':showEqualsOnly}"
     >
       <div
         v-for="movie in movies"
@@ -291,7 +309,7 @@
         :key="movie._id"
         :id="movie._id"
       >
-        rm -i {{movie.path}}<br>
+        rm -i {{movie.path}} #<br>
       </div>
     </div>
 
@@ -372,9 +390,11 @@ export default {
         "duration": "eqd",
         "name": "eqn"
       },
+      duplicationCheckOptions: ["duration", "name"],
+      duplicationCheckSelection: "",
       paginationOptions: {
         sortTypes: ["random", "rating", "date created", "date updated", "date watched", "name", "duration"],
-        pageLimits: [4,6,8,12,16,20,24,30,36,60,100,9999],
+        pageLimits: [4,6,8,12,16,20,24,30,36,60,100],
         ratings: ["0+","0","1","1+","2","2+","3","3+","4","4+","5", "5+", "6"],
         durationHours: [0,1,2,3,4,5],
         durationMinutes: [0,5,10,15,20,25,30,35,40,45,50,55],
@@ -388,7 +408,7 @@ export default {
       paginationState: {
         sortType: "random",
         sortAsc: true,
-        limit: 20,
+        limit: 4,
         skip: 0,
         nr: 1,
         rating: "0+",
@@ -401,10 +421,8 @@ export default {
         showQueryControls: false,
         showHideButtons: false,
         showClearButton: false,
-        showEqualsOnly: false,
       },
       hasNewDurationLimits: false,
-      isChanging: false,
       startFrameTimeForEquals: 99,
       queryHidden: false,
       filterQuery: {
@@ -613,11 +631,8 @@ export default {
         movie.update()
       })
     },
-    toggleShowEqualsOnly() {
-      this.isChanging = true
-      this.$nextTick(() => {
-        this.paginationState.showEqualsOnly = !this.paginationState.showEqualsOnly
-      })
+    clearDuplicationCheckSelection() {
+      this.duplicationCheckSelection = ""
     },
     clearWatchedAt() {
       logMessage("Movies clearWatchedAt")
@@ -647,8 +662,8 @@ export default {
       return !this.loading && this.movies && this.movies[0];
     },
     fadeControls() {
-      logMessage("fadeControls ", this.loading || this.isChanging)
-      return this.loading || this.isChanging
+      logMessage("fadeControls ", this.loading)
+      return this.loading
     },
     query() {
       // it is not necessary to define ownerId in the query:
@@ -752,22 +767,22 @@ export default {
       )
       return totalSizeInMB < 1000 ? Math.round(totalSizeInMB*10)/10 + " MB" : Math.round(totalSizeInMB/10)/100 + " GB"
     },
-    isEqualsOnly() {
-      return this.paginationState.showEqualsOnly && (this.paginationState.sortType==='duration' || this.paginationState.sortType==='name')
+    showEqualsOnly() {
+      return this.duplicationCheckSelection !== ""
     },
     moviesAmended() {
       //logMessage("Movies moviesAmended")
       logMessage("Movies moviesAmended", {moviesQueryResult: this.moviesQueryResult})
       let data = this.moviesQueryResult.data
 
-      /* take paginationState.showEqualsOnly into account */
+      /* take showEqualsOnly into account */
       let filteredData = []
       let lastPushedIndex = -1
 
-      if (this.isEqualsOnly) {
-        logMessage("filtering movies with equal " + this.paginationState.sortType + " only")
-        let propNameToTest = this.paginationState.sortType==='duration'? "metaDurationInSec" : "basename"
-        let eqPropName = this.eqProps[this.paginationState.sortType]
+      if (this.showEqualsOnly) {
+        logMessage("filtering movies with equal " + this.duplicationCheckSelection + " only")
+        let propNameToTest = this.duplicationCheckSelection==='duration'? "metaDurationInSec" : "basename"
+        let eqPropName = this.eqProps[this.duplicationCheckSelection]
         logMessage("eqPropName", eqPropName)
         /*
         data.forEach((m,i) => {
@@ -785,6 +800,10 @@ export default {
         let untestedFound = false
         let i = 1
         let iMax = data.length
+        // because the movie array is ordered by the property 
+        // for which to test equality, a while loop can be used
+        // which can be exited as soon as duplicates are found
+        // followed by a unequal value.
         while(i<iMax && searchEquals) {
           let curM = data[i]
           let prevM = data[i-1]
@@ -828,8 +847,8 @@ export default {
             m.rating = m.rating ? 1*m.rating : 0
             m.level2 = m.level2 || "-"
 
-            if (this.isEqualsOnly) {
-              logMessage("isEqualsOnly", {m_sft:m.sft})
+            if (this.showEqualsOnly) {
+              logMessage("showEqualsOnly", {m_sft:m.sft})
               if (m._sft_orig === undefined) {
                 // prevent double assignment
                 if (m.sft !== undefined) {
@@ -847,7 +866,7 @@ export default {
                 logMessage("setting sft to " + 1*m.sft + "  orig=" + 1*m._sft_orig)
               }
             } else {
-              logMessage("NOT isEqualsOnly", {m_sft_orig:m._sft_orig})
+              logMessage("NOT showEqualsOnly", {m_sft_orig:m._sft_orig})
               if(m._sft_orig !== undefined) {
                 if (m._sft_orig===null) {
                   delete m.sft
@@ -928,10 +947,6 @@ export default {
     pageLevel2() {
       // define computed item of nested property so we can watch it easier below
       return this.paginationState.level2
-    },
-    pageEqualsOnly() {
-      // define computed item of nested property so we can watch it easier below
-      return this.paginationState.showEqualsOnly
     },
     pageSortType() {
       // define computed item of nested property so we can watch it easier below
@@ -1095,22 +1110,39 @@ export default {
       logMessage("pageDurationRange", {metaDurationInSec: this.filterQuery.metaDurationInSec})
       this.resetPage()
     },
-    pageEqualsOnly(newVal, oldVal) {
-      logMessage("page EqualsOnly changed from " + oldVal + " to " + newVal)
+    showEqualsOnly(newVal, oldVal) {
+      logMessage("showEqualsOnly changed from " + oldVal + " to " + newVal)
       if (newVal) {
-        this.tmpPaginationState = {
-          limit: 1*this.paginationState.limit,
-          skip: 1*this.paginationState.skip
-        }
+        this.origAutoEmbedPlayer = this.autoEmbedPlayer?true:false
+        this.origPaginationState = {...this.paginationState}
         // employ a trick to reset all movies so that the temporary
         // start frame time can take effect
+        this.preventPaginationStatePersist = true
         this.paginationState.limit = 1
         this.paginationState.skip = 0
         this.movies
+        this.autoEmbedPlayer = true
         this.$nextTick(() => {
           // temporarily show all duplicates on one page
-          this.paginationState.limit = 9999
-          this.paginationState.skip = 0
+          // ensure that all filters are cleared
+          this.paginationState = {
+            sortType: this.duplicationCheckSelection,
+            sortAsc: true,
+            limit: 9999,
+            skip: 0,
+            nr: 1,
+            rating: "0+",
+            level1: "",
+            level2: "",
+            duration: {
+              min:null,
+              max:null
+            },
+            showQueryControls: false,
+            showHideButtons: true,
+            showClearButton: false,
+          }
+
           this.resetPage()
         })
       } else {
@@ -1121,30 +1153,24 @@ export default {
         this.movies
         this.$nextTick(() => {
           // reset to normal
-          if (this.tmpPaginationState) {
-            this.paginationState.limit = 1*this.tmpPaginationState.limit
-            this.paginationState.skip = 1*this.tmpPaginationState.skip
+          if (this.origPaginationState) {
+            this.paginationState = {...this.origPaginationState}
+            delete this.preventPaginationStatePersist
+            delete this.origPaginationState
+            this.autoEmbedPlayer = this.origAutoEmbedPlayer?true:false
           }
           this.resetPage()
         })
       }
       this.resetPage()
     },
-    pageSortType() {
-      if (this.paginationState.showEqualsOnly) {
-        logMessage("reset EqualsOnly flag")
-        this.paginationState.showEqualsOnly = false
-      }
-    },
     paginationState: {
       deep: true,
       handler: function(newVal) {
-        this.isChanging = true
-        logMessage("persist new paginationState", newVal)
-        persistPaginationState(newVal)
-        setTimeout(() => {
-          this.isChanging = false
-        },500)
+        if (!this.preventPaginationStatePersist) {
+          logMessage("persist new paginationState", newVal)
+          persistPaginationState(newVal)
+        }
       }
     },
     queryHidden(newVal) {
@@ -1157,7 +1183,7 @@ export default {
       }
       this.resetPage()
     },
-    autoEmbedPlayer(newVal,oldVal) {
+    autoEmbedPlayer(newVal) {
       this.minMovieCellHeight = newVal? this.minMovieCellHeightDefault : 0
     },
   }
@@ -1177,6 +1203,12 @@ h2.movies {
 }
 .filters {
   margin: 1em 0 4em;
+}
+.query-filters {
+  border: 1px dashed #454545;
+  border-radius:9px;
+  padding: .5em;
+  margin-bottom: 1em;
 }
 .fadedcontrols svg,
 .fadedcontrols .action-text,
@@ -1312,6 +1344,36 @@ select.select-page-number.action.button {
     padding-top: 3px;
   }
 }
+
+.slidefade-enter-active,
+.slidefade-leave-active {
+  transition: all 0.4s ease-in-out, transform 0.4s ease-in-out;
+  transform: scaleY(1);
+  max-height: 369px;
+}
+.slidefade-enter,
+.slidefade-leave-to {
+  transform: scaleY(0);
+  max-height: 0;
+}
+.fade-up-enter-active,
+.fade-up-leave-active,
+.fade-down-enter-active,
+.fade-down-leave-active {
+  transition: all 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+.fade-down-enter,
+.fade-down-leave-to {
+  opacity: 0;
+  transform: translateY(-9px);
+}
+
+.fade-up-enter,
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(9px);
+}
+
 @media all and (max-width: 400px) {
   .grid .grid-cell {
     width: 100%;
