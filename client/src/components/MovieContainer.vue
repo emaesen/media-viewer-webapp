@@ -59,7 +59,7 @@
       </div>
       <div class="meta info">
         {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }}<br>
-        {{ movieLastWatchedTime }} &nbsp; {{ movieRNR }} &nbsp; {{ eqFlags }}
+        {{ movieLastWatchedDate }} &nbsp; {{ movieRNR }} &nbsp; {{ eqFlags }}
       </div>
       <div v-if="movie.hidden" class="cmd-rm info">
         rm -i {{movie.path}}
@@ -134,6 +134,10 @@ export default {
     },
     movieRNR() {
       return this.movie.rnr
+    },
+    movieLastWatchedDate() {
+      const options = { dateStyle: "short" };
+      return this.movie.watchedAt ? new Date(this.movie.watchedAt).toLocaleDateString('en-US', options) : "---"
     },
     movieLastWatchedTime() {
       const options = { dateStyle: "short", timeStyle: "short", hour12: false };
