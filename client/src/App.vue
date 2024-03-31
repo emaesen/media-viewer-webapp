@@ -422,7 +422,9 @@ label.no_results_when_clicked {
   display: inline-block;
   min-width: 3.5em;
 }
-
+.right-aligned {
+  text-align: right;
+}
 /* "clearfix" */
 .group:after {
   content: "";

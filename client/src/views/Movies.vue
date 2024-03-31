@@ -271,8 +271,17 @@
       <span class="action-text">mark</span> reviewed for {{ this.duplicationCheckSelection }} duplication
     </button>
 
+    <div class="right-aligned">
+      <button @click="showMoviesList=!showMoviesList" 
+        v-if="!loading && movies && movies[0]"
+        class="action button"
+      >
+        <span class="action-text">show</span> {{ showMoviesList? "grid with videos": "list of filenames"}}
+      </button>
+    </div>
+
     <transition-group
-      v-if="!loading && movies && movies[0]"
+      v-if="!loading && !showMoviesList && movies && movies[0]"
       tag="div"
       name="movies-list"
       class="grid movies-list"
@@ -313,8 +322,18 @@
       </div>
     </div>
 
+    <div class="movie-names-list grid" v-if="showMoviesList && resultsFound">
+      <div
+        v-for="movie in allMoviesforQuery"
+        :key="movie._id"
+        :id="movie._id"
+        class="grid-cell"
+      >
+        {{ movie.basename.replace(".mp4","") }}
+      </div>
+    </div>
 
-    <div v-if="showPaginationControls" class="controls pagination convert-to-block-on-small-device">
+    <div v-if="showPaginationControls && !showMoviesList" class="controls pagination convert-to-block-on-small-device">
       <div class="filter-group">
         <span class="filter-type">Page Nr:</span>
         <div class="filter-set">
@@ -442,6 +461,7 @@ export default {
       autoEmbedPlayer: true,
       minMovieCellHeight: 0,
       minMovieCellHeightDefault: 300,
+      showMoviesList: false,
     };
   },
   created() {
@@ -1260,6 +1280,10 @@ span.side-button{
   flex-wrap: wrap;
   align-items: stretch;
   margin: 0 -0.2rem 5rem;
+}
+.grid.movie-names-list {
+  flex-direction: column;
+  height: 100vh;
 }
 .grid.review-equals {
   margin-bottom: 360px;
