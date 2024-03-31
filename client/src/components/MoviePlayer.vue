@@ -13,7 +13,7 @@
     <video
       :id="source.id+'-video'"
       :ref="source.id+'-video'"
-      :class="['mp-video', {'grid-media':!isInFullView}, {'hide-cursor': !state.showCtrls}]"
+      :class="['mp-video', {'grid-media':!isInFullView}, {'hide-cursor': !state.showCtrls || state.fadeCtrls}]"
       :preload="options.preload"
       controls
     >
@@ -37,6 +37,7 @@
     <transition name="fade-down">
       <div class="mp-ctrls-topleft"
         v-show="state.showCtrls && state.showSecondaryCtrls && isInFullView"
+        :class="{fade:state.fadeCtrls}"
       >
         <div class="mp-ctrls-speed">
           <button class="mp-ctrl-btn"
@@ -119,6 +120,7 @@
     <transition name="fade-down">
       <div class="mp-ctrls-topright"
         v-show="state.showCtrls && state.showSecondaryCtrls && isInFullView"
+        :class="{fade:state.fadeCtrls}"
       >
         <div class="mp-ctrls-flags">
           <button class="mp-ctrl-btn"
@@ -162,7 +164,7 @@
     <transition name="fade-up">
       <div class="mp-ctrls-bottom"
         v-show="state.showCtrls"
-        :class="{minimal:!state.showPlaybackSlider}"
+        :class="{minimal:!state.showPlaybackSlider, fade:state.fadeCtrls}"
     
         @mouseenter="showPlaybackSlider"
         @mouseleave="hidePlaybackSlider"
@@ -434,6 +436,8 @@ export default {
         showSecondaryCtrls: true,
         showPlaybackSlider: true,
         showMsg: false,
+        fadeCtrls: false,
+        forceShowCtrls: true,
         forceShowPlaybackSlider: false,
         vol: 0.5,
         currentTime: 0,
@@ -693,15 +697,29 @@ export default {
         this.tmp.ctrlsDisplayTimer = null
       }
       this.state.showCtrls = true
+      this.state.showPlaybackSlider=true
+      this.state.fadeCtrls = false
     },
-    hideControls(delay) {
+    minimizeControls(delay,opts) {
       if (this.tmp.ctrlsDisplayTimer) {
         clearTimeout(this.tmp.ctrlsDisplayTimer)
       }
       this.tmp.ctrlsDisplayTimer = setTimeout(() => {
-        if (this.state.isPlaying) this.state.showCtrls = false
+        if (this.state.isPlaying || (opts && opts.force)) {
+          if (this.state.forceShowCtrls) {
+            this.state.fadeCtrls = true
+          } else {
+            this.state.showCtrls = false
+          }
+        }
         this.tmp.ctrlsDisplayTimer = null
       }, delay)
+    },
+    toggleFadeHide() {
+      this.state.forceShowCtrls = !this.state.forceShowCtrls
+      logMessage("switched controls to " + (this.state.forceShowCtrls?"fade":"hide") + " mode")
+      this.showControls()
+      this.minimizeControls(0,{force:true}) 
     },
     showPlaybackSlider() {
       if (this.isInFullView) {
@@ -709,7 +727,7 @@ export default {
       }
     },
     hidePlaybackSlider() {
-      if (this.isInFullView && !this.state.forceShowPlaybackSlider) {
+      if (this.isInFullView && !this.state.forceShowPlaybackSlider && !this.state.forceShowCtrls) {
         this.state.showPlaybackSlider=false
       }
     },
@@ -725,7 +743,7 @@ export default {
       }
     },
     onMouseleaveVideo() {
-      this.hideControls(3000)
+      this.minimizeControls(3000)
     },
     setVideoByTime(percent) {
       this.videoEl.currentTime = Math.floor(percent * this.videoEl.duration)
@@ -735,7 +753,7 @@ export default {
         this.state.isPlaying = !this.state.isPlaying
         if (this.state.isPlaying) {
           this.videoEl.play()
-          this.hideControls(5000)
+          this.minimizeControls(5000)
         } else {
           this.videoEl.pause()
         }
@@ -746,7 +764,7 @@ export default {
       if (this.videoEl) {
         this.videoEl.play()
         this.state.isPlaying = true
-        this.hideControls(2000)
+        this.minimizeControls(2000)
       }
     },
     reload() {
@@ -812,7 +830,7 @@ export default {
           this.onClickSkipButton(1)
         }
       }
-      this.hideControls(3000)
+      this.minimizeControls(3000)
     },
     onMousedownVolumeSlider() {
       this.setVolumeDimensions()
@@ -1136,6 +1154,9 @@ export default {
         if (evt.key==="s") {
           this.onClickStartFlagButton()
         }
+        if (evt.key==="w") {
+          this.toggleFadeHide()
+        }
       }
       if (evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
         if (evt.key==="ArrowRight") {
@@ -1186,7 +1207,7 @@ export default {
     isInFullView(val) {
       if (!val) {
         // leave full view
-        this.state.showCtrls = true
+        this.showControls()
         this.state.showPlaybackSlider=true
       } else {
         // enter full view
@@ -1430,7 +1451,7 @@ button.mp-video-player {
   left: 0;
   top: -360%;
   right: 0;
-  padding: .7em;
+  padding: 1.8em;
   background-color: rgba(175, 40, 18, 0.5);
   transition: all 300ms;
   text-align: center;

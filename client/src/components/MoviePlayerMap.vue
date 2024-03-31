@@ -74,6 +74,8 @@
           <dd>key: ArrowUp</dd>
           <dt>volume down</dt>
           <dd>key: ArrowDown</dd>
+          <dt>toggle between control fade or hide</dt>
+          <dd>key: “w”</dd>
         </dl>
       </div>
     

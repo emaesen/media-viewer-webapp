@@ -386,6 +386,9 @@ input[type="checkbox"]:checked + label:not(.nocheck)::before {
   color: #29dc58;
   opacity: 1;
 }
+.fade {
+  opacity:.3;
+}
 span.clear.checked.fadedcontrols::before {
   opacity: .5;
 }
