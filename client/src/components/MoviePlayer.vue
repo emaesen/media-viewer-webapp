@@ -554,7 +554,7 @@ export default {
         this.setPlaybackDimensions()
         this.setVolumeDimensions()
         this.displayPlaybackMarkers()
-      }, 500)
+      }, 1000)
     },
     initPlaybackMarker(marker) {
       this.player.markers.push(marker)
