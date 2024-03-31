@@ -159,7 +159,7 @@ export default {
       return this.movie.rt
     },
     eqFlags() {
-      return "d"+(this.movie.eqd || 0) + "-n" + (this.movie.eqn || 0)
+      return (this.movie.eqd? "eqd":this.movie.eqn?"&":"") + (this.movie.eqn? "eqn":"")
     },
     hasCustomStartFlagTime() {
       return this.movie.sft !== null && this.movie.sft >= 0 && this.movie.sft !== this.startFlagTimeDefault

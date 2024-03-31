@@ -1283,7 +1283,7 @@ span.side-button{
 }
 .grid.movie-names-list {
   flex-direction: column;
-  height: 100vh;
+  height: 93vh;
 }
 .grid.review-equals {
   margin-bottom: 360px;
