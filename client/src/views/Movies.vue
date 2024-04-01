@@ -846,9 +846,9 @@ export default {
               lastPushedIndex = -1
             }
           }
-          if (!untestedFound) {
-            filteredData = []
-          }
+          // if (!untestedFound) {
+          //   filteredData = []
+          // }
           i++
         }
       } else {
