@@ -843,6 +843,7 @@ export default {
             } else {
               //resume new search
               filteredData = []
+              lastPushedIndex = -1
             }
           }
           if (!untestedFound) {
