@@ -35,20 +35,20 @@ export default {
   methods: {
     intsecHandler(target, opts) {
       if (opts && opts.init) {
-        this.init(target)
+        this.intsecInit(target)
       } else if (opts && opts.inview) {
-        this.activate(target)
+        this.intsecActivate(target)
       } else if (opts && !opts.observedonce) {
-        this.deActivate(target)
+        this.intsecDeActivate(target)
       }
     },
-    init(el) {
+    intsecInit(el) {
       if (!el.classList.contains('v-activate--init')) {
         logMessage("actOnIntsecHandler INIT: " + el.id)
         el.classList.add('v-activate--init')
       }
     },
-    activate(el) {
+    intsecActivate(el) {
       if (!el.classList.contains('v-activate--active')) {
         el.classList.remove('v-activate--init')
         el.classList.remove('v-activate--deactive')
@@ -62,7 +62,7 @@ export default {
         logMessage("  ... active IDs: ", this.intSecObsv.activeIDs)
       }
     },
-    deActivate(el) {
+    intsecDeActivate(el) {
       if (!el.classList.contains('v-activate--deactive')) {
         el.classList.remove('v-activate--init')
         el.classList.remove('v-activate--active')

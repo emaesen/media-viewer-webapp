@@ -475,6 +475,7 @@ export default {
       });
   },
   mounted() {
+    logMessage("MOVIES module mounted - INITIALIZE")
     this.init()
   },
   methods: {
@@ -486,8 +487,10 @@ export default {
       //console.log("p.showQueryControls = " + p.showQueryControls)
       if (!p.pageLimits && p.showQueryControls !== undefined && p.duration !== undefined) {
         // new version - use
-        this.paginationState = p
-        logMessage("Using stored pagination state ", p);
+        if (!this.showEqualsOnly) {
+          this.paginationState = p
+          logMessage("Using stored pagination state ", p);
+        }
       } else {
         // old version - replace
         logMessage("Using default pagination state ", p);
@@ -1145,7 +1148,7 @@ export default {
         this.paginationState.skip = 0
         this.movies
         this.autoEmbedPlayer = true
-        this.$nextTick(() => {
+        //this.$nextTick(() => {
           // temporarily show all duplicates on one page
           // ensure that all filters are cleared
           this.paginationState = {
@@ -1167,7 +1170,7 @@ export default {
           }
 
           this.resetPage()
-        })
+        //})
       } else {
         // employ a trick to reset all movies so that the temporary
         // start frame time can be made undone effectively
