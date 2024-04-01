@@ -6,7 +6,7 @@
 
     <MoviePlayerMap/>
     
-    <div class="controls filters convert-to-block-on-small-device">
+    <div id="controls" class="controls filters convert-to-block-on-small-device">
 
       <div>
         <span class="pagination-info">
@@ -284,6 +284,7 @@
       v-if="!loading && !showMoviesList && movies && movies[0]"
       tag="div"
       name="movies-list"
+      id="movies-list"
       class="grid movies-list"
       :class="{'review-equals':showEqualsOnly}"
     >
@@ -846,9 +847,6 @@ export default {
               lastPushedIndex = -1
             }
           }
-          // if (!untestedFound) {
-          //   filteredData = []
-          // }
           i++
         }
       } else {
@@ -998,9 +996,13 @@ export default {
     pageNr(newVal, oldVal) {
       if (!this.isInit) {
         logMessage("page Nr changed from " + oldVal + " to " + newVal)
+        const el = document.getElementById("controls")
+        const rect = el.getBoundingClientRect()
+        let topDelta = rect.bottom - rect.top + 200
+        logMessage("scroll to " + topDelta)
         // scroll to top
-        window.scrollTo({top:400, left:0, behavior:'instant'})
-        window.scrollTo({top:130, left:0, behavior:'smooth'})
+        window.scrollTo({top:100, left:0, behavior:'instant'})
+        window.scrollTo({top:topDelta, left:0, behavior:'smooth'})
         this.paginationState.skip = this.paginationState.limit * (1 * this.paginationState.nr - 1)
       }
     },
