@@ -26,7 +26,7 @@
       </div>
 
       <transition name="slidefade">
-      <div v-show="paginationState.showQueryControls" 
+      <div v-show="paginationState.showQueryControls && !showEqualsOnly" 
         class="query-filters"
         :class="{fadedcontrols:fadeControls}"
       >
