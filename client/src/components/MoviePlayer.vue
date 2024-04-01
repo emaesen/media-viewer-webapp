@@ -918,7 +918,7 @@ export default {
         })
       }
     },
-    onFullscreenChange(evt) {
+    onFullscreenChange() {
       if (this.state.onFullscreenChange) {
         logMessage("onFullscreenChange EXIT")
         this.setResumeTime()
