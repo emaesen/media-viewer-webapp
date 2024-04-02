@@ -224,7 +224,7 @@ export default {
 
 <style lang="less" scoped>
 .movie-container {
-  padding: 10px 5px 20px;
+  padding: 5px 5px 5px;
 }
 .movie-container.full-width {
   display: flex;

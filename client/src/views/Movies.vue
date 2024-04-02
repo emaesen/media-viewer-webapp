@@ -999,13 +999,16 @@ export default {
     pageNr(newVal, oldVal) {
       if (!this.isInit) {
         logMessage("page Nr changed from " + oldVal + " to " + newVal)
+        const listEl = document.getElementById("movies-list")
         const el = document.getElementById("controls")
         const rect = el.getBoundingClientRect()
-        let topDelta = rect.bottom - rect.top + 200
+        let topDelta = rect.bottom - rect.top + 234
         logMessage("scroll to " + topDelta)
         // scroll to top
+        listEl.style="min-height:100vh;"
         window.scrollTo({top:100, left:0, behavior:'instant'})
         window.scrollTo({top:topDelta, left:0, behavior:'smooth'})
+        listEl.style=""
         this.paginationState.skip = this.paginationState.limit * (1 * this.paginationState.nr - 1)
       }
     },
@@ -1292,7 +1295,7 @@ span.side-button{
   height: 93vh;
 }
 .grid.review-equals {
-  margin-bottom: 360px;
+  margin-bottom: 450px;
 }
 .grid .cell-content {
   margin: 5px;
@@ -1416,7 +1419,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 50%;
     .grid-media {
-      max-height: 38vw;
+      max-height: 31vw;
     }
   }
 }
@@ -1424,7 +1427,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 33.333%;
     .grid-media {
-      max-height: 25vw;
+      max-height: 20vw;
     }
   }
 }
@@ -1432,7 +1435,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 25%;
     .grid-media {
-      max-height: 19vw;
+      max-height: 15vw;
     }
   }
 }
@@ -1440,7 +1443,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 20%;
     .grid-media {
-      max-height: 15vw;
+      max-height: 12vw;
     }
   }
 }
@@ -1448,7 +1451,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 16.666%;
     .grid-media {
-      max-height: 13vw;
+      max-height: 10vw;
     }
   }
 }
