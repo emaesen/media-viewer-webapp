@@ -441,6 +441,7 @@ export default {
         showQueryControls: false,
         showHideButtons: false,
         showClearButton: false,
+        preventScroll: false,
       },
       hasNewDurationLimits: false,
       startFrameTimeForEquals: 99,
@@ -674,6 +675,13 @@ export default {
     convertHrsMinsToSecs(hrs,mins) {
       return 60 * (60 * hrs + 1 * mins)
     },
+    preventScroll() {
+      // temporarily prevent the movie list from scrolling
+      this.paginationState.preventScroll = true
+      this.$nextTick(() => {
+        this.paginationState.preventScroll = false
+      })
+    },
   },
   computed: {
     ...mapState("auth", { user: "payload" }),
@@ -808,17 +816,7 @@ export default {
         let propNameToTest = this.duplicationCheckSelection==='duration'? "metaDurationInSec" : "basename"
         let eqPropName = this.eqProps[this.duplicationCheckSelection]
         logMessage("eqPropName", eqPropName)
-        /*
-        data.forEach((m,i) => {
-          if(i>0 && m[propNameToTest] === data[i-1][propNameToTest] && m[eqPropName]!==1) {
-            if (i-1 !== lastPushedIndex) {
-              filteredData.push(data[i-1])
-            }
-            filteredData.push(m)
-            lastPushedIndex = i
-          }
-        })
-        */
+
         let searchEquals = true
         let equalsFound = false
         let untestedFound = false
@@ -999,28 +997,32 @@ export default {
     pageNr(newVal, oldVal) {
       if (!this.isInit) {
         logMessage("page Nr changed from " + oldVal + " to " + newVal)
-        const listEl = document.getElementById("movies-list")
-        const el = document.getElementById("controls")
-        const rect = el.getBoundingClientRect()
-        let topDelta = rect.bottom - rect.top + 234
-        logMessage("scroll to " + topDelta)
-        // scroll to top
-        listEl.style="min-height:100vh;"
-        window.scrollTo({top:100, left:0, behavior:'instant'})
-        window.scrollTo({top:topDelta, left:0, behavior:'smooth'})
-        listEl.style=""
+        if (!this.paginationState.preventScroll) {
+          // scroll to top of movies list
+          const listEl = document.getElementById("movies-list")
+          const el = document.getElementById("controls")
+          const rect = el.getBoundingClientRect()
+          let topDelta = rect.bottom - rect.top + 234
+          logMessage("scroll to " + topDelta)
+          listEl.style="min-height:100vh;"
+          window.scrollTo({top:100, left:0, behavior:'instant'})
+          window.scrollTo({top:topDelta, left:0, behavior:'smooth'})
+          listEl.style=""
+        }
         this.paginationState.skip = this.paginationState.limit * (1 * this.paginationState.nr - 1)
       }
     },
     pageLimit(newVal, oldVal) {
       if (!this.isInit) {
         logMessage("page Limit changed from " + oldVal + " to " + newVal)
+        this.preventScroll()
         this.paginationState.nr = 1 + Math.floor((this.paginationState.nr - 1)*(oldVal/newVal))
         this.paginationState.skip = (this.paginationState.nr - 1) * newVal
       }
     },
     pageRating(newVal, oldVal) {
       logMessage("page Rating changed from " + oldVal + " to " + newVal)
+      this.preventScroll()
       if (newVal.includes("+")) {
         this.filterQuery.rating = {
           $gte: 1 * newVal.replace("+","")
@@ -1032,6 +1034,7 @@ export default {
     },
     pageLevel1(newVal, oldVal) {
       logMessage("page Level1 changed from " + oldVal + " to " + newVal)
+      this.preventScroll()
       if (newVal !== "") {
         this.filterQuery.level1 = newVal
       } else {
@@ -1041,6 +1044,7 @@ export default {
     },
     pageLevel2(newVal, oldVal) {
       logMessage("page Level2 changed from " + oldVal + " to " + newVal)
+      this.preventScroll()
       if (newVal !== "") {
         this.filterQuery.level2 = newVal
       } else {
@@ -1114,6 +1118,7 @@ export default {
     },
     pageDurationRange(newVal, oldVal) {
       logMessage("page duration range changed from ", oldVal, " to ", newVal)
+      this.preventScroll()
       let newValArr = newVal.split("-")
       let newMin = newValArr[0]
       let newMax = newValArr[1]
