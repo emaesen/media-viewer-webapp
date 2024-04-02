@@ -34,6 +34,7 @@ Additional features:
   - by duration or by name
 - show video previews automatically or manually
 - generates a list of `rm` console statements to delete files from the file system: the files that were marked as hidden.
+- switch between grid with movie previews or list of movie names 
 
 Movies are suggested and expected to be organized in a folder structure with two levels:
 ```
