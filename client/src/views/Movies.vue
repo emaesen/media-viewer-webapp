@@ -279,6 +279,23 @@
         <span class="action-text">show</span> {{ showMoviesList? "grid with videos": "list of filenames"}}
       </button>
     </div>
+    <div v-if="showMoviesList">
+      Only show names starting with 
+      <input class="short" type="text" 
+        v-model="fileNameStartsWith"
+      /> 
+      <select
+        class="side-margin5 action button"
+        v-model="fileNameFilterLogic"
+        @change="ensurePaginationStateNrIsNumber"
+      >
+        <option v-for="val in fileNameFilterLogicOptions" :key="val" :value="val">{{val}}</option>
+      </select>
+      containing 
+      <input class="short" type="text" 
+        v-model="fileNameContains"
+      />
+    </div>
 
     <transition-group
       v-if="!loading && !showMoviesList && movies && movies[0]"
@@ -325,7 +342,7 @@
 
     <div class="movie-names-list grid" v-if="showMoviesList && resultsFound">
       <div
-        v-for="movie in allMoviesforQuery"
+        v-for="movie in filteredMoviesList"
         :key="movie._id"
         :id="movie._id"
         class="grid-cell"
@@ -464,6 +481,10 @@ export default {
       minMovieCellHeight: 0,
       minMovieCellHeightDefault: 300,
       showMoviesList: false,
+      fileNameStartsWith: "",
+      fileNameContains: "",
+      fileNameFilterLogicOptions: ["or", "and"],
+      fileNameFilterLogic: "or",
     };
   },
   created() {
@@ -787,6 +808,28 @@ export default {
             query: this.query
           })
         : {data:[],total:0}
+    },
+    filteredMoviesList() {
+      let list = this.allMoviesforQuery
+      let testSW = ""
+      let testC = ""
+      let testCondition = this.fileNameFilterLogic
+      if (this.fileNameStartsWith !== "" || this.fileNameContains !== "") {
+        testSW = this.fileNameStartsWith.toLowerCase()
+        testC = this.fileNameContains.toLowerCase()
+        logMessage("filter list of movie names", {testSW, testC, testCondition})
+        list = list.filter(m => {
+          let name = m.basename.toLowerCase()
+          let passSW = true
+          let passC = true
+          if(testSW!=="" && !name.startsWith(testSW)) passSW = false
+          if(testC!=="" && !name.includes(testC)) passC = false
+          return testCondition === "or" ? 
+            (testSW!=="" && passSW) || (testC!=="" && passC) : 
+            passSW && passC
+        })
+      }
+      return list
     },
     totalNrOfMovies() {
       return this.moviesQueryResult.total
@@ -1220,6 +1263,12 @@ export default {
     autoEmbedPlayer(newVal) {
       this.minMovieCellHeight = newVal? this.minMovieCellHeightDefault : 0
     },
+    fileNameStartsWith(newVal) {
+      logMessage("fileNameStartsWith", newVal)
+    },
+    fileNameContains(newVal) {
+      logMessage("fileNameContains", newVal)
+    },
   }
 };
 </script>
@@ -1297,7 +1346,9 @@ span.side-button{
 }
 .grid.movie-names-list {
   flex-direction: column;
-  height: 93vh;
+  height: 85vh;
+  overflow: auto;
+  margin-bottom: 2rem;
 }
 .grid.review-equals {
   margin-bottom: 450px;

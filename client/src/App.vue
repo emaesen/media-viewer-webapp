@@ -202,17 +202,20 @@ textarea {
   width: -moz-available;
   width: -webkit-fill-available;
 }
+input.short {
+  width: 7em;
+}
 input,
 textarea,
 select,
 button {
-  background-color: rgba(231, 231, 231, 0.87);
-  color: #0e0d0f;
-  font-weight: 400;
-  border: 1px solid #333;
+  background-color: rgba(231, 231, 231, 0.18);
+  color: #bdb1bd;
+  font-weight: 600;
+  border: 1px solid #8270ad;
   border-radius: 5px;
   padding: 5px 10px;
-  margin-bottom: 1em;
+  margin: 0 .25em 1em;
 }
 textarea::placeholder,
 input::placeholder {
@@ -305,6 +308,10 @@ a,
   display: inline-block;
   border-radius: 5px;
   line-height: 21px;
+}
+.action.button.side-margin5 {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 button,
 .action.button {
@@ -459,6 +466,10 @@ label.no_results_when_clicked {
   margin-left: 5px;
 }
 .right-margin5 {
+  margin-right: 5px;
+}
+.side-margin5 {
+  margin-left: 5px;
   margin-right: 5px;
 }
 .auth-state {
