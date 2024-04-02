@@ -772,7 +772,7 @@ export default {
       logMessage("Movies allMoviesforQuery")
       // all movies by query irrespective of pagination settings
       let query = { ...this.query}  // shallow clone (bug fix)
-      query.$limit=5000
+      query.$limit=8192
       query.$skip=0
       return this.user
         ? this.findMoviesInStore({
