@@ -21,6 +21,9 @@ feathersClient.service('movies')
           context.result.data.map(m => {
             m.metaDurationInSec = 1 * m.meta.durationInSec
             m.sortName = m.basename.toLowerCase().replaceAll(/[-_+]/gi,"").replace(".mp4","")
+            // calculate some sort of "quality factor"
+            m.qf = 4*1000*1000*m.meta.sizeInMB / m.meta.durationInSec / m.meta.height / m.meta.width
+            m.qf = m.qf.toFixed(1)
           })
           logMessage("store-movies - after_find hook", context)
         }

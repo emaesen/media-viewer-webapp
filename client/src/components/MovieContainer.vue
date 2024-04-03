@@ -58,7 +58,7 @@
         </button>
       </div>
       <div class="meta info">
-        {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }}<br>
+        {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }} &nbsp; &nbsp; {{ movieQuality }}<br>
         {{ movieLastWatchedDate }} &nbsp; {{ movieRNR }} &nbsp; {{ eqFlags }}
       </div>
       <div v-if="movie.hidden" class="cmd-rm info">
@@ -148,6 +148,9 @@ export default {
       let levels =  this.movie.level1 
         + (this.movie.level2!=="-" ? "/" + this.movie.level2 : "")
       return levels
+    },
+    movieQuality() {
+      return this.movie.qf
     },
     movieRating() {
       return this.movie.rating
