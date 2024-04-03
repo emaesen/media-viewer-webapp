@@ -108,7 +108,11 @@ export default {
     }
   },
   mounted() {
+    logMessage("mount movie-container for: " + this.movie._id)
     this.embedPlayer = this.isActive && this.autoEmbedPlayer
+  },
+  beforeDestroy() {
+    logMessage("destroy movie-container for: " + this.movie._id)
   },
   computed: {
     movieSrc() {

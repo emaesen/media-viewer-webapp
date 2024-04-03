@@ -8,6 +8,7 @@ import { logMessage } from '@/utils/logger.js'
 const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
   idField: "_id"
 });
+const movieBasePath = "/media/movies/"
 
 Vue.use(Vuex);
 Vue.use(FeathersVuex);
@@ -24,6 +25,10 @@ feathersClient.service('movies')
             // calculate some sort of "quality factor"
             m.qf = 4*1000*1000*m.meta.sizeInMB / m.meta.durationInSec / m.meta.height / m.meta.width
             m.qf = m.qf.toFixed(1)
+            // add ui-specifc property
+            m.ui = {
+              src: movieBasePath + m.path
+            }
           })
           logMessage("store-movies - after_find hook", context)
         }

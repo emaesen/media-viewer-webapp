@@ -454,7 +454,7 @@ export default {
     }
   },
   mounted() {
-    logMessage("mount movieplayer for: " + this.source.id)
+    logMessage("mount movie-player for: " + this.source.id)
     this.init()
   },
   beforeDestroy() {
@@ -473,7 +473,7 @@ export default {
       }
       vEl.load()
     }
-    logMessage("destroy movieplayer for: " + this.source.id)
+    logMessage("destroy movie-player for: " + this.source.id)
   },
   methods: {
     init() {

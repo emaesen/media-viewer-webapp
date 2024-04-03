@@ -342,12 +342,29 @@
 
     <div class="movie-names-list grid" v-if="showMoviesList && resultsFound">
       <div
-        v-for="movie in filteredMoviesList"
+        v-for="(movie,index) in filteredMoviesList"
         :key="movie._id"
         :id="movie._id"
-        class="grid-cell"
+        :data-index="index"
+        class="grid-cell action"
+        @click="showPipMovie"
       >
         {{ movie.basename.replace(".mp4","") }}
+      </div>
+      <div v-if="pipMovie" class="movie-pip">
+        <font-awesome-icon icon="times" class="close-pip-icon action" @click="closePipMovie"/>
+        <MovieContainer
+          isActive=true
+          autoEmbedPlayer=true
+          :movie="pipMovie"
+          @toggle-fullwidth="onToggleFullWidth"
+          @update-movie="onUpdateMovie"
+          @hide-movie="hideMovie"
+          @unhide-movie="unhideMovie"
+          @remove-movie="removeMovie"
+          class="pip"
+          :showHideButton=false
+        />
       </div>
     </div>
 
@@ -421,7 +438,6 @@ export default {
       level2s: [],
       filter: { ratings: [], level1s: [], level2s: [] },
       hasFullWidthMovie: false,
-      movieBasePath: "/media/movies/",
       isInit: true,
       eqProps: {
         "duration": "eqd",
@@ -485,6 +501,7 @@ export default {
       fileNameContains: "",
       fileNameFilterLogicOptions: ["or", "and"],
       fileNameFilterLogic: "or",
+      pipMovie: null,
     };
   },
   created() {
@@ -703,6 +720,21 @@ export default {
         this.paginationState.preventScroll = false
       })
     },
+    closePipMovie() {
+      this.pipMovie = null
+    },
+    showPipMovie(props) {
+      let movieIndex = props.target.attributes["data-index"].value
+      logMessage("show PiP movie id", props.target.id)
+      logMessage("show PiP movie", this.filteredMoviesList[movieIndex])
+      if (this.pipMovie) {
+        // destroy existing viewer
+        this.pipMovie = null
+      }
+      this.$nextTick(() => {
+        this.pipMovie = this.filteredMoviesList[movieIndex]
+      })
+    },
   },
   computed: {
     ...mapState("auth", { user: "payload" }),
@@ -904,9 +936,6 @@ export default {
           */
           .filter((m, i) => i < this.paginationState.limit)
           .map(m => {
-            m.ui = {
-              src: this.movieBasePath + m.path
-            }
             m.rating = m.rating ? 1*m.rating : 0
             m.level2 = m.level2 || "-"
 
@@ -1349,6 +1378,7 @@ span.side-button{
   height: 85vh;
   overflow: auto;
   margin-bottom: 2rem;
+  padding-right:300px;
 }
 .grid.review-equals {
   margin-bottom: 450px;
@@ -1386,6 +1416,23 @@ span.side-button{
 .grid .movies-list-cell {
   border: 1px dashed #454545;
   margin: -1px;
+}
+.movie-pip {
+  border: 1px dashed #454545;
+  position:fixed;
+  bottom:50px;
+  right:0;
+  width: 33.3vw;
+  max-width: 300px;
+  z-index:99999;
+  background-color:#000;
+}
+.close-pip-icon {
+  position: absolute;
+  right: 0;
+  top: 2px;
+  height:27px;
+  width:27px !important;
 }
 .cmd-list-rm {
   border: 1px solid #f90;
