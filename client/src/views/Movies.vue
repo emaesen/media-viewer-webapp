@@ -354,8 +354,8 @@
       <div v-if="pipMovie" class="movie-pip">
         <font-awesome-icon icon="times" class="close-pip-icon action" @click="closePipMovie"/>
         <MovieContainer
-          isActive=true
-          autoEmbedPlayer=true
+          :isActive=true
+          :autoEmbedPlayer=true
           :movie="pipMovie"
           @toggle-fullwidth="onToggleFullWidth"
           @update-movie="onUpdateMovie"
