@@ -154,7 +154,7 @@ export default {
       return levels
     },
     movieQuality() {
-      return this.movie.qf
+      return this.movie.ui.qf
     },
     movieRating() {
       return this.movie.rating

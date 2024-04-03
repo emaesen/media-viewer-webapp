@@ -38,6 +38,7 @@ module.exports = {
       async function(context) {
         // prevent ui-specific properties from cluttering the DB
         delete context.data.ui
+        delete context.data.sortName
         console.log("in movies `before-update` hook", context.data)
         return context
       }

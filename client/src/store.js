@@ -21,14 +21,20 @@ feathersClient.service('movies')
           // https://feathers-vuex-v1.netlify.app/common-patterns.html#accessing-the-store-from-hooks
           context.result.data.map(m => {
             m.metaDurationInSec = 1 * m.meta.durationInSec
-            m.sortName = m.basename.toLowerCase().replaceAll(/[-_+]/gi,"").replace(".mp4","")
-            // calculate some sort of "quality factor"
-            m.qf = 4*1000*1000*m.meta.sizeInMB / m.meta.durationInSec / m.meta.height / m.meta.width
-            m.qf = m.qf.toFixed(1)
-            // add ui-specifc property
+            // Add ui-specifc properties - anything within ui prop
+            // will not be persisted to the DB (movies.hooks.js).
+            // Calculate some sort of "quality factor"
+            let qf = 4*1000*1000*m.meta.sizeInMB / m.meta.durationInSec / m.meta.height / m.meta.width
+            qf = qf.toFixed(1)
             m.ui = {
-              src: movieBasePath + m.path
+              src: movieBasePath + m.path,
+              qf: qf
             }
+            // sortName is a special property to allow client-side
+            // sorting that is case-insensitive, but it needs to be
+            // at top level or else it can not be passed to feathersjs.
+            // sortName will not be persisted to the DB (movies.hooks.js).
+            m.sortName = m.basename.toLowerCase().replaceAll(/[-_+]/gi,"").replace(".mp4","")
           })
           logMessage("store-movies - after_find hook", context)
         }
