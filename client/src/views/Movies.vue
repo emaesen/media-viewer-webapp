@@ -753,7 +753,7 @@ export default {
           sort.rnr = sortInd
           break;
         case "name":
-          sort.basename = sortInd
+          sort.sortName = sortInd
           break;
         case "duration":
           sort.metaDurationInSec = sortInd

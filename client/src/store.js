@@ -20,6 +20,7 @@ feathersClient.service('movies')
           // https://feathers-vuex-v1.netlify.app/common-patterns.html#accessing-the-store-from-hooks
           context.result.data.map(m => {
             m.metaDurationInSec = 1 * m.meta.durationInSec
+            m.sortName = m.basename.toLowerCase().replaceAll(/[-_+]/gi,"").replace(".mp4","")
           })
           logMessage("store-movies - after_find hook", context)
         }
