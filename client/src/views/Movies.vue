@@ -536,7 +536,9 @@ export default {
         p = this.paginationState
         persistPaginationState(p)
       }
-
+      if (this.autoEmbedPlayer) {
+        this.minMovieCellHeight = this.minMovieCellHeightDefault
+      }
       this.$nextTick(() => {
         this.isInit = false
       })
