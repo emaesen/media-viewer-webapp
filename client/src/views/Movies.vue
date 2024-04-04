@@ -351,6 +351,13 @@
       >
         {{ movie.basename.replace(".mp4","") }}
       </div>
+      <div
+        v-for="i in 20"
+        :key="'spacer'+i"
+        class="grid-cell spacer"
+      >
+        &nbsp;
+      </div>
       <div v-if="pipMovie" class="movie-pip">
         <font-awesome-icon icon="times" class="close-pip-icon action" @click="closePipMovie"/>
         <MovieContainer
@@ -1380,7 +1387,6 @@ span.side-button{
   height: 85vh;
   overflow: auto;
   margin-bottom: 2rem;
-  padding-right:300px;
 }
 .grid.review-equals {
   margin-bottom: 450px;
