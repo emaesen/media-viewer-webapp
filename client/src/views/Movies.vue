@@ -502,7 +502,7 @@ export default {
       },
       autoEmbedPlayer: true,
       minMovieCellHeight: 0,
-      minMovieCellHeightDefault: 300,
+      minMovieCellHeightDefault: 333,
       showMoviesList: false,
       fileNameStartsWith: "",
       fileNameContains: "",
@@ -1534,7 +1534,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 100%;
     .grid-media {
-      max-height: 75vw;
+      height: 75vw;
     }
   }
 }
@@ -1542,7 +1542,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 50%;
     .grid-media {
-      max-height: 31vw;
+      height: 31vw;
     }
   }
 }
@@ -1550,7 +1550,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 33.333%;
     .grid-media {
-      max-height: 20vw;
+      height: 20vw;
     }
   }
 }
@@ -1558,7 +1558,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 25%;
     .grid-media {
-      max-height: 15vw;
+      height: 15vw;
     }
   }
 }
@@ -1566,7 +1566,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 20%;
     .grid-media {
-      max-height: 12vw;
+      height: 12vw;
     }
   }
 }
@@ -1574,7 +1574,7 @@ select.select-page-number.action.button {
   .grid .grid-cell {
     width: 16.666%;
     .grid-media {
-      max-height: 10vw;
+      height: 10vw;
     }
   }
 }
