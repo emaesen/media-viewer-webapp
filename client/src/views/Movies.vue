@@ -1083,11 +1083,10 @@ export default {
           const listEl = document.getElementById("movies-list")
           const el = document.getElementById("controls")
           const rect = el.getBoundingClientRect()
-          let topDelta = rect.bottom - rect.top + 234
+          let topDelta = rect.bottom - rect.top + 200
           logMessage("scroll to " + topDelta)
           listEl.style="min-height:100vh;"
-          window.scrollTo({top:100, left:0, behavior:'instant'})
-          window.scrollTo({top:topDelta, left:0, behavior:'smooth'})
+          window.scroll({top:topDelta, left:0, behavior:'smooth'})
           listEl.style=""
         }
         this.paginationState.skip = this.paginationState.limit * (1 * this.paginationState.nr - 1)
@@ -1307,6 +1306,14 @@ export default {
     fileNameContains(newVal) {
       logMessage("fileNameContains", newVal)
     },
+    showMoviesList(newVal) {
+      if (newVal) {
+        logMessage("show movies list - scroll to bottom")
+        this.$nextTick(() => {
+          window.scroll({top:1000, left:0, behavior:'smooth'})
+        })
+      }
+    },
   }
 };
 </script>
@@ -1384,7 +1391,7 @@ span.side-button{
 }
 .grid.movie-names-list {
   flex-direction: column;
-  height: 85vh;
+  height: 80vh;
   overflow: auto;
   margin-bottom: 2rem;
 }
