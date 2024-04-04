@@ -621,6 +621,7 @@ export default {
       let eqPropName = this.eqProps[this.paginationState.sortType]
       logMessage("Movies tested for equal " + this.paginationState.sortType, movies)
       movies.forEach((m) => {
+        this.restoreSft(m)
         this.updateMovie({movie:m, prop:eqPropName, val:1})
       })
     },
@@ -715,6 +716,17 @@ export default {
         }
       })
       this.paginationState.showClearButton = false
+    },
+    restoreSft(m) {
+      if(m._sft_orig !== undefined) {
+        if (m._sft_orig===null) {
+          delete m.sft
+        } else {
+          m.sft = 1*m._sft_orig
+          logMessage("re-setting sft to " + 1*m.sft)
+        }
+        delete m._sft_orig
+      }
     },
     toggleSort() {
       this.paginationState.sortAsc = !this.paginationState.sortAsc
@@ -964,19 +976,12 @@ export default {
                   m.sft = Math.ceil(m.metaDurationInSec / 2)
                 }
                 
-                logMessage("setting sft to " + 1*m.sft + "  orig=" + 1*m._sft_orig)
+                logMessage("setting sft to " + 1*m.sft + "  orig=" + 1*m._sft_orig,  m.basename)
               }
             } else {
-              logMessage("NOT showEqualsOnly", {m_sft_orig:m._sft_orig})
               if(m._sft_orig !== undefined) {
-                if (m._sft_orig===null) {
-                  delete m.sft
-                } else {
-                  m.sft = 1*m._sft_orig
-                  
-                logMessage("re-setting sft to " + 1*m.sft)
-                }
-                delete m._sft_orig
+                logMessage("restore sft to " + 1*m._sft_orig,  m.basename)
+                this.restoreSft(m)
               }
             }
 
