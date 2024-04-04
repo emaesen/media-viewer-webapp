@@ -39,6 +39,7 @@ module.exports = {
         // prevent ui-specific properties from cluttering the DB
         delete context.data.ui
         delete context.data.sortName
+        delete context.data.metaDurationInSec
         console.log("in movies `before-update` hook", context.data)
         return context
       }
