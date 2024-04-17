@@ -810,8 +810,8 @@ export default {
           break;
         case "duration":
           sort.metaDurationInSec = sortInd
-          // sort items with same duration by their name
-          sort.basename = 1
+          // sort items with same duration by their creation date
+          sort.createdAt = -1
           break;
       }
       query.$sort = sort
