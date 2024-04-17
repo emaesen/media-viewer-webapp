@@ -1234,6 +1234,9 @@ export default {
       if (newVal) {
         this.origAutoEmbedPlayer = this.autoEmbedPlayer?true:false
         this.origPaginationState = {...this.paginationState}
+        this.origObserveOnlyOnce = this.intsecObserverBehavior.observeOnlyOnce?true:false
+        // prevent movie deactivation when scrolling up and down
+        this.intsecObserverBehavior.observeOnlyOnce = true
         // employ a trick to reset all movies so that the temporary
         // start frame time can take effect
         this.preventPaginationStatePersist = true
@@ -1277,6 +1280,9 @@ export default {
             delete this.preventPaginationStatePersist
             delete this.origPaginationState
             this.autoEmbedPlayer = this.origAutoEmbedPlayer?true:false
+            this.intsecObserverBehavior.observeOnlyOnce = this.origObserveOnlyOnce? true:false
+            delete this.origAutoEmbedPlayer
+            delete this.origObserveOnlyOnce
           }
           this.resetPage()
         })
