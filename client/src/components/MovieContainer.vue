@@ -58,7 +58,7 @@
         </button>
       </div>
       <div class="meta info">
-        {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }} &nbsp; &nbsp; {{ movieQuality }}<br>
+        {{ movieSize }} &nbsp; &nbsp; {{ movieDimensions }} &nbsp; &nbsp; {{ movieDuration }} &nbsp; &nbsp; qf={{ movieQuality }}<br>
         {{ movieLastWatchedDate }} &nbsp; {{ movieRNR }} &nbsp; {{ eqFlags }}
       </div>
       <div v-if="movie.hidden" class="cmd-rm info">
