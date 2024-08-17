@@ -304,7 +304,7 @@ export default {
 .path,
 .title,
 .markers {
-  margin: 10px 0 10px 0;
+  margin: 1px 0 2px 0;
 }
 .title {
   color: #90d9f5;

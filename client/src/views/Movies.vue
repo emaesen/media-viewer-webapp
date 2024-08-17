@@ -502,7 +502,7 @@ export default {
       },
       autoEmbedPlayer: true,
       minMovieCellHeight: 0,
-      minMovieCellHeightDefault: 333,
+      minMovieCellHeightDefault: 270,
       showMoviesList: false,
       fileNameStartsWith: "",
       fileNameContains: "",
